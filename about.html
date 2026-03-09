@@ -945,9 +945,15 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  // Footer links — I-beam text cursor
-  document.querySelectorAll('footer span, footer a').forEach(el => {
+  // Footer text — I-beam thin bar, tiny ring
+  document.querySelectorAll('footer span, .footer-reached').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  // Footer links — pinpoint dot, medium ring
+  document.querySelectorAll('footer a').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
 
