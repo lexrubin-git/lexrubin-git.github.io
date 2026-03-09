@@ -597,6 +597,7 @@
       function draw() {
         const w = canvas.width, h = canvas.height;
         ctx.clearRect(0, 0, w, h);
+        let allSettled = true;
         dots.forEach(d => {
           const dx = d.x - localMx;
           const dy = d.y - localMy;
@@ -607,15 +608,24 @@
             tx = d.ox + (dx / dist) * force;
             ty = d.oy + (dy / dist) * force;
           }
-          // spring toward target
           d.x += (tx - d.x) * 0.18;
           d.y += (ty - d.y) * 0.18;
+
+          // check if still moving
+          if (Math.abs(d.x - d.ox) > 0.2 || Math.abs(d.y - d.oy) > 0.2) allSettled = false;
 
           ctx.beginPath();
           ctx.arc(d.x, d.y, RADIUS, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(255,255,255,0.15)';
           ctx.fill();
         });
+
+        // stop loop once dots are back home and not hovered
+        if (!isHovered && allSettled) {
+          ctx.clearRect(0, 0, w, h);
+          cancelAnimationFrame(animId);
+          return;
+        }
         animId = requestAnimationFrame(draw);
       }
 
@@ -635,8 +645,7 @@
       item.addEventListener('mouseleave', () => {
         isHovered = false;
         localMx = -9999; localMy = -9999;
-        // let dots spring back then stop
-        setTimeout(() => cancelAnimationFrame(animId), 800);
+        // animation loop will self-terminate once dots settle back
       });
 
       window.addEventListener('resize', () => { if (isHovered) buildDots(); });
