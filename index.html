@@ -154,13 +154,12 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.6s ease, filter 0.5s ease;
-      filter: blur(1px) brightness(0.8);
-      animation: pulseBlur 3s ease-in-out infinite, pulseBrightness 4s ease-in-out infinite;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
     }
     .portfolio-item:hover .item-image img {
-      filter: blur(0px) brightness(1);
-      transform: scale(1.04);
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
       animation: none;
     }
 
@@ -190,39 +189,42 @@
       text-transform: uppercase;
       color: var(--gray);
       position: relative;
-      transition: transform 0.6s ease, filter 0.5s ease;
-      filter: blur(1px) brightness(0.8);
-      animation: pulseBlur 3s ease-in-out infinite, pulseBrightness 4s ease-in-out infinite;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
     }
     .portfolio-item:hover .img-placeholder {
-      filter: blur(0px) brightness(1);
-      transform: scale(1.04);
-      animation: none;
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
     }
     .img-pyxd    { background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 60%, #3d3d3d 100%); }
     .img-arctic  { background: linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #555 100%); }
     .img-watch   { background: linear-gradient(135deg, #111 0%, #222 60%, #333 100%); }
     .img-dam     { background: linear-gradient(135deg, #383838 0%, #4f4f4f 50%, #666 100%); }
 
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.4s;
-    }
-    .portfolio-item:hover .overlay { background: rgba(0,0,0,0.15); }
+    .overlay { display: contents; }
+
     .overlay-text {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(0, 0, 0, 0.72);
+      color: #f0ede8;
       font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0);
-      transition: color 0.4s;
       font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      pointer-events: none;
     }
-    .portfolio-item:hover .overlay-text { color: rgba(255,255,255,0.7); }
+    .portfolio-item:hover .overlay-text {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* ── FOOTER ── */
     footer {
