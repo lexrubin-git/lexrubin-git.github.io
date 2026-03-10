@@ -953,9 +953,8 @@
       const imgEl = card.querySelector('.artwork-card-img');
       const wrap  = document.getElementById('lightbox-img-wrap');
       if (imgEl) {
-        const rotate = (index === 1 || index === 2) ? 'transform:rotate(90deg);' : '';
         wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
-          + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="' + rotate + 'display:block;">'
+          + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
           + '</div>';
       }
       lightbox.classList.add('open');
