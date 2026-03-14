@@ -621,11 +621,28 @@
     });
 
     // Stagger brightness overlay animations so cards pulse independently
-    document.querySelectorAll('.brightness-overlay').forEach(overlay => {
+    const allOverlays = document.querySelectorAll('.brightness-overlay');
+    allOverlays.forEach(overlay => {
       const delay = -(Math.random() * 3).toFixed(2);
-      const duration = (2.5 + Math.random() * 2).toFixed(2);
+      const duration = (5 + Math.random() * 3).toFixed(2);
       overlay.style.animationDelay = `${delay}s`;
       overlay.style.animationDuration = `${duration}s`;
+    });
+
+    // Pause all other overlays when any card is hovered
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        allOverlays.forEach(overlay => {
+          if (overlay.closest('.portfolio-item') !== item) {
+            overlay.style.animationPlayState = 'paused';
+          }
+        });
+      });
+      item.addEventListener('mouseleave', () => {
+        allOverlays.forEach(overlay => {
+          overlay.style.animationPlayState = 'running';
+        });
+      });
     });
 
     // Randomize blur/brightness animation per card
