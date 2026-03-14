@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <rect width="593.83" height="593.83" fill="#000000"/>
+  <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10px" d="M206.75,475.25h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10px" d="M294.81,415.38h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10px" points="294.81 475.25 294.81 415.38 294.81 358.86 338.95 358.86"/>
+  <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10px" d="M297.45,287.84h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10px" x1="294.81" y1="415.38" x2="356.43" y2="415.38"/>
+</svg>
