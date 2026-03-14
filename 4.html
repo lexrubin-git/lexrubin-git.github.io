@@ -741,6 +741,29 @@
 
 
     /* ── SLIDESHOW ── */
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      font-size: 2.5rem;
+      width: 2.8rem;
+      height: 5rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .lightbox-arrow:hover { background: rgba(0,0,0,0.85); }
+    .lightbox-arrow.lightbox-prev { left: 0.5rem; }
+    .lightbox-arrow.lightbox-next { right: 0.5rem; }
+    .lightbox-arrow.visible { display: flex; }
+
     .slideshow-card { overflow: hidden; }
     .slideshow-wrapper { position: relative; width: 100%; }
     .slideshow-img {
@@ -940,10 +963,12 @@
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner">
+    <button class="lightbox-arrow lightbox-prev" id="lightbox-prev">&#8249;</button>
     <div class="lightbox-placeholder" id="lightbox-img-wrap">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       Image Preview
     </div>
+    <button class="lightbox-arrow lightbox-next" id="lightbox-next">&#8250;</button>
   </div>
 </div>
 
@@ -1051,11 +1076,27 @@
   const lightbox      = document.getElementById('lightbox');
   const lightboxTitle = document.getElementById('lightbox-title');
   const lightboxMeta  = document.getElementById('lightbox-meta');
+  const lightboxPrev  = document.getElementById('lightbox-prev');
+  const lightboxNext  = document.getElementById('lightbox-next');
 
-  cards.forEach((card, index) => {
+  let lightboxIsSlideshow = false;
+
+  function openLightboxImage(src) {
+    const wrap = document.getElementById('lightbox-img-wrap');
+    wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+      + '<img class="lightbox-img" src="' + src + '" alt="Artwork" style="display:block;">'
+      + '</div>';
+    lightbox.classList.add('open');
+  }
+
+  cards.forEach((card) => {
     card.addEventListener('click', () => {
+      if (card.classList.contains('slideshow-card')) return; // handled separately
       const mediaEl = card.querySelector('.artwork-card-img');
       const wrap    = document.getElementById('lightbox-img-wrap');
+      lightboxIsSlideshow = false;
+      lightboxPrev.classList.remove('visible');
+      lightboxNext.classList.remove('visible');
       if (mediaEl) {
         if (mediaEl.tagName === 'VIDEO') {
           wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
@@ -1069,6 +1110,35 @@
       }
       lightbox.classList.add('open');
     });
+  });
+
+  // Slideshow card click — open lightbox at current slide
+  const slideshowCard = document.querySelector('.slideshow-card');
+  if (slideshowCard) {
+    slideshowCard.addEventListener('click', (e) => {
+      if (e.target.classList.contains('slideshow-btn')) return;
+      lightboxIsSlideshow = true;
+      lightboxPrev.classList.add('visible');
+      lightboxNext.classList.add('visible');
+      openLightboxImage(slideImgs[slideIndex].src);
+      lightbox.classList.add('open');
+    });
+  }
+
+  lightboxPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex - 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
+  });
+
+  lightboxNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex + 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
   });
 
   lightbox.addEventListener('click', e => {
