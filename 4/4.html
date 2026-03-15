@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>U.C. Berkeley Dam Research</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000000;
+      --white: #f0ede8;
+      --gray: #aaa;
+      --border: rgba(255,255,255,0.1);
+      --accent: #c8b89a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 110px;
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 0.5s ease forwards;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo { position: relative; display: flex; }
+    #logo-default, #logo-hover { transition: opacity 0.3s ease; }
+    #logo-hover { position: absolute; top: 0; left: 0; }
+
+    .logo-text {
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .logo-text:hover { color: var(--accent); }
+
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      color: #444;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: #aaa;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: #aaa; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: #aaa; }
+    .nav-links a.active::after { width: 100%; background: #aaa; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper { padding: 0 4rem; max-width: 1350px; margin: 0 auto; }
+
+    .content-col {
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    /* ── HERO HEADER ── */
+    .artwork-hero {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .artwork-label {
+      border-bottom: 1px solid var(--border);
+      padding: 1.8rem 2.5rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 400;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .artwork-label-count {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: #333;
+    }
+
+    .artwork-title-row {
+      padding: 3rem 2.5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: end;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .artwork-main-title {
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .artwork-subtitle {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.9;
+      font-weight: 400;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 1.2rem 2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #444;
+      background: none;
+      border: none;
+      border-right: 1px solid var(--border);
+      transition: color 0.2s, background 0.2s;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+    }
+    .filter-btn:last-child { border-right: none; }
+    .filter-btn:hover { color: #aaa; }
+    .filter-btn.active { color: var(--white); background: rgba(255,255,255,0.03); }
+
+    /* ── SECTION ARROWS ── */
+    .section-arrows {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.25s forwards;
+    }
+    .arrow-cell {
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.6rem 0; color: #333; font-size: 0.9rem;
+      border-right: 1px solid var(--border);
+    }
+    .arrow-cell:last-child { border-right: none; }
+
+    /* ── ARTWORK GRID ── */
+    .artworks-section {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.3s forwards;
+    }
+
+    .artworks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .artwork-card {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      background: #050505;
+    }
+    .artwork-card:nth-child(2n) { border-right: none; }
+    .artwork-card:last-child { border-bottom: none; }
+    .artwork-card:last-child { border-bottom: none; }
+
+    .artwork-card-img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      aspect-ratio: 16/7;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
+    }
+
+    .artwork-card-placeholder {
+      width: 100%;
+      aspect-ratio: 16/7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: #1e1e1e;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px dashed #111;
+      background: #030303;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .artwork-card:hover .artwork-card-placeholder {
+      border-color: #222;
+      color: #333;
+    }
+    .artwork-card-placeholder svg { opacity: 0.15; }
+
+    .artwork-card:hover .artwork-card-img {
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
+    }
+
+    .artwork-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.4rem;
+    }
+    .artwork-card:hover .artwork-card-overlay { opacity: 1; }
+
+    .artwork-card-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--white);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+      transform: translateY(6px);
+      transition: transform 0.3s ease;
+    }
+    .artwork-card:hover .artwork-card-title { transform: translateY(0); }
+
+    .artwork-card-meta {
+      font-size: 0.65rem;
+      color: rgba(240,237,232,0.5);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transform: translateY(6px);
+      transition: transform 0.35s ease;
+    }
+    .artwork-card:hover .artwork-card-meta { transform: translateY(0); }
+
+    /* ── FEATURED WORK ── */
+    .featured-section {
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.35s forwards;
+      margin-top: 3rem;
+    }
+
+    .featured-label {
+      border-bottom: 1px solid var(--border);
+      padding: 1.8rem 2.5rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 400;
+    }
+
+    .featured-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .featured-img-col {
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      background: #050505;
+      min-height: 340px;
+    }
+
+    .featured-img-col-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: #1e1e1e;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px dashed #111;
+    }
+    .featured-img-col-placeholder svg { opacity: 0.15; }
+
+    .featured-img-col img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.8);
+      transition: filter 0.5s ease, transform 0.6s ease;
+    }
+    .featured-img-col:hover img {
+      filter: brightness(1);
+      transform: scale(1.03);
+    }
+
+    .featured-info-col {
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .featured-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 1.2rem;
+    }
+
+    .featured-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 1.4rem;
+    }
+
+    .featured-desc {
+      font-size: 0.85rem;
+      line-height: 1.85;
+      color: #666;
+      flex: 1;
+      margin-bottom: 2rem;
+    }
+
+    .featured-desc strong { color: #999; font-weight: 500; }
+
+    .featured-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.4rem;
+    }
+
+    .featured-detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+    .featured-detail-label { color: #444; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.68rem; }
+    .featured-detail-val { color: #777; }
+
+    /* ── MEDIUM STATS ── */
+    .stats-section {
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.4s forwards;
+    }
+
+    .stat-cell {
+      padding: 2.2rem 2rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    /* ── PROCESS TICKER ── */
+    .ticker-section {
+      border: 1px solid var(--border);
+      margin-top: 3rem;
+      margin-bottom: 4rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.45s forwards;
+    }
+
+    .ticker-row {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      height: 52px;
+    }
+    .ticker-row:last-child { border-bottom: none; }
+
+    .ticker-label {
+      flex-shrink: 0;
+      width: 180px;
+      padding: 0 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #aaa;
+      font-weight: 600;
+      border-right: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+
+    .ticker-inner {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .ticker-row:nth-child(1) .ticker-inner { animation: tickerLeft 22s linear infinite; }
+    .ticker-row:nth-child(2) .ticker-inner { animation: tickerRight 28s linear infinite; }
+    .ticker-row:nth-child(3) .ticker-inner { animation: tickerLeft 20s linear infinite; }
+
+    @keyframes tickerLeft {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes tickerRight {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 0 1.6rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: #555;
+      text-transform: uppercase;
+    }
+    .ticker-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: #333;
+      flex-shrink: 0;
+    }
+    .ticker-item.highlight { color: #999; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #000000;
+      padding: 0;
+      position: relative;
+      text-align: center;
+    }
+
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 0 3.5rem;
+      gap: 1.4rem;
+    }
+
+    .footer-reached {
+      font-style: italic;
+      font-size: 1rem;
+      color: #444;
+      letter-spacing: 0.90em;
+      word-spacing: 1.3em;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      font-size: 0.85rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+    }
+
+    .footer-bottom span {
+      font-style: normal;
+    }
+
+    .footer-bottom a {
+      color: #444;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-style: normal;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+      transition: color 0.2s;
+    }
+    .footer-bottom a:hover { color: #888; }
+
+    .footer-scroll-btn { display: none; }
+
+
+    .artwork-enlarge-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .artwork-card:hover .artwork-enlarge-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    /* ── HIDDEN FILTER STATE ── */
+
+    .artwork-card[data-hidden="true"] { display: none; }
+
+    body, * { cursor: none !important; }
+    a, button { pointer-events: auto; }
+
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+                  height 0.35s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.35s, background 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%);
+      opacity: 0.8;
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1),
+                  height 0.4s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.4s, opacity 0.2s, border-width 0.2s;
+    }
+    .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox-inner {
+      display: block;
+      line-height: 0;
+      padding: 0;
+      margin: 0;
+      font-size: 0;
+    }
+    .lightbox-img {
+      display: block;
+      max-width: 90vw;
+      max-height: calc(90vh - 60px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+    .lightbox-placeholder {
+      display: contents;
+    }
+    .lightbox-placeholder svg { opacity: 0.2; }
+    /* ── BOTTOM NAV BAR ── */
+    .bottom-nav-wrap {
+      max-width: 1350px;
+      margin: 3rem auto 0;
+      padding: 0 4rem;
+    }
+
+    .bottom-nav {
+      display: flex;
+      border: 1px solid var(--border);
+      background: #000;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.5s forwards;
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.4rem 0.5rem;
+      text-decoration: none;
+      color: #444;
+      border-right: 1px solid var(--border);
+      transition: color 0.25s ease, background 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .bottom-nav-item:last-child { border-right: none; }
+
+    .bottom-nav-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.03);
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bottom-nav-item:hover::before { transform: translateY(0); }
+
+    .bottom-nav-item:hover { color: var(--white); }
+
+    .bottom-nav-item svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), stroke 0.25s;
+    }
+    .bottom-nav-item:hover svg { transform: translateY(-3px); }
+
+    .bottom-nav-item span {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bottom-nav-item:hover span { transform: translateY(-2px); }
+
+
+    /* ── SLIDESHOW ── */
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      font-size: 2.5rem;
+      width: 2.8rem;
+      height: 5rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .lightbox-arrow:hover { background: rgba(0,0,0,0.85); }
+    .lightbox-arrow.lightbox-prev { left: 0.5rem; }
+    .lightbox-arrow.lightbox-next { right: 0.5rem; }
+    .lightbox-arrow.visible { display: flex; }
+
+    .slideshow-card { overflow: hidden; }
+    .slideshow-wrapper { position: relative; width: 100%; }
+    .slideshow-img {
+      display: none;
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+    .slideshow-img.active { display: block; }
+    .slideshow-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: none;
+      font-size: 2rem;
+      width: 2.2rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .slideshow-btn:hover { background: rgba(0,0,0,0.85); }
+    .slideshow-btn.prev { left: 0; }
+    .slideshow-btn.next { right: 0; }
+    .slideshow-counter {
+      position: absolute;
+      bottom: 0.6rem;
+      right: 0.7rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.55);
+      background: rgba(0,0,0,0.45);
+      padding: 0.15rem 0.5rem;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring0"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="index.html" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
+    <svg id="logo-default" style="opacity:1;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs><style>.ld-cls-1{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:10px;}</style></defs>
+  <path class="ld-cls-1" d="M206.75,475.25h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="ld-cls-1" d="M294.81,415.38h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="ld-cls-1" points="294.81 475.25 294.81 415.38 294.81 358.86 338.95 358.86"/>
+  <path class="ld-cls-1" d="M297.45,287.84h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="ld-cls-1" x1="294.81" y1="415.38" x2="356.43" y2="415.38"/>
+</svg>
+    <svg id="logo-hover" style="opacity:0;position:absolute;top:0;left:0;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs><style>.lh-cls-1{stroke-width:13px;}.lh-cls-1,.lh-cls-2{fill:#fff;stroke:#fff;stroke-miterlimit:10;}.lh-cls-3{fill:none;stroke:#231f20;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;}.lh-cls-2{stroke-width:18px;}</style></defs>
+  <path class="lh-cls-2" d="M388.15,284.82h-67.51l100.96-126.47c8.65-10.83,7.79-25.09-2.09-34.66-33.33-32.27-110.11,41.61-122.6,54.07-12.48-12.46-89.26-86.34-122.59-54.07-9.88,9.57-10.75,23.83-2.09,34.66l100.96,126.47h-66.44c-20.02,0-36.3,13.96-36.3,31.12v131.17c0,17.16,16.28,31.12,36.3,31.12h181.4c20.02,0,36.3-13.96,36.3-31.12v-131.17c0-17.16-16.28-31.12-36.3-31.12Z"/>
+  <path class="lh-cls-3" d="M206.75,475.23h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="lh-cls-3" d="M294.81,415.36h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="lh-cls-3" points="294.81 475.23 294.81 415.36 294.81 358.84 338.95 358.84"/>
+  <path class="lh-cls-3" d="M297.45,287.82h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
+</svg>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Work</a>
+    <a href="artwork.html" class="active">Artworks</a>
+    <a href="about.html">About</a>
+    <a href="/cdn-cgi/l/email-protection#fc9499909093bc9099848e899e9592d29f9391">Contact</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="page-wrapper">
+  <div class="artwork-hero">
+    <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
+      <h1 class="artwork-main-title">U.C. Berkeley Dam Research</h1>
+      <span style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:#666; white-space:nowrap;">Selected Works</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION ARROWS ── -->
+<div class="page-wrapper">
+<div class="section-arrows">
+  <div class="arrow-cell">∨</div>
+  <div class="arrow-cell">∨</div>
+  <div class="arrow-cell">∨</div>
+</div>
+</div>
+
+<!-- ── ARTWORK GRID ── -->
+<div class="page-wrapper">
+  <div class="artworks-section">
+    <div class="artworks-grid" id="artwork-grid">
+
+      <!-- Card 1 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_1.png" alt="Image 1">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_2.png" alt="Image 2">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_3.png" alt="Image 3">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_4.png" alt="Image 4">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_5.png" alt="Image 5">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_6.png" alt="Image 6">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 7 -->
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_7.png" alt="Image 7">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <!-- Card 8 - Slideshow -->
+      <div class="artwork-card slideshow-card">
+        <div class="slideshow-wrapper">
+          <img class="artwork-card-img slideshow-img active" src="dam_slideshow_1.png" alt="Slideshow 1">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_2.png" alt="Slideshow 2">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_3.png" alt="Slideshow 3">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_4.png" alt="Slideshow 4">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_5.png" alt="Slideshow 5">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_6.png" alt="Slideshow 6">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_7.png" alt="Slideshow 7">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_8.png" alt="Slideshow 8">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_9.png" alt="Slideshow 9">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_10.png" alt="Slideshow 10">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_11.png" alt="Slideshow 11">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_12.png" alt="Slideshow 12">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_13.png" alt="Slideshow 13">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_14.png" alt="Slideshow 14">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_15.png" alt="Slideshow 15">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_16.png" alt="Slideshow 16">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_17.png" alt="Slideshow 17">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_18.png" alt="Slideshow 18">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_19.png" alt="Slideshow 19">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_20.png" alt="Slideshow 20">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_21.png" alt="Slideshow 21">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_22.png" alt="Slideshow 22">
+          <button class="slideshow-btn prev" onclick="slideshowMove(-1, event)">&#8249;</button>
+          <button class="slideshow-btn next" onclick="slideshowMove(1, event)">&#8250;</button>
+          <div class="slideshow-counter"><span id="slideshow-current">1</span> / 22</div>
+        </div>
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div style="border-top: 1px solid rgba(255,255,255,0.1);"></div>
+  <div class="footer-bottom">
+    <div class="footer-reached">You've reached the bottom</div>
+    <div class="footer-links">
+      <span>© 2026 Lex Rubin</span>
+      <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn</a>
+      <a href="index.html">Home Page</a>
+      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
+    </div>
+    <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
+  </div>
+</footer>
+
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-arrow lightbox-prev" id="lightbox-prev">&#8249;</button>
+    <div class="lightbox-placeholder" id="lightbox-img-wrap">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Image Preview
+    </div>
+    <button class="lightbox-arrow lightbox-next" id="lightbox-next">&#8250;</button>
+  </div>
+</div>
+
+
+<script>
+
+  // ── FILTER ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards      = document.querySelectorAll('.artwork-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.removeAttribute('data-hidden');
+        } else {
+          card.setAttribute('data-hidden', 'true');
+        }
+      });
+    });
+  });
+
+  // ── LIGHTBOX ──
+
+  // ── LOGO HOVER SWAP ──
+  const logoLink    = document.getElementById('logo-link');
+  const logoDefault = document.getElementById('logo-default');
+  const logoHover   = document.getElementById('logo-hover');
+  logoLink.addEventListener('mouseenter', () => {
+    logoDefault.style.opacity = '0';
+    logoHover.style.opacity   = '1';
+  });
+  logoLink.addEventListener('mouseleave', () => {
+    logoDefault.style.opacity = '1';
+    logoHover.style.opacity   = '0';
+  });
+
+
+  // ── CUSTOM CURSOR ──
+  const cur  = document.getElementById('cur');
+  const ring = document.getElementById('ring0');
+
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  function animCursor() {
+    cur.style.left = mx + 'px';
+    cur.style.top  = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  function setCursor(dotW, dotH, dotRadius, ringW, ringH, ringRadius, ringBorder) {
+    cur.style.width         = dotW;
+    cur.style.height        = dotH;
+    cur.style.borderRadius  = dotRadius;
+    cur.style.background    = '#fff';
+    ring.style.width        = ringW;
+    ring.style.height       = ringH;
+    ring.style.borderRadius = ringRadius;
+    ring.style.borderWidth  = ringBorder || '1.5px';
+    ring.style.opacity      = '0.8';
+  }
+
+  function resetCursor() {
+    setCursor('10px','10px','50%','36px','36px','50%','1.5px');
+  }
+
+  document.querySelectorAll('nav a').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','52px','52px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.querySelectorAll('.artwork-card').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.querySelectorAll('h1, h2, h3, h4, p, span, label, li, .artwork-main-title, .section-label, .filter-btn, .ticker-item, .ticker-label, .stat-number, .stat-label, footer, .footer-reached').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.querySelectorAll('footer a').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.addEventListener('mousedown', () => cur.classList.add('clicking'));
+  document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
+
+
+  const lightbox      = document.getElementById('lightbox');
+  const lightboxTitle = document.getElementById('lightbox-title');
+  const lightboxMeta  = document.getElementById('lightbox-meta');
+  const lightboxPrev  = document.getElementById('lightbox-prev');
+  const lightboxNext  = document.getElementById('lightbox-next');
+
+  let lightboxIsSlideshow = false;
+
+  function openLightboxImage(src) {
+    const wrap = document.getElementById('lightbox-img-wrap');
+    wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+      + '<img class="lightbox-img" src="' + src + '" alt="Artwork" style="display:block;">'
+      + '</div>';
+    lightbox.classList.add('open');
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      if (card.classList.contains('slideshow-card')) return; // handled separately
+      const mediaEl = card.querySelector('.artwork-card-img');
+      const wrap    = document.getElementById('lightbox-img-wrap');
+      lightboxIsSlideshow = false;
+      lightboxPrev.classList.remove('visible');
+      lightboxNext.classList.remove('visible');
+      if (mediaEl) {
+        if (mediaEl.tagName === 'VIDEO') {
+          wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+            + '<video class="lightbox-img" src="' + mediaEl.src + '" autoplay loop muted playsinline style="display:block;"></video>'
+            + '</div>';
+        } else {
+          wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+            + '<img class="lightbox-img" src="' + mediaEl.src + '" alt="Artwork" style="display:block;">'
+            + '</div>';
+        }
+      }
+      lightbox.classList.add('open');
+    });
+  });
+
+  // Slideshow card click — open lightbox at current slide
+  const slideshowCard = document.querySelector('.slideshow-card');
+  if (slideshowCard) {
+    slideshowCard.addEventListener('click', (e) => {
+      if (e.target.classList.contains('slideshow-btn')) return;
+      lightboxIsSlideshow = true;
+      lightboxPrev.classList.add('visible');
+      lightboxNext.classList.add('visible');
+      openLightboxImage(slideImgs[slideIndex].src);
+      lightbox.classList.add('open');
+    });
+  }
+
+  lightboxPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex - 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
+  });
+
+  lightboxNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex + 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
+  });
+
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) lightbox.classList.remove('open');
+  });
+
+  // ── SLIDESHOW ──
+  let slideIndex = 0;
+  const slideImgs = document.querySelectorAll('.slideshow-img');
+  const slideCounter = document.getElementById('slideshow-current');
+  const totalSlides = slideImgs.length;
+
+  function showSlide(n) {
+    slideImgs[slideIndex].classList.remove('active');
+    slideIndex = (n + totalSlides) % totalSlides;
+    slideImgs[slideIndex].classList.add('active');
+    if (slideCounter) slideCounter.textContent = slideIndex + 1;
+  }
+
+  function slideshowMove(dir, e) {
+    if (e) e.stopPropagation();
+    showSlide(slideIndex + dir);
+    resetAutoplay();
+  }
+
+  let autoplayTimer = setInterval(() => showSlide(slideIndex + 1), 3000);
+
+  function resetAutoplay() {
+    clearInterval(autoplayTimer);
+    autoplayTimer = setInterval(() => showSlide(slideIndex + 1), 3000);
+  }
+
+</script>
+</body>
+</html>
