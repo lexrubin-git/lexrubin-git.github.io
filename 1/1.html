@@ -614,7 +614,6 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-    /* ── HIDDEN FILTER STATE ── */
 
     .artwork-card[data-hidden="true"] { display: none; }
 
@@ -650,7 +649,6 @@
                   border-radius 0.4s, opacity 0.2s, border-width 0.2s;
     }
     .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
-
 
     .lightbox {
       position: fixed;
@@ -749,67 +747,67 @@
 
       <!-- Card 1 -->
       <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img1.png" alt="Shoot">
+        <img class="artwork-card-img" src="/1/img1.png" alt="Shoot">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 2 -->
       <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img2.png" alt="Create">
+        <img class="artwork-card-img" src="/1/img2.png" alt="Create">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 3 -->
       <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img3.png" alt="Sell">
+        <img class="artwork-card-img" src="/1/img3.png" alt="Sell">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 4 -->
       <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img4.png" alt="Unleash your iPhone">
+        <img class="artwork-card-img" src="/1/img4.png" alt="Unleash your iPhone">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 5 -->
       <div class="artwork-card" data-category="icons">
-        <img class="artwork-card-img" src="img5.png" alt="Icons">
+        <img class="artwork-card-img" src="/1/img5.png" alt="Icons">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 6 -->
       <div class="artwork-card" data-category="app">
-        <img class="artwork-card-img" src="img6.png" alt="pyxMAGIC app">
+        <img class="artwork-card-img" src="/1/img6.png" alt="pyxMAGIC app">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 7 -->
       <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img7.png" alt="iPhone photo studio">
+        <img class="artwork-card-img" src="/1/img7.png" alt="iPhone photo studio">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 8 -->
       <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img8.png" alt="T-shirt mockup">
+        <img class="artwork-card-img" src="/1/img8.png" alt="T-shirt mockup">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 9 -->
       <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img9.png" alt="Manufacturers">
+        <img class="artwork-card-img" src="/1/img9.png" alt="Manufacturers">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 10 -->
       <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img10.png" alt="Purpose Built">
+        <img class="artwork-card-img" src="/1/img10.png" alt="Purpose Built">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 11 -->
       <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img11.png" alt="Retailers">
+        <img class="artwork-card-img" src="/1/img11.png" alt="Retailers">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
@@ -825,13 +823,12 @@
     <div class="footer-links">
       <span>© 2026 Lex Rubin</span>
       <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn</a>
-      <a href="index.html">Home Page</a>
+      <a href="/">Home Page</a>
       <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
     </div>
     <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
   </div>
 </footer>
-
 
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox">
@@ -842,7 +839,6 @@
     </div>
   </div>
 </div>
-
 
 <script>
 
@@ -865,8 +861,6 @@
     });
   });
 
-  // ── LIGHTBOX ──
-
   // ── LOGO HOVER SWAP ──
   const logoLink    = document.getElementById('logo-link');
   const logoDefault = document.getElementById('logo-default');
@@ -879,7 +873,6 @@
     logoDefault.style.opacity = '1';
     logoHover.style.opacity   = '0';
   });
-
 
   // ── CUSTOM CURSOR ──
   const cur  = document.getElementById('cur');
@@ -942,7 +935,6 @@
 
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
-
 
   const lightbox      = document.getElementById('lightbox');
   const lightboxTitle = document.getElementById('lightbox-title');
