@@ -401,7 +401,7 @@
 
   <!-- NAV -->
   <nav>
-    <a href="index.html" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
+    <a href="index" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
       <svg id="logo-default" style="display:block;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
   <defs>
     <style>
@@ -461,7 +461,7 @@
     <div class="nav-links">
       <a href="#" class="active">Portfolio</a>
       <a href="about">About</a>
-      <a href="contact.html">Contact</a>
+      <a href="contact">Contact</a>
       <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
     </div>
   </nav>
@@ -471,7 +471,7 @@
   <main class="portfolio-grid">
 
     <!-- Pyxd -->
-    <div class="portfolio-item" onclick="window.location='1.html'">
+    <div class="portfolio-item" onclick="window.location='1'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
         <div class="item-title">Pyxd, Inc.</div>
@@ -487,7 +487,7 @@
     </div>
 
     <!-- Arctic Zoo -->
-    <div class="portfolio-item" onclick="window.location='2.html'">
+    <div class="portfolio-item" onclick="window.location='2'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
         <div class="item-title">Arctic Zoo &amp; Aquarium</div>
@@ -503,7 +503,7 @@
     </div>
 
     <!-- Apple Watch -->
-    <div class="portfolio-item" onclick="window.location='3.html'">
+    <div class="portfolio-item" onclick="window.location='3'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
         <div class="item-title">Apple Watch Face</div>
@@ -519,7 +519,7 @@
     </div>
 
     <!-- Dam Research -->
-    <div class="portfolio-item" onclick="window.location='4.html'">
+    <div class="portfolio-item" onclick="window.location='4'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
         <div class="item-title">U.C. Berkeley Dam Research</div>
@@ -544,7 +544,7 @@
       <div class="footer-links">
         <span>© 2026 Lex Rubin</span>
         <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn</a>
-        <a href="index.html">Home Page</a>
+        <a href="index">Home Page</a>
         <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
       </div>
       <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
