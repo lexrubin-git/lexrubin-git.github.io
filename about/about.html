@@ -185,11 +185,16 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .about-photo-wrap img {
+    /* shared styles for both real images and placeholder divs */
+    .about-photo-wrap img,
+    .about-photo-wrap .photo-placeholder {
       position: absolute;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    .about-photo-wrap img {
       object-fit: cover;
       object-position: center top;
     }
@@ -533,7 +538,6 @@
       z-index: 0;
     }
 
-    /* Slightly different offsets per slot for variety */
     .gallery-img-slot:nth-child(1) .gallery-shimmer { animation-delay: 0s; }
     .gallery-img-slot:nth-child(2) .gallery-shimmer { animation-delay: 0.4s; }
     .gallery-img-slot:nth-child(3) .gallery-shimmer { animation-delay: 0.8s; }
@@ -544,7 +548,6 @@
       100% { background-position: 200% 0; opacity: 0.9; }
     }
 
-    /* Hide shimmer once a real image is present */
     .gallery-img-slot:has(img) .gallery-shimmer { display: none; }
 
     .gallery-divider {
@@ -769,7 +772,7 @@
         <div class="about-photo-linkedin-label">View LinkedIn ↗</div>
         <div class="about-photo-wrap" id="photo-wrap">
           <img id="photo-nothover" src="101.png" alt="Lex Rubin" />
-          <img id="photo-hover"    src="102.png" alt="Lex Rubin hover" />
+          <img id="photo-hover" src="102.png" alt="Lex Rubin hover" />
         </div>
         </a>
       </div>
@@ -1039,17 +1042,37 @@
   const photoWrap   = document.querySelector('.about-photo-wrap');
   const photoReveal = document.getElementById('photo-hover');
 
-  const TARGET_R = 85;
+  const MIN_R       = 20;   // radius when fully idle
+  const MAX_R       = 80;   // radius at peak speed
+  const SPEED_SCALE = 0.08; // tiny — absolute minimum movement hits MAX_R
+
   let revX = 50, revY = 50;
   let tgtX = 50, tgtY = 50;
-  let curR = 0, tgtR = 0;
+  let curR = 0,  tgtR = 0;
   let insidePhoto = false;
+
+  // speed tracking
+  let lastMX = 0, lastMY = 0, lastMT = 0;
+  let cursorSpeed = 0; // smoothed px/ms
+
+  document.addEventListener('mousemove', e => {
+    const now = performance.now();
+    const dt  = now - lastMT;
+    if (dt > 0) {
+      const dx  = e.clientX - lastMX;
+      const dy  = e.clientY - lastMY;
+      const raw = Math.sqrt(dx*dx + dy*dy) / dt;
+      cursorSpeed += (raw - cursorSpeed) * 0.35;
+    }
+    lastMX = e.clientX;
+    lastMY = e.clientY;
+    lastMT = now;
+  });
 
   if (photoWrap && photoReveal) {
     photoWrap.addEventListener('mouseenter', () => {
       insidePhoto = true;
-      tgtR = TARGET_R;
-      cur.style.opacity = '0';
+      cur.style.opacity  = '0';
       ring.style.opacity = '0';
     });
 
@@ -1062,15 +1085,22 @@
     photoWrap.addEventListener('mouseleave', () => {
       insidePhoto = false;
       tgtR = 0;
-      cur.style.opacity = '1';
+      cur.style.opacity  = '1';
       ring.style.opacity = '0.8';
       resetCursor();
     });
 
     (function revealLoop() {
+      if (insidePhoto) {
+        // decay speed each frame so circle shrinks when mouse stops
+        cursorSpeed *= 0.994;
+        const t = Math.min(cursorSpeed / SPEED_SCALE, 1);
+        tgtR = MIN_R + (MAX_R - MIN_R) * t;
+      }
+
       const LERP_POS = 0.18;
-      const LERP_IN  = 0.05;
-      const LERP_OUT = 0.13;
+      const LERP_IN  = 0.06;
+      const LERP_OUT = 0.012;
       revX += (tgtX - revX) * LERP_POS;
       revY += (tgtY - revY) * LERP_POS;
       const lerpR = curR < tgtR ? LERP_IN : LERP_OUT;
