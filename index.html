@@ -1,1046 +1,761 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crossword — Home</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lex Rubin Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'DM Mono', monospace;
-    background: #f9f9f8;
-    color: #1a1a1a;
-    min-height: 100vh;
-  }
+    :root {
+      --black: #000000;
+      --white: #f0ede8;
+      --gray: #aaa;
+      --border: rgba(255,255,255,0.1);
+      --accent: #c8b89a;
+    }
 
-  .screen { display: none; }
-  .screen.active { display: block; }
+    html { scroll-behavior: smooth; }
 
-  .page {
-    padding: 48px 24px;
-    max-width: 720px;
-    margin: 0 auto;
-  }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      min-height: 100vh;
+    }
 
-  .hero { margin-bottom: 36px; }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px; font-weight: 700; color: #1a1a1a;
-    line-height: 1.2; margin-bottom: 8px;
-  }
-  .hero p { font-size: 14px; color: #666; line-height: 1.6; }
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 110px;
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+    }
 
-  .section-label {
-    font-size: 11px; font-weight: 500; letter-spacing: .1em;
-    text-transform: uppercase; color: #999; margin-bottom: 12px;
-  }
+    .logo { position: relative; display: flex; }
+    #logo-default, #logo-hover {
+      transition: opacity 0.3s ease;
+    }
+    #logo-hover {
+      position: absolute;
+      top: 0; left: 0;
+    }
 
-  .btn-primary {
-    padding: 10px 22px; background: #1a1a1a; color: #fff; border: none;
-    border-radius: 8px; font-size: 13px; cursor: pointer;
-    font-family: 'DM Mono', monospace; font-weight: 500; transition: opacity .15s;
-  }
-  .btn-primary:hover:not(:disabled) { opacity: .82; }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      color: #444;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: #aaa;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: #aaa; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: #aaa; }
+    .nav-links a.active::after { width: 100%; background: #aaa; }
 
-  .btn-ghost {
-    padding: 8px 14px; background: transparent; color: #666;
-    border: 0.5px solid #ddd; border-radius: 8px; font-size: 13px;
-    cursor: pointer; font-family: 'DM Mono', monospace; transition: background .15s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn-ghost:hover { background: #f4f4f2; }
-  .btn-ghost svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    /* ── GRID ── */
+    .grid-wrapper {
+      padding: 0 4rem;
+      background: #000;
+    }
 
-  .banner-code-wrap {
-    position: relative; display: inline-flex; align-items: center;
-  }
-  .banner-code.blurred {
-    filter: blur(12px); user-select: none;
-    transition: filter .25s;
-  }
-  .banner-reveal-overlay {
-    position: absolute; inset: -4px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 10px; font-weight: 600;
-    letter-spacing: .08em; text-transform: uppercase; color: #444;
-  }
-  .banner-reveal-overlay.hidden { display: none; }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-  .code-input {
-    width: 100%; padding: 14px; border: 1.5px solid #e5e5e3;
-    border-radius: 8px; font-size: 22px; font-family: 'DM Mono', monospace;
-    color: #1a1a1a; background: #fafaf9; outline: none;
-    text-transform: uppercase; letter-spacing: .15em; text-align: center;
-    transition: border-color .15s;
-  }
-  .code-input:focus { border-color: #1a1a1a; }
-  .code-input.error { border-color: #e05151; }
+    .portfolio-item {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: var(--black);
+      transition: background 0.4s;
+    }
+    .portfolio-item:hover { background: #111; }
 
-  .overlay-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px;
-  }
-  .overlay-sub2 { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.5; }
-  .overlay-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .halftone-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
 
-  .lobby-code-banner {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #f4f4f2; border-radius: 10px;
-    padding: 12px 16px; gap: 16px; flex-wrap: wrap;
-  }
-  .banner-left { display: flex; flex-direction: column; gap: 2px; }
-  .banner-label {
-    font-size: 10px; font-weight: 500; letter-spacing: .1em;
-    text-transform: uppercase; color: #999;
-  }
-  .banner-code {
-    font-size: 20px; font-weight: 700; letter-spacing: .14em; color: #1a1a1a;
-    font-family: 'DM Mono', monospace;
-  }
-  .banner-copy {
-    padding: 7px 12px; background: #fff; border: 0.5px solid #ddd;
-    border-radius: 7px; font-size: 12px; cursor: pointer; color: #444;
-    font-family: 'DM Mono', monospace; transition: background .15s;
-    display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
-  }
-  .banner-copy:hover { background: #f9f9f8; }
-  .banner-copy svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags {
+      pointer-events: none;
+    }
+    .portfolio-item:hover .halftone-canvas { opacity: 1; }
 
-  .swatch.taken {
-    opacity: 0.35; cursor: not-allowed; pointer-events: none;
-  }
-  .swatch.taken::before {
-    content: '×'; position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700; color: #fff; line-height: 1;
-  }
+    .item-header {
+      padding: 1rem 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .identity-editor {
-    background: #f4f4f2; border-radius: 10px; padding: 12px 14px;
-    margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
-  }
-  .identity-row { display: flex; align-items: center; gap: 10px; }
-  .identity-avatar {
-    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700; color: #fff;
-  }
-  .identity-name-input {
-    flex: 1; padding: 7px 10px; border: 1.5px solid #e5e5e3;
-    border-radius: 7px; font-size: 13px; font-family: 'DM Mono', monospace;
-    color: #1a1a1a; background: #fff; outline: none; transition: border-color .15s;
-  }
-  .identity-name-input:focus { border-color: #1a1a1a; }
-  .identity-swatches { display: flex; gap: 8px; flex-wrap: wrap; padding-left: 42px; }
-  .identity-swatches .swatch { width: 22px; height: 22px; }
-  .identity-swatches .swatch.selected::after { inset: 3px; border-width: 1.5px; }
+    .item-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.3rem;
+      color: #ccc;
+    }
 
-  .waiting-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr 260px;
-    gap: 28px;
-    align-items: start;
-  }
-  @media (max-width: 800px) {
-    .waiting-layout { grid-template-columns: 260px 1fr; }
-    .waiting-chat { display: none; }
-  }
-  @media (max-width: 600px) {
-    .waiting-layout { grid-template-columns: 1fr; }
-    .waiting-chat { display: flex; }
-  }
+    .item-tags {
+      font-size: 0.9rem;
+      color: #777;
+      letter-spacing: 0.08em;
+    }
 
-  .waiting-chat {
-    display: flex; flex-direction: column; gap: 0;
-    border: 0.5px solid #e5e5e3; border-radius: 12px;
-    overflow: hidden; background: #fff;
-    height: 420px;
-  }
-  .chat-header {
-    padding: 10px 14px; border-bottom: 0.5px solid #e5e5e3;
-    font-size: 11px; font-weight: 500; letter-spacing: .1em;
-    text-transform: uppercase; color: #999; background: #fafaf9;
-    flex-shrink: 0;
-  }
-  .chat-messages {
-    flex: 1; overflow-y: auto; padding: 12px;
-    display: flex; flex-direction: column; gap: 8px;
-    scroll-behavior: smooth;
-  }
-  .chat-messages::-webkit-scrollbar { width: 4px; }
-  .chat-messages::-webkit-scrollbar-track { background: transparent; }
-  .chat-messages::-webkit-scrollbar-thumb { background: #e0e0dd; border-radius: 2px; }
-  .chat-msg { display: flex; flex-direction: column; gap: 1px; animation: fadeSlide .2s ease; }
-  .chat-msg-meta {
-    display: flex; align-items: center; gap: 5px;
-  }
-  .chat-msg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .chat-msg-name { font-size: 10px; font-weight: 600; color: #555; }
-  .chat-msg-time { font-size: 10px; color: #bbb; }
-  .chat-msg-text {
-    font-size: 13px; color: #1a1a1a; line-height: 1.4;
-    padding-left: 13px; word-break: break-word;
-  }
-  .chat-empty {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; color: #ccc; text-align: center; padding: 16px;
-  }
-  .chat-input-row {
-    display: flex; gap: 6px; padding: 10px;
-    border-top: 0.5px solid #e5e5e3; flex-shrink: 0; background: #fff;
-  }
-  .chat-input {
-    flex: 1; padding: 7px 10px; border: 1.5px solid #e5e5e3;
-    border-radius: 8px; font-size: 13px; font-family: 'DM Mono', monospace;
-    color: #1a1a1a; background: #fafaf9; outline: none;
-    transition: border-color .15s;
-  }
-  .chat-input:focus { border-color: #1a1a1a; }
-  .chat-send {
-    padding: 7px 12px; background: #1a1a1a; color: #fff;
-    border: none; border-radius: 8px; font-size: 13px; cursor: pointer;
-    font-family: 'DM Mono', monospace; transition: opacity .15s; flex-shrink: 0;
-  }
-  .chat-send:hover { opacity: .82; }
-  .chat-send:disabled { opacity: .35; cursor: not-allowed; }
+    .item-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      position: relative;
+    }
 
-  .lobby-back { margin-bottom: 20px; }
-  .lobby-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px; font-weight: 700; color: #1a1a1a;
-  }
-  .lobby-subtitle { font-size: 13px; color: #888; line-height: 1.5; }
+    .item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
+    }
+    .portfolio-item:hover .item-image img {
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
+      animation: none;
+    }
 
-  .player-list {
-    display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
-  }
-  .player-row {
-    display: flex; align-items: center; gap: 10px;
-    background: #fff; border: 0.5px solid #e5e5e3; border-radius: 10px;
-    padding: 10px 14px; font-size: 13px; color: #1a1a1a;
-    animation: fadeSlide .25s ease;
-  }
-  @keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .player-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .player-badge {
-    margin-left: auto; font-size: 10px; padding: 2px 8px;
-    border-radius: 10px; background: #f4f4f2; color: #888;
-    border: 0.5px solid #e5e5e3;
-  }
-  .player-badge.host { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    @keyframes pulseBlur {
+      0%   { filter: blur(1px) brightness(0.90); }
+      50%  { filter: blur(1.8px) brightness(0.65); }
+      100% { filter: blur(1px) brightness(0.90); }
+    }
 
-  .vote-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
-  }
-  .vote-card {
-    background: #fff; border: 1.5px solid #e5e5e3; border-radius: 10px;
-    cursor: pointer; transition: border-color .15s; overflow: hidden; position: relative;
-  }
-  .vote-card:hover { border-color: #aaa; }
-  .vote-card.my-vote { border-color: #1a1a1a; border-width: 2px; }
+    @keyframes pulseBrightness {
+      0%   { filter: blur(1px) brightness(0.90); }
+      25%  { filter: blur(1.2px) brightness(0.70); }
+      50%  { filter: blur(1.5px) brightness(0.65); }
+      75%  { filter: blur(1px) brightness(0.80); }
+      100% { filter: blur(1px) brightness(0.90); }
+    }
 
-  .vote-preview {
-    width: 100%; aspect-ratio: 1.6; display: grid; padding: 8px; gap: 2px;
-    background: #fafaf9;
-  }
-  .vote-preview.sz5  { grid-template-columns: repeat(5,1fr); }
-  .vote-preview.sz9  { grid-template-columns: repeat(9,1fr); }
-  .vote-preview.sz11 { grid-template-columns: repeat(11,1fr); }
-  .vote-preview.sz13 { grid-template-columns: repeat(13,1fr); }
-  .vote-preview.sz15 { grid-template-columns: repeat(15,1fr); }
-  .vote-preview.sz21 { grid-template-columns: repeat(21,1fr); }
-  .vp-cell { border-radius: 1px; background: #e2e2df; }
-  .vp-cell.b { background: #1a1a1a; }
+    /* placeholder images via gradient */
+    .img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      position: relative;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
+    }
+    .portfolio-item:hover .img-placeholder {
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
+    }
+    .img-pyxd    { background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 60%, #3d3d3d 100%); }
+    .img-arctic  { background: linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #555 100%); }
+    .img-watch   { background: linear-gradient(135deg, #111 0%, #222 60%, #333 100%); }
+    .img-dam     { background: linear-gradient(135deg, #383838 0%, #4f4f4f 50%, #666 100%); }
 
-  .vote-info { padding: 8px 10px 10px; border-top: 0.5px solid #e5e5e3; }
-  .vote-info h3 { font-size: 13px; font-weight: 500; color: #1a1a1a; margin-bottom: 6px; }
-  .vote-bar-wrap { height: 4px; background: #f0f0ee; border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
-  .vote-bar { height: 100%; background: #1a1a1a; border-radius: 2px; transition: width .4s; }
-  .vote-meta { display: flex; justify-content: space-between; align-items: center; }
-  .vote-tags { display: flex; gap: 4px; }
-  .vote-tag {
-    font-size: 10px; padding: 1px 6px; border-radius: 8px;
-    background: #f4f4f2; color: #666; border: 0.5px solid #ddd;
-  }
-  .diff-easy   { background: #eaf3de !important; color: #3B6D11 !important; border-color: #c0dd97 !important; }
-  .diff-medium { background: #faeeda !important; color: #633806 !important; border-color: #fac775 !important; }
-  .diff-hard   { background: #fcebeb !important; color: #791F1F !important; border-color: #f7c1c1 !important; }
-  .vote-count { font-size: 11px; color: #999; }
+    .overlay { display: contents; }
 
-  .vote-status { font-size: 13px; color: #888; min-height: 20px; }
-  .vote-status strong { color: #1a1a1a; }
+    /* ── BRIGHTNESS OVERLAY ── */
+    .brightness-overlay {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: 0.45;
+      z-index: 5;
+      pointer-events: none;
+      animation: brightnessFlicker 3s ease-in-out infinite;
+      transition: opacity 0.5s ease;
+    }
+    .portfolio-item:hover .brightness-overlay {
+      opacity: 0 !important;
+      animation: none;
+    }
 
-  .overlay-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100; backdrop-filter: blur(3px);
-  }
-  .overlay-backdrop.hidden { display: none; }
+    @keyframes brightnessFlicker {
+      0%   { opacity: 0.35; }
+      30%  { opacity: 0.55; }
+      60%  { opacity: 0.28; }
+      80%  { opacity: 0.50; }
+      100% { opacity: 0.35; }
+    }
 
-  .overlay-card {
-    background: #fff; border-radius: 16px; padding: 36px 32px;
-    width: 100%; max-width: 400px; margin: 16px;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
-  }
+    .overlay-text {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(0, 0, 0, 0.72);
+      color: #f0ede8;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .portfolio-item:hover .overlay-text {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-  .field-label {
-    font-size: 11px; font-weight: 500; letter-spacing: .08em;
-    text-transform: uppercase; color: #999; margin-bottom: 8px; display: block;
-  }
-  .name-input {
-    width: 100%; padding: 10px 14px; border: 1.5px solid #e5e5e3;
-    border-radius: 8px; font-size: 14px; font-family: 'DM Mono', monospace;
-    color: #1a1a1a; background: #fafaf9; outline: none;
-    transition: border-color .15s;
-  }
-  .name-input:focus { border-color: #1a1a1a; }
-  .name-input.error { border-color: #e05151; }
-  .field-error { font-size: 12px; color: #e05151; margin-top: 6px; display: none; }
-  .field-error.visible { display: block; }
+    /* ── FOOTER ── */
+    footer {
+      background: #000000;
+      padding: 0;
+      position: relative;
+      text-align: center;
+    }
 
-  .color-section { margin-top: 22px; margin-bottom: 28px; }
-  .color-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
-  .swatch {
-    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
-    border: 2.5px solid transparent; transition: transform .12s, border-color .12s;
-    position: relative;
-  }
-  .swatch:hover { transform: scale(1.12); }
-  .swatch.selected { border-color: #1a1a1a; }
-  .swatch.selected::after {
-    content: ''; position: absolute; inset: 5px;
-    border-radius: 50%; border: 2px solid rgba(255,255,255,0.8);
-  }
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 0 3.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      gap: 1.4rem;
+    }
 
-  .overlay-footer { display: flex; justify-content: flex-end; gap: 10px; }
-  .btn-primary:disabled { opacity: .38; cursor: not-allowed; }
+    .footer-reached {
+      font-style: italic;
+      font-size: 1rem;
+      color: #444;
+      letter-spacing: 0.90em;
+      word-spacing: 1.3em;
+    }
 
-  .player-chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px 6px 6px; border-radius: 20px;
-    background: #fff; border: 0.5px solid #e5e5e3;
-    font-size: 13px; color: #1a1a1a; cursor: pointer;
-    transition: background .12s;
-  }
-  .player-chip:hover { background: #f4f4f2; }
-  .player-avatar {
-    width: 24px; height: 24px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: #fff;
-  }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      font-size: 0.85rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+    }
 
-  .config-notice {
-    background: #fff8ec; border: 1.5px solid #fac775; border-radius: 10px;
-    padding: 16px 18px; margin-bottom: 28px; font-size: 13px; line-height: 1.7; color: #633806;
-  }
-  .config-notice strong { font-weight: 600; display: block; margin-bottom: 4px; }
-  .config-notice code {
-    font-family: 'DM Mono', monospace; background: #faeeda;
-    padding: 1px 5px; border-radius: 4px; font-size: 12px;
-  }
+    .ticker-wrap {
+      overflow: hidden;
+      padding: 1.1rem 0;
+      background: #0a1a10;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      animation: ticker 22s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+    .ticker-item {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #EDE6D6;
+      padding: 0 3rem;
+      opacity: 0.7;
+    }
+    .ticker-sep {
+      color: #2E5E35;
+      padding: 0;
+      opacity: 1 !important;
+      font-size: 0.5rem;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
 
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: #1a1a1a; color: #fff; padding: 10px 18px; border-radius: 8px;
-    font-size: 13px; transition: transform .3s ease; z-index: 200; white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-</style>
+
+    .footer-bottom span {
+      font-style: normal;
+    }
+
+    .footer-bottom a {
+      color: #444;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-style: normal;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+      transition: color 0.2s;
+    }
+    .footer-bottom a:hover { color: #888; }
+
+    .footer-scroll-btn { display: none; }
+
+    /* ── ENTRANCE ANIMATION ── */
+    .portfolio-item {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .portfolio-item:nth-child(1) { animation-delay: 0.05s; }
+    .portfolio-item:nth-child(2) { animation-delay: 0.15s; }
+    .portfolio-item:nth-child(3) { animation-delay: 0.25s; }
+    .portfolio-item:nth-child(4) { animation-delay: 0.35s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    nav {
+      animation: fadeDown 0.5s ease forwards;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    body, * { cursor: none !important; }
+
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+                  height 0.35s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.35s, background 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%);
+      opacity: 0.8;
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1),
+                  height 0.4s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.4s, opacity 0.2s, border-width 0.2s;
+    }
+    .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+  </style>
 </head>
 <body>
 
-<div class="toast" id="toast"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring0"></div>
 
-<!-- ══ Join lobby overlay ══ -->
-<div class="overlay-backdrop hidden" id="join-overlay">
-  <div class="overlay-card">
-    <div class="overlay-title">Join a lobby</div>
-    <p class="overlay-sub2">Enter the code and pick your name and color.</p>
-    <label class="field-label" for="join-code">Lobby code</label>
-    <input class="code-input" id="join-code" type="text" maxlength="8"
-           placeholder="CW-XXXXX" oninput="onJoinInput()" onkeydown="if(event.key==='Enter')doJoin()" />
-    <div class="field-error" id="join-error">Please enter a valid lobby code.</div>
-
-    <div style="margin-top:20px">
-      <label class="field-label" for="join-name">Your name</label>
-      <input class="name-input" id="join-name" type="text" maxlength="20" placeholder="Wordsmith42" oninput="onJoinNameInput()" />
-      <div class="field-error" id="join-name-error">Please enter your name.</div>
-    </div>
-
-    <div style="margin-top:18px;margin-bottom:24px">
-      <label class="field-label">Your color</label>
-      <div class="color-swatches" id="join-color-swatches"></div>
-    </div>
-
-    <div class="overlay-row">
-      <button class="btn-ghost" onclick="closeOverlay('join-overlay')">Cancel</button>
-      <button class="btn-primary" id="join-btn" onclick="doJoin()">Join →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ Profile overlay ══ -->
-<div class="overlay-backdrop hidden" id="profile-overlay">
-  <div class="overlay-card">
-    <label class="field-label" for="player-name">Your name</label>
-    <input class="name-input" id="player-name" type="text" maxlength="20"
-           placeholder="Wordsmith42" oninput="onNameInput()" />
-    <div class="field-error" id="name-error">Please enter a name to continue.</div>
-
-    <div class="color-section">
-      <label class="field-label">Your color</label>
-      <div class="color-swatches" id="color-swatches"></div>
-    </div>
-
-    <div class="overlay-footer">
-      <button class="btn-ghost" onclick="closeOverlay('profile-overlay')">Cancel</button>
-      <button class="btn-primary" onclick="confirmProfile()">Save →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ Screen 1: Home ══ -->
-<div id="screen-home" class="screen active">
-  <div class="page">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;align-items:center">
-      <button class="btn-primary" onclick="goToLobby()">Create lobby →</button>
-      <button class="btn-ghost" onclick="joinLobby()">Join lobby</button>
-      <div style="margin-left:auto">
-        <div class="player-chip" id="player-chip" onclick="openProfile()">
-          <div class="player-avatar" id="chip-avatar"></div>
-          <span id="chip-name"></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="config-notice" id="config-notice">
-      <strong>⚙️ Firebase setup required — one-time step</strong>
-      Open this file in a text editor, find <code>PASTE YOUR FIREBASE CONFIG HERE</code>
-      near the bottom, and replace the whole <code>firebaseConfig</code> object with yours from
-      the Firebase console (<em>Project Settings → Your apps → SDK setup → Config</em>).
-      Also set your Realtime Database rules to allow read/write while you're there.
-    </div>
-  </div>
-</div>
-
-<!-- ══ Screen 2: Waiting Room ══ -->
-<div id="screen-lobby" class="screen">
-  <div class="page">
-    <div class="lobby-back">
-      <button class="btn-ghost" onclick="leaveLobby()">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        Leave
-      </button>
-    </div>
-
-    <div class="waiting-layout">
-      <div class="waiting-left">
-        <div class="waiting-header">
-          <div class="identity-editor" id="identity-editor">
-            <div class="identity-row">
-              <div class="identity-avatar" id="lobby-avatar"></div>
-              <input class="identity-name-input" id="lobby-name-input" type="text" maxlength="20"
-                     placeholder="Your name" oninput="onLobbyNameInput()" onblur="saveLobbyIdentity()" />
-            </div>
-            <div class="identity-swatches" id="lobby-swatches"></div>
-          </div>
-          <div class="lobby-title" style="margin-bottom:4px">Waiting room</div>
-          <div class="lobby-subtitle" id="lobby-subtitle" style="margin-bottom:20px">Waiting for players to join…</div>
-          <div class="lobby-code-banner">
-            <div class="banner-left">
-              <span class="banner-label">Lobby code</span>
-              <div class="banner-code-wrap">
-                <span class="banner-code" id="lobby-banner-code"></span>
-                <div class="banner-reveal-overlay" id="banner-reveal-overlay" onclick="revealCode()">click to reveal</div>
-              </div>
-              <span id="banner-code-hint" style="display:none"></span>
-            </div>
-            <button class="banner-copy" onclick="bannerCopy()">
-              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span id="banner-copy-label">Copy</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="section-label" style="margin-top:24px">Players (<span id="player-count">0</span>)</div>
-        <div class="player-list" id="player-list"></div>
-        <div style="margin-top:28px" id="start-btn-wrap"></div>
-      </div>
-
-      <div class="waiting-right">
-        <div class="section-label">Vote for a map</div>
-        <div class="vote-grid" id="vote-grid"></div>
-        <div class="vote-status" id="vote-status"></div>
-      </div>
-
-      <div class="waiting-chat">
-        <div class="chat-header">Chat</div>
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-empty" id="chat-empty">No messages yet…<br>say hello! 👋</div>
-        </div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chat-input" type="text" maxlength="200"
-                 placeholder="Say something…"
-                 onkeydown="if(event.key==='Enter')sendChat()"
-                 oninput="document.getElementById('chat-send').disabled=!this.value.trim()" />
-          <button class="chat-send" id="chat-send" onclick="sendChat()" disabled>↑</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, get, update, onValue, remove, push, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  // ─────────────────────────────────────────────────────────────
-  // 🔥 PASTE YOUR FIREBASE CONFIG HERE
-  //    Firebase Console → Project Settings → Your apps → Config
-  // ─────────────────────────────────────────────────────────────
-  const firebaseConfig = {
-    apiKey:            "AIzaSyAqrn86mjVSwmhGGv7bGmCW8Tc1nbU795s",
-    authDomain:        "crosswordlex.firebaseapp.com",
-    databaseURL:       "https://crosswordlex-default-rtdb.firebaseio.com",
-    projectId:         "crosswordlex",
-    storageBucket:     "crosswordlex.firebasestorage.app",
-    messagingSenderId: "1005145578019",
-    appId:             "1:1005145578019:web:588bb7573d14b15455af96"
-  };
-  // ─────────────────────────────────────────────────────────────
-
-  const FIREBASE_CONFIGURED = firebaseConfig.apiKey !== "PASTE YOUR FIREBASE CONFIG HERE";
-
-  let db;
-  if (FIREBASE_CONFIGURED) {
-    const app = initializeApp(firebaseConfig);
-    db = getDatabase(app);
-    document.getElementById('config-notice').style.display = 'none';
-  }
-
-  // ── Data ──
-  const MAPS = [
-    { id:'mini',    name:'Mini',    size:5,  difficulty:'easy',   blacks:[[0,3],[1,3],[2,2],[3,1],[4,1],[4,4]] },
-    { id:'small',   name:'Small',   size:9,  difficulty:'easy',   blacks:[[0,3],[0,7],[1,3],[1,7],[3,0],[3,4],[4,3],[4,5],[5,4],[5,8],[7,1],[7,5],[8,1],[8,5]] },
-    { id:'cryptic', name:'Cryptic', size:11, difficulty:'hard',   blacks:[[0,3],[0,7],[1,5],[2,2],[2,8],[3,4],[4,1],[4,6],[5,3],[5,7],[6,4],[6,9],[7,2],[8,5],[9,0],[9,4],[10,3],[10,7]] },
-    { id:'weekend', name:'Weekend', size:13, difficulty:'medium', blacks:[[0,4],[0,8],[1,4],[1,8],[2,4],[3,0],[3,1],[3,2],[4,7],[5,3],[5,9],[6,6],[7,3],[7,9],[8,5],[9,10],[9,11],[9,12],[10,4],[11,4],[11,8],[12,4],[12,8]] },
-    { id:'classic', name:'Classic', size:15, difficulty:'medium', blacks:[[0,3],[0,9],[1,3],[1,9],[2,3],[2,9],[3,0],[3,1],[3,2],[3,7],[4,6],[4,12],[5,5],[5,11],[6,4],[6,10],[7,3],[7,9],[8,5],[8,11],[9,4],[9,10],[10,3],[10,9],[11,7],[11,12],[11,13],[11,14],[12,5],[12,11],[13,5],[13,11],[14,5],[14,11]] },
-    { id:'expert',  name:'Expert',  size:21, difficulty:'hard',   blacks:[[0,5],[0,13],[1,5],[1,13],[2,7],[2,11],[3,4],[3,8],[3,12],[4,3],[4,9],[5,5],[5,9],[5,15],[6,6],[6,14],[7,5],[7,11],[8,4],[8,10],[9,3],[9,9],[10,6],[10,12],[11,5],[11,11],[12,4],[12,10],[13,3],[13,9],[14,6],[14,14],[15,5],[15,11],[16,4],[16,12],[17,5],[17,9],[17,13],[18,7],[18,11],[19,4],[19,10],[20,5],[20,13]] },
-  ];
-
-  const COLORS = [
-    { hex:'#E05151',name:'Red'    },{ hex:'#E07C35',name:'Orange'},
-    { hex:'#D4A017',name:'Amber'  },{ hex:'#4CAF7D',name:'Green' },
-    { hex:'#3B8FD4',name:'Blue'   },{ hex:'#7B61E0',name:'Purple'},
-    { hex:'#D45FA3',name:'Pink'   },{ hex:'#5BBCCC',name:'Teal'  },
-  ];
-
-  // ── Local state ──
-  let playerName  = 'Player';
-  let playerColor = COLORS[0];
-  let myPlayerId  = null;
-  let activeLobbyCode = null;
-  let isHost = false;
-  let lobbyListener = null;
-  let lastKnownPlayers = {};
-  let myVote = null;
-  let chatListener = null;
-
-  function applyCodeVisibility() {
-    document.getElementById('lobby-banner-code').classList.add('blurred');
-    document.getElementById('banner-reveal-overlay').classList.remove('hidden');
-  }
-
-  window.revealCode = () => {
-    document.getElementById('lobby-banner-code').classList.remove('blurred');
-    document.getElementById('banner-reveal-overlay').classList.add('hidden');
-  };
-
-  // ── Toast ──
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  // ── Color helpers ──
-  function takenColorHexes(excludeMyId) {
-    return new Set(
-      Object.entries(lastKnownPlayers)
-        .filter(([id]) => id !== excludeMyId)
-        .map(([, p]) => p.colorHex)
-    );
-  }
-
-  // ── Profile overlay (home screen) ──
-  function initColorSwatches() {
-    const container = document.getElementById('color-swatches');
-    COLORS.forEach((c, i) => {
-      const s = document.createElement('div');
-      s.className = 'swatch' + (i === 0 ? ' selected' : '');
-      s.style.background = c.hex;
-      s.title = c.name;
-      s.dataset.hex = c.hex;
-      s.onclick = () => {
-        container.querySelectorAll('.swatch').forEach(el => el.classList.remove('selected'));
-        s.classList.add('selected');
-        playerColor = c;
-      };
-      container.appendChild(s);
-    });
-  }
-
-  window.onNameInput = () => {
-    document.getElementById('player-name').classList.remove('error');
-    document.getElementById('name-error').classList.remove('visible');
-  };
-
-  window.confirmProfile = () => {
-    const val = document.getElementById('player-name').value.trim();
-    if (!val) {
-      document.getElementById('player-name').classList.add('error');
-      document.getElementById('name-error').classList.add('visible');
-      return;
-    }
-    playerName = val;
-    const sel = document.querySelector('#color-swatches .swatch.selected');
-    if (sel) playerColor = COLORS.find(c => c.hex === sel.dataset.hex) || playerColor;
-    closeOverlay('profile-overlay');
-    updateChip();
-  };
-
-  window.openProfile = () => {
-    document.getElementById('player-name').value = playerName;
-    document.querySelectorAll('#color-swatches .swatch').forEach(s =>
-      s.classList.toggle('selected', s.dataset.hex === playerColor.hex)
-    );
-    document.getElementById('profile-overlay').classList.remove('hidden');
-  };
-
-  function updateChip() {
-    const avatar = document.getElementById('chip-avatar');
-    avatar.style.background = playerColor.hex;
-    avatar.textContent = playerName.charAt(0).toUpperCase();
-    document.getElementById('chip-name').textContent = playerName;
-  }
-
-  window.closeOverlay = (id) => document.getElementById(id).classList.add('hidden');
-
-  // ── Create lobby ──
-  window.goToLobby = async () => {
-    if (!FIREBASE_CONFIGURED) { showToast('Add your Firebase config first!'); return; }
-
-    const code = 'CW-' + Math.random().toString(36).slice(2,7).toUpperCase();
-    activeLobbyCode = code;
-    isHost = true;
-    myVote = null;
-
-    await set(ref(db, `lobbies/${code}`), {
-      createdAt: serverTimestamp(),
-      status: 'waiting',
-    });
-
-    const newRef = push(ref(db, `lobbies/${code}/players`));
-    myPlayerId = newRef.key;
-    await set(newRef, {
-      name: playerName,
-      colorHex: playerColor.hex,
-      vote: null,
-      isHost: true,
-      joinedAt: serverTimestamp(),
-    });
-
-    enterLobbyScreen();
-  };
-
-  // ── Join lobby ──
-  window.joinLobby = () => {
-    if (!FIREBASE_CONFIGURED) { showToast('Add your Firebase config first!'); return; }
-    document.getElementById('join-code').value = '';
-    document.getElementById('join-name').value = playerName;
-    ['join-code','join-name'].forEach(id => document.getElementById(id).classList.remove('error'));
-    ['join-error','join-name-error'].forEach(id => document.getElementById(id).classList.remove('visible'));
-    initJoinSwatches();
-    document.getElementById('join-overlay').classList.remove('hidden');
-    setTimeout(() => document.getElementById('join-code').focus(), 50);
-  };
-
-  window.onJoinInput = () => {
-    document.getElementById('join-code').classList.remove('error');
-    document.getElementById('join-error').classList.remove('visible');
-  };
-
-  window.onJoinNameInput = () => {
-    document.getElementById('join-name').classList.remove('error');
-    document.getElementById('join-name-error').classList.remove('visible');
-  };
-
-  window.doJoin = async () => {
-    const code = document.getElementById('join-code').value.trim().toUpperCase();
-    const name = document.getElementById('join-name').value.trim();
-    let ok = true;
-
-    if (!code) {
-      document.getElementById('join-code').classList.add('error');
-      document.getElementById('join-error').textContent = 'Please enter a lobby code.';
-      document.getElementById('join-error').classList.add('visible');
-      ok = false;
-    }
-    if (!name) {
-      document.getElementById('join-name').classList.add('error');
-      document.getElementById('join-name-error').classList.add('visible');
-      ok = false;
-    }
-    if (!ok) return;
-
-    // Check lobby exists in Firebase
-    const btn = document.getElementById('join-btn');
-    btn.disabled = true; btn.textContent = 'Checking…';
-    try {
-      const snap = await get(ref(db, `lobbies/${code}`));
-      if (!snap.exists()) {
-        document.getElementById('join-code').classList.add('error');
-        document.getElementById('join-error').textContent = 'Lobby not found. Check the code.';
-        document.getElementById('join-error').classList.add('visible');
-        return;
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
+      <svg id="logo-default" style="display:block;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs>
+    <style>
+      .ld-cls-1 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 10px;
       }
-    } catch(e) {
-      document.getElementById('join-error').textContent = 'Connection error. Try again.';
-      document.getElementById('join-error').classList.add('visible');
-      return;
-    } finally {
-      btn.disabled = false; btn.textContent = 'Join →';
-    }
-
-    const selSwatch = document.querySelector('#join-color-swatches .swatch.selected');
-    playerColor = COLORS.find(c => c.hex === selSwatch?.dataset.hex) || COLORS[0];
-    playerName = name;
-    updateChip();
-
-    activeLobbyCode = code;
-    isHost = false;
-    myVote = null;
-
-    const newRef = push(ref(db, `lobbies/${code}/players`));
-    myPlayerId = newRef.key;
-    await set(newRef, {
-      name: playerName,
-      colorHex: playerColor.hex,
-      vote: null,
-      isHost: false,
-      joinedAt: serverTimestamp(),
-    });
-
-    closeOverlay('join-overlay');
-    enterLobbyScreen();
-  };
-
-  function initJoinSwatches() {
-    const taken = takenColorHexes(null);
-    const firstFree = COLORS.find(c => !taken.has(c.hex)) || COLORS[0];
-    const container = document.getElementById('join-color-swatches');
-    container.innerHTML = '';
-    COLORS.forEach(c => {
-      const isTaken = taken.has(c.hex);
-      const s = document.createElement('div');
-      s.className = 'swatch' + (!isTaken && c.hex === firstFree.hex ? ' selected' : '') + (isTaken ? ' taken' : '');
-      s.style.background = c.hex;
-      s.title = isTaken ? `${c.name} (taken)` : c.name;
-      s.dataset.hex = c.hex;
-      if (!isTaken) {
-        s.onclick = () => {
-          container.querySelectorAll('.swatch').forEach(el => el.classList.remove('selected'));
-          s.classList.add('selected');
-        };
+    </style>
+  </defs>
+  <path class="ld-cls-1" d="M206.75,475.25h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="ld-cls-1" d="M294.81,415.38h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="ld-cls-1" points="294.81 475.25 294.81 415.38 294.81 358.86 338.95 358.86"/>
+  <path class="ld-cls-1" d="M297.45,287.84h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="ld-cls-1" x1="294.81" y1="415.38" x2="356.43" y2="415.38"/>
+</svg>
+      <svg id="logo-hover" style="display:none;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs>
+    <style>
+      .lh-cls-1 {
+        stroke-width: 13px;
       }
-      container.appendChild(s);
-    });
-  }
 
-  // ── Enter lobby screen + subscribe to Firebase ──
-  function enterLobbyScreen() {
-    document.getElementById('lobby-banner-code').textContent = activeLobbyCode;
-    document.getElementById('banner-copy-label').textContent = 'Copy';
-    applyCodeVisibility();
-    document.getElementById('screen-home').classList.remove('active');
-    document.getElementById('screen-lobby').classList.add('active');
-    initLobbyIdentityEditor();
-    subscribeLobby();
-    subscribeChat();
-    window.scrollTo(0, 0);
-  }
-
-  function subscribeLobby() {
-    if (lobbyListener) lobbyListener();
-    lobbyListener = onValue(ref(db, `lobbies/${activeLobbyCode}/players`), snap => {
-      lastKnownPlayers = snap.val() || {};
-      renderPlayerList();
-      renderVoteGrid();
-      updateVoteStatus();
-      renderStartBtn();
-      refreshLobbySwatches();
-    });
-  }
-
-  function subscribeChat() {
-    if (chatListener) { chatListener(); chatListener = null; }
-    if (!FIREBASE_CONFIGURED) return;
-    chatListener = onValue(ref(db, `lobbies/${activeLobbyCode}/chat`), snap => {
-      const msgs = snap.val() || {};
-      renderChat(msgs);
-    });
-  }
-
-  function renderChat(msgs) {
-    const container = document.getElementById('chat-messages');
-    const empty = document.getElementById('chat-empty');
-    const entries = Object.values(msgs).sort((a, b) => a.ts - b.ts);
-    if (!entries.length) { empty.style.display = 'flex'; return; }
-    empty.style.display = 'none';
-    // only re-render if count changed to avoid flicker
-    if (container.dataset.count === String(entries.length)) return;
-    container.dataset.count = entries.length;
-    container.innerHTML = '';
-    container.appendChild(empty);
-    entries.forEach(m => {
-      const time = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = `
-        <div class="chat-msg-meta">
-          <div class="chat-msg-dot" style="background:${m.colorHex}"></div>
-          <span class="chat-msg-name">${m.name}</span>
-          <span class="chat-msg-time">${time}</span>
-        </div>
-        <div class="chat-msg-text">${m.text.replace(/</g,'&lt;')}</div>
-      `;
-      container.appendChild(div);
-    });
-    container.scrollTop = container.scrollHeight;
-  }
-
-  window.sendChat = async () => {
-    const input = document.getElementById('chat-input');
-    const text = input.value.trim();
-    if (!text || !activeLobbyCode) return;
-    input.value = '';
-    document.getElementById('chat-send').disabled = true;
-    if (FIREBASE_CONFIGURED) {
-      await push(ref(db, `lobbies/${activeLobbyCode}/chat`), {
-        name: playerName,
-        colorHex: playerColor.hex,
-        text,
-        ts: Date.now(),
-      });
-    }
-  };
-
-  // ── Leave lobby ──
-  window.leaveLobby = async () => {
-    if (lobbyListener) { lobbyListener(); lobbyListener = null; }
-    if (chatListener) { chatListener(); chatListener = null; }
-    if (activeLobbyCode && myPlayerId) {
-      await remove(ref(db, `lobbies/${activeLobbyCode}/players/${myPlayerId}`));
-    }
-    activeLobbyCode = null; myPlayerId = null; isHost = false;
-    myVote = null; lastKnownPlayers = {};
-    const chatContainer = document.getElementById('chat-messages');
-    chatContainer.dataset.count = '';
-    chatContainer.innerHTML = '<div class="chat-empty" id="chat-empty">No messages yet…<br>say hello! 👋</div>';
-    document.getElementById('screen-lobby').classList.remove('active');
-    document.getElementById('screen-home').classList.add('active');
-    window.scrollTo(0, 0);
-  };
-
-  // ── Render player list ──
-  function renderPlayerList() {
-    const players = Object.entries(lastKnownPlayers);
-    document.getElementById('player-count').textContent = players.length;
-    document.getElementById('lobby-subtitle').textContent =
-      players.length <= 1 ? 'Waiting for players to join…' : `${players.length} players in the room`;
-
-    const list = document.getElementById('player-list');
-    list.innerHTML = '';
-    players.forEach(([id, p]) => {
-      const isMe = id === myPlayerId;
-      const row = document.createElement('div');
-      row.className = 'player-row';
-      row.innerHTML = `
-        <div class="player-dot" style="background:${p.colorHex}"></div>
-        <span>${p.name}${isMe ? ' <span style="color:#bbb;font-size:11px">(you)</span>' : ''}</span>
-        ${p.vote ? `<span style="font-size:11px;color:#aaa;margin-left:4px">✓ voted</span>` : ''}
-        <span class="player-badge ${p.isHost ? 'host' : ''}">${p.isHost ? 'host' : 'player'}</span>
-      `;
-      list.appendChild(row);
-    });
-  }
-
-  // ── Vote grid ──
-  function buildVotePreview(map) {
-    const size = map.size;
-    const blackSet = new Set(map.blacks.map(([r,c]) => r*size+c));
-    map.blacks.forEach(([r,c]) => blackSet.add((size-1-r)*size+(size-1-c)));
-    const cells = [];
-    for (let i = 0; i < size*size; i++) cells.push(`<div class="vp-cell${blackSet.has(i)?' b':''}"></div>`);
-    const sc = size<=5?'sz5':size<=9?'sz9':size<=11?'sz11':size<=13?'sz13':size<=15?'sz15':'sz21';
-    return `<div class="vote-preview ${sc}">${cells.join('')}</div>`;
-  }
-
-  function renderVoteGrid() {
-    const players = Object.values(lastKnownPlayers);
-    const grid = document.getElementById('vote-grid');
-    grid.innerHTML = '';
-    MAPS.forEach(map => {
-      const votes = players.filter(p => p.vote === map.id).length;
-      const pct = players.length ? Math.round(votes/players.length*100) : 0;
-      const card = document.createElement('div');
-      card.className = 'vote-card' + (myVote === map.id ? ' my-vote' : '');
-      card.innerHTML = `
-        ${buildVotePreview(map)}
-        <div class="vote-info">
-          <h3>${map.name}</h3>
-          <div class="vote-bar-wrap"><div class="vote-bar" style="width:${pct}%"></div></div>
-          <div class="vote-meta">
-            <div class="vote-tags">
-              <span class="vote-tag">${map.size}×${map.size}</span>
-              <span class="vote-tag diff-${map.difficulty}">${map.difficulty}</span>
-            </div>
-            <span class="vote-count">${votes} vote${votes!==1?'s':''}</span>
-          </div>
-        </div>
-      `;
-      card.onclick = () => castVote(map.id);
-      grid.appendChild(card);
-    });
-  }
-
-  async function castVote(mapId) {
-    myVote = mapId;
-    if (activeLobbyCode && myPlayerId) {
-      await update(ref(db, `lobbies/${activeLobbyCode}/players/${myPlayerId}`), { vote: mapId });
-    }
-  }
-
-  function updateVoteStatus() {
-    const players = Object.values(lastKnownPlayers);
-    const voteCounts = {};
-    players.forEach(p => { if (p.vote) voteCounts[p.vote] = (voteCounts[p.vote]||0)+1; });
-    const topId = Object.entries(voteCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
-    const topMap = MAPS.find(m => m.id === topId);
-    const voted = players.filter(p=>p.vote).length;
-    const status = document.getElementById('vote-status');
-    status.innerHTML = !topMap
-      ? 'No votes yet — pick a map!'
-      : `Leading: <strong>${topMap.name}</strong> · ${voted}/${players.length} voted`;
-  }
-
-  function renderStartBtn() {
-    document.getElementById('start-btn-wrap').innerHTML = isHost
-      ? `<button class="btn-primary" onclick="startGame()">Start game →</button>`
-      : `<p style="font-size:13px;color:#999">Waiting for the host to start…</p>`;
-  }
-
-  window.startGame = () => {
-    const players = Object.values(lastKnownPlayers);
-    const voteCounts = {};
-    players.forEach(p => { if (p.vote) voteCounts[p.vote] = (voteCounts[p.vote]||0)+1; });
-    const topId = Object.entries(voteCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
-    const topMap = MAPS.find(m => m.id === topId) || MAPS[0];
-    alert(`Starting!\n\nMap: ${topMap.name} (${topMap.size}×${topMap.size})\nPlayers: ${players.map(p=>p.name).join(', ')}`);
-  };
-
-  // ── Lobby identity editor ──
-  function initLobbyIdentityEditor() {
-    document.getElementById('lobby-name-input').value = playerName;
-    updateLobbyAvatar();
-    const container = document.getElementById('lobby-swatches');
-    container.innerHTML = '';
-    const taken = takenColorHexes(myPlayerId);
-    COLORS.forEach(c => {
-      const isTaken = taken.has(c.hex);
-      const s = document.createElement('div');
-      s.className = 'swatch' + (c.hex === playerColor.hex ? ' selected' : '') + (isTaken ? ' taken' : '');
-      s.style.background = c.hex;
-      s.title = isTaken ? `${c.name} (taken)` : c.name;
-      s.dataset.hex = c.hex;
-      if (!isTaken) {
-        s.onclick = () => {
-          container.querySelectorAll('.swatch').forEach(el => el.classList.remove('selected'));
-          s.classList.add('selected');
-          playerColor = COLORS.find(x => x.hex === c.hex);
-          updateLobbyAvatar();
-          saveLobbyIdentity();
-        };
+      .lh-cls-1, .lh-cls-2 {
+        fill: #fff;
+        stroke: #fff;
+        stroke-miterlimit: 10;
       }
-      container.appendChild(s);
-    });
-  }
 
-  function refreshLobbySwatches() {
-    const taken = takenColorHexes(myPlayerId);
-    document.querySelectorAll('#lobby-swatches .swatch').forEach(s => {
-      const isTaken = taken.has(s.dataset.hex);
-      s.classList.toggle('taken', isTaken);
-      s.style.pointerEvents = isTaken ? 'none' : '';
-      s.title = isTaken
-        ? `${COLORS.find(c=>c.hex===s.dataset.hex)?.name} (taken)`
-        : COLORS.find(c=>c.hex===s.dataset.hex)?.name;
-    });
-  }
+      .lh-cls-3 {
+        fill: none;
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 6px;
+      }
 
-  function updateLobbyAvatar() {
-    const av = document.getElementById('lobby-avatar');
-    av.style.background = playerColor.hex;
-    av.textContent = (playerName || '?').charAt(0).toUpperCase();
-  }
+      .lh-cls-2 {
+        stroke-width: 18px;
+      }
+    </style>
+  </defs>
+  <path class="lh-cls-2" d="M388.15,284.82h-67.51l100.96-126.47c8.65-10.83,7.79-25.09-2.09-34.66-33.33-32.27-110.11,41.61-122.6,54.07-12.48-12.46-89.26-86.34-122.59-54.07-9.88,9.57-10.75,23.83-2.09,34.66l100.96,126.47h-66.44c-20.02,0-36.3,13.96-36.3,31.12v131.17c0,17.16,16.28,31.12,36.3,31.12h181.4c20.02,0,36.3-13.96,36.3-31.12v-131.17c0-17.16-16.28-31.12-36.3-31.12ZM300.45,182.71c4.23-4.22,23.62-23.22,46.02-38.87,22.58-15.78,52.86-31.34,68.86-15.84,7.58,7.34,8.23,18.28,1.58,26.61l-103.95,130.21h-12.51v-102.11ZM176.92,154.61c-6.65-8.33-6-19.27,1.58-26.61,15.99-15.49,46.24.04,68.8,15.8,22.41,15.65,41.85,34.68,46.08,38.91v102.11h-12.51l-103.95-130.21ZM291.81,472.23h-85.06c-16.71,0-30.3-11.27-30.3-25.12v-131.17c0-13.85,13.59-25.12,30.3-25.12h84.33l-73.72,123c-.55.93-.57,2.08-.03,3.02.53.94,1.53,1.52,2.61,1.52h71.87v53.87ZM291.81,358.84v53.52h-66.58l71.15-118.7,37.27,62.18h-38.84c-1.66,0-3,1.34-3,3ZM418.45,447.11c0,13.85-13.59,25.12-30.3,25.12h-90.34v-53.87h58.62c1.66,0,3-1.34,3-3s-1.34-3-3-3h-58.62v-50.52h41.13c.07,0,.13-.01.2-.02.1,0,.21-.01.31-.03.1-.02.2-.04.3-.07.09-.03.18-.05.27-.08.1-.05.2-.1.3-.15.05-.03.11-.04.17-.08.02-.01.04-.03.06-.04.09-.06.17-.13.26-.2.07-.05.14-.11.21-.17.07-.07.13-.14.19-.21.06-.08.13-.15.19-.23.05-.08.09-.16.14-.25.05-.08.1-.16.14-.25.04-.09.07-.18.1-.27.03-.09.06-.19.08-.28.02-.09.03-.18.04-.27.02-.11.03-.21.04-.32v-.08c0-.06-.01-.12-.02-.19,0-.11-.01-.21-.03-.32-.02-.1-.04-.19-.07-.29-.02-.09-.05-.18-.08-.27-.04-.11-.09-.21-.15-.3-.02-.06-.04-.12-.07-.17l-39.85-66.48h86.48c16.71,0,30.3,11.27,30.3,25.12v131.17Z"/>
+  <path class="lh-cls-1" d="M291.81,418.36v53.87h-85.06c-16.71,0-30.3-11.27-30.3-25.12v-131.17c0-13.85,13.59-25.12,30.3-25.12h84.33l-73.72,123c-.55.93-.57,2.08-.03,3.02.53.94,1.53,1.52,2.61,1.52h71.87Z"/>
+  <path class="lh-cls-1" d="M418.45,315.94v131.17c0,13.85-13.59,25.12-30.3,25.12h-90.34v-53.87h58.62c1.66,0,3-1.34,3-3s-1.34-3-3-3h-58.62v-50.52h41.13c.07,0,.13-.01.2-.02.1,0,.21-.01.31-.03.1-.02.2-.04.3-.07.09-.03.18-.05.27-.08.1-.05.2-.1.3-.15.05-.03.11-.04.17-.08.02-.01.04-.03.06-.04.09-.06.17-.13.26-.2.07-.05.14-.11.21-.17.07-.07.13-.14.19-.21.06-.08.13-.15.19-.23.05-.08.09-.16.14-.25.05-.08.1-.16.14-.25.04-.09.07-.18.1-.27.03-.09.06-.19.08-.28.02-.09.03-.18.04-.27.02-.11.03-.21.04-.32v-.08c0-.06-.01-.12-.02-.19,0-.11-.01-.21-.03-.32-.02-.1-.04-.19-.07-.29-.02-.09-.05-.18-.08-.27-.04-.11-.09-.21-.15-.3-.02-.06-.04-.12-.07-.17l-39.85-66.48h86.48c16.71,0,30.3,11.27,30.3,25.12Z"/>
+  <path class="lh-cls-1" d="M416.91,154.61l-103.95,130.21h-12.51v-102.11c4.23-4.22,23.62-23.22,46.02-38.87,22.58-15.78,52.86-31.34,68.86-15.84,7.58,7.34,8.23,18.28,1.58,26.61Z"/>
+  <path class="lh-cls-1" d="M293.38,182.71v102.11h-12.51l-103.95-130.21c-6.65-8.33-6-19.27,1.58-26.61,15.99-15.49,46.24.04,68.8,15.8,22.41,15.65,41.85,34.68,46.08,38.91Z"/>
+  <path class="lh-cls-3" d="M206.75,475.23h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="lh-cls-3" d="M294.81,415.36h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="lh-cls-3" points="294.81 475.23 294.81 415.36 294.81 358.84 338.95 358.84"/>
+  <path class="lh-cls-3" d="M297.45,287.82h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
+</svg>
+    </a>
+    <div class="nav-links">
+      <a href="#" class="active">Portfolio</a>
+      <a href="about/about.html">About</a>
+      <a href="contact/contact.html">Contact</a>
+      <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+    </div>
+  </nav>
 
-  window.onLobbyNameInput = () => {
-    const val = document.getElementById('lobby-name-input').value;
-    document.getElementById('lobby-avatar').textContent = (val || '?').charAt(0).toUpperCase();
-  };
+  <!-- GRID -->
+  <div class="grid-wrapper">
+  <main class="portfolio-grid">
 
-  window.saveLobbyIdentity = async () => {
-    const val = document.getElementById('lobby-name-input').value.trim();
-    if (!val) return;
-    playerName = val;
-    updateLobbyAvatar();
-    updateChip();
-    if (activeLobbyCode && myPlayerId) {
-      await update(ref(db, `lobbies/${activeLobbyCode}/players/${myPlayerId}`), {
-        name: playerName,
-        colorHex: playerColor.hex,
-      });
+    <!-- Pyxd -->
+    <div class="portfolio-item" onclick="window.location='1/1.html'">
+      <canvas class="halftone-canvas"></canvas>
+      <div class="item-header">
+        <div class="item-title">Pyxd, Inc.</div>
+        <div class="item-tags">Icon Design, Web Design, Apparel Design</div>
+      </div>
+      <div class="item-image">
+        <img src="index1.png" alt="Pyxd, Inc." />
+        <div class="brightness-overlay"></div>
+        <div class="overlay">
+          <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arctic Zoo -->
+    <div class="portfolio-item" onclick="window.location='2/2.html'">
+      <canvas class="halftone-canvas"></canvas>
+      <div class="item-header">
+        <div class="item-title">Arctic Zoo &amp; Aquarium</div>
+        <div class="item-tags">Web Design, Logo Design, Branding, UI/UX</div>
+      </div>
+      <div class="item-image">
+        <img src="index2.png" alt="Arctic Zoo & Aquarium" />
+        <div class="brightness-overlay"></div>
+        <div class="overlay">
+          <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apple Watch -->
+    <div class="portfolio-item" onclick="window.location='3/3.html'">
+      <canvas class="halftone-canvas"></canvas>
+      <div class="item-header">
+        <div class="item-title">Apple Watch Face</div>
+        <div class="item-tags">Typography, Animation, Graphic Design</div>
+      </div>
+      <div class="item-image">
+        <img src="index3.png" alt="Apple Watch Face" />
+        <div class="brightness-overlay"></div>
+        <div class="overlay">
+          <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dam Research -->
+    <div class="portfolio-item" onclick="window.location='4/4.html'">
+      <canvas class="halftone-canvas"></canvas>
+      <div class="item-header">
+        <div class="item-title">U.C. Berkeley Dam Research</div>
+        <div class="item-tags">Graphic Design, Illustration, Data Visualization</div>
+      </div>
+      <div class="item-image">
+        <img src="index4.png" alt="U.C. Berkeley Dam Research" />
+        <div class="brightness-overlay"></div>
+        <div class="overlay">
+          <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  </div>
+
+  <footer>
+    <div style="border-top: 1px solid rgba(255,255,255,0.1);"></div>
+    <div class="footer-bottom">
+      <div class="footer-reached">You've reached the bottom</div>
+      <div class="footer-links">
+        <span>© 2026 Lex Rubin</span>
+        <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn</a>
+        <a href="/index.html">Home Page</a>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
+      </div>
+      <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
+    </div>
+  </footer>
+
+  <script>
+    const cur  = document.getElementById('cur');
+    const ring = document.getElementById('ring0');
+
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function animCursor() {
+      cur.style.left = mx + 'px';
+      cur.style.top  = my + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animCursor);
     }
-  };
+    animCursor();
 
-  window.bannerCopy = () => {
-    navigator.clipboard.writeText(activeLobbyCode).then(() => {
-      document.getElementById('banner-copy-label').textContent = 'Copied!';
-      setTimeout(() => document.getElementById('banner-copy-label').textContent = 'Copy', 2000);
-    });
-  };
-
-  // Remove player entry from Firebase if they close the tab
-  window.addEventListener('beforeunload', () => {
-    if (activeLobbyCode && myPlayerId && FIREBASE_CONFIGURED) {
-      // sendBeacon to Firebase REST API for reliable cleanup on close
-      fetch(`${firebaseConfig.databaseURL}/lobbies/${activeLobbyCode}/players/${myPlayerId}.json`, {
-        method: 'DELETE', keepalive: true
-      });
+    function setCursor(dotW, dotH, dotRadius, ringW, ringH, ringRadius, ringBorder) {
+      cur.style.width        = dotW;
+      cur.style.height       = dotH;
+      cur.style.borderRadius = dotRadius;
+      cur.style.background   = '#fff';
+      ring.style.width       = ringW;
+      ring.style.height      = ringH;
+      ring.style.borderRadius = ringRadius;
+      ring.style.borderWidth = ringBorder || '1.5px';
+      ring.style.opacity     = '0.8';
     }
-  });
 
-  // ── Init ──
-  initColorSwatches();
-  updateChip();
-</script>
+    function resetCursor() {
+      setCursor('10px','10px','50%','36px','36px','50%','1.5px');
+    }
+
+    // Nav links — small dot, wide ring
+    document.querySelectorAll('nav a').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','52px','52px','50%','1px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Portfolio items — bigger ring on hover
+    document.querySelectorAll('.portfolio-item').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Text — I-beam thin bar, tiny ring
+    document.querySelectorAll('h1, h2, h3, .item-title').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Tags — horizontal dash, no ring
+    document.querySelectorAll('.item-tags').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('22px','3px','2px','0px','0px','50%','0px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Footer text — I-beam thin bar, tiny ring
+    document.querySelectorAll('footer span, .footer-reached').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Footer links — pinpoint dot, medium ring
+    document.querySelectorAll('footer a').forEach(el => {
+      el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+      el.addEventListener('mouseleave', resetCursor);
+    });
+
+    // Stagger brightness overlay animations so cards pulse independently
+    const allOverlays = document.querySelectorAll('.brightness-overlay');
+    allOverlays.forEach(overlay => {
+      const delay = -(Math.random() * 3).toFixed(2);
+      const duration = (5 + Math.random() * 3).toFixed(2);
+      overlay.style.animationDelay = `${delay}s`;
+      overlay.style.animationDuration = `${duration}s`;
+    });
+
+    // Pause all other overlays when any card is hovered
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        allOverlays.forEach(overlay => {
+          if (overlay.closest('.portfolio-item') !== item) {
+            overlay.style.animationPlayState = 'paused';
+          }
+        });
+      });
+      item.addEventListener('mouseleave', () => {
+        allOverlays.forEach(overlay => {
+          overlay.style.animationPlayState = 'running';
+        });
+      });
+    });
+
+    // Randomize blur/brightness animation per card
+    document.querySelectorAll('.item-image img').forEach(img => {
+      const blurDelay      = (Math.random() * 3).toFixed(2);
+      const brightnessDelay = (Math.random() * 4).toFixed(2);
+      const blurDuration   = (2 + Math.random() * 2).toFixed(2);
+      const brightDuration = (2.5 + Math.random() * 2).toFixed(2);
+      img.style.animationDelay    = `-${blurDelay}s, -${brightnessDelay}s`;
+      img.style.animationDuration = `${blurDuration}s, ${brightDuration}s`;
+    });
+
+    // Logo hover swap
+    const logoLink = document.getElementById('logo-link');
+    const logoDefault = document.getElementById('logo-default');
+    const logoHover = document.getElementById('logo-hover');
+    logoHover.style.opacity = '0';
+    logoDefault.style.opacity = '1';
+    logoHover.style.display = 'block';
+    logoLink.addEventListener('mouseenter', () => {
+      logoDefault.style.opacity = '0';
+      logoHover.style.opacity = '1';
+    });
+    logoLink.addEventListener('mouseleave', () => {
+      logoDefault.style.opacity = '1';
+      logoHover.style.opacity = '0';
+    });
+
+    document.addEventListener('mousedown', () => cur.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
+
+    // ── MAGNETIC HALFTONE ──
+    const SPACING = 10;
+    const RADIUS  = 1;
+    const REPEL   = 160;
+    const STRENGTH = 80;
+
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      const canvas = item.querySelector('.halftone-canvas');
+      const ctx    = canvas.getContext('2d');
+      let dots     = [];
+      let localMx  = -9999, localMy = -9999;
+      let isHovered = false;
+      let animId;
+
+      function buildDots() {
+        const w = canvas.width  = item.offsetWidth;
+        const h = canvas.height = item.offsetHeight;
+        dots = [];
+        for (let x = SPACING / 2; x < w; x += SPACING) {
+          for (let y = SPACING / 2; y < h; y += SPACING) {
+            dots.push({ ox: x, oy: y, x, y });
+          }
+        }
+      }
+
+      function draw() {
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        let allSettled = true;
+        dots.forEach(d => {
+          const dx = d.x - localMx;
+          const dy = d.y - localMy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          let tx = d.ox, ty = d.oy;
+          if (dist < REPEL && isHovered) {
+            const force = (1 - dist / REPEL) * STRENGTH;
+            tx = d.ox + (dx / dist) * force;
+            ty = d.oy + (dy / dist) * force;
+          }
+          d.x += (tx - d.x) * 0.18;
+          d.y += (ty - d.y) * 0.18;
+
+          // check if still moving
+          if (Math.abs(d.x - d.ox) > 0.2 || Math.abs(d.y - d.oy) > 0.2) allSettled = false;
+
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, RADIUS, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.15)';
+          ctx.fill();
+        });
+
+        // stop loop once dots are back home and not hovered
+        if (!isHovered && allSettled) {
+          ctx.clearRect(0, 0, w, h);
+          cancelAnimationFrame(animId);
+          return;
+        }
+        animId = requestAnimationFrame(draw);
+      }
+
+      item.addEventListener('mouseenter', () => {
+        isHovered = true;
+        buildDots();
+        cancelAnimationFrame(animId);
+        draw();
+      });
+
+      item.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        localMx = e.clientX - rect.left;
+        localMy = e.clientY - rect.top;
+      });
+
+      item.addEventListener('mouseleave', () => {
+        isHovered = false;
+        localMx = -9999; localMy = -9999;
+        // animation loop will self-terminate once dots settle back
+      });
+
+      window.addEventListener('resize', () => { if (isHovered) buildDots(); });
+    });
+  </script>
 </body>
 </html>
