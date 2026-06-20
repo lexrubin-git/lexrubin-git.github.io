@@ -561,11 +561,11 @@
     .testimonial-slider {
       padding: 2.5rem 3rem;
       position: relative;
-      min-height: 220px;
+      display: grid;
     }
 
-    .testimonial-slide { display: none; }
-    .testimonial-slide.active { display: block; }
+    .testimonial-slide { grid-area: 1 / 1; visibility: hidden; pointer-events: none; }
+    .testimonial-slide.active { visibility: visible; pointer-events: auto; }
 
     .testimonial-relation {
       font-size: 0.9rem;
@@ -782,7 +782,7 @@
       .skill-col-body { padding: 1.2rem 1.5rem; }
 
       /* ticker */
-      .ticker-label { width: 110px; padding: 0 0.75rem; font-size: 0.62rem; letter-spacing: 0.18em; }
+      .ticker-label { width: 125px; padding: 0 0.75rem; font-size: 0.62rem; letter-spacing: 0.18em; }
 
       /* gallery */
       .gallery-strip { height: 150px; }
@@ -791,7 +791,7 @@
 
       /* testimonials */
       .testimonials-header { font-size: 1.1rem; padding: 1.5rem 0; }
-      .testimonial-slider { padding: 1.5rem; min-height: auto; }
+      .testimonial-slider { padding: 1.5rem; }
       .testimonial-nav { padding: 0.8rem 1.5rem; }
       .testimonial-quote { font-size: 0.83rem; }
 
