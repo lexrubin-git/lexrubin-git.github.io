@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -497,28 +497,12 @@
       object-position: center;
       display: block;
       transition: transform 0.6s ease, filter 0.5s ease;
-      filter: blur(1px) brightness(0.8);
-      animation: pulseBlur 3s ease-in-out infinite, pulseBrightness 4s ease-in-out infinite;
+      filter: brightness(0.6);
     }
 
     .gallery-img-slot:hover img {
-      filter: blur(0px) brightness(1);
+      filter: brightness(1);
       transform: scale(1.04);
-      animation: none;
-    }
-
-    @keyframes pulseBlur {
-      0%   { filter: blur(1px) brightness(0.90); }
-      50%  { filter: blur(1.8px) brightness(0.65); }
-      100% { filter: blur(1px) brightness(0.90); }
-    }
-
-    @keyframes pulseBrightness {
-      0%   { filter: blur(1px) brightness(0.90); }
-      25%  { filter: blur(1.2px) brightness(0.70); }
-      50%  { filter: blur(1.5px) brightness(0.65); }
-      75%  { filter: blur(1px) brightness(0.80); }
-      100% { filter: blur(1px) brightness(0.90); }
     }
 
     /* ── SHIMMER PLACEHOLDER ── */
@@ -690,7 +674,8 @@
     .footer-scroll-btn { display: none; }
 
     /* ── CUSTOM CURSOR ── */
-    body, * { cursor: none !important; }
+    @media (pointer: fine) { body, * { cursor: none !important; } }
+    @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
 
     .cursor {
       position: fixed;
@@ -722,6 +707,76 @@
                   border-radius 0.4s, opacity 0.2s, border-width 0.2s;
     }
     .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+    /* ── NAV HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 200;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: #666;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #aaa; }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #aaa; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
+      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      .logo { width: 70px !important; height: 70px !important; }
+      .logo svg { width: 70px !important; height: 70px !important; }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 150;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a::after { display: none; }
+      .nav-hamburger { display: flex; }
+      .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
+      .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+
+      /* about page layout */
+      .page-wrapper { padding: 0 0.75rem; }
+      .content-col { max-width: 100%; }
+      .about-hero { grid-template-columns: 1fr; }
+      .about-label { grid-column: 1; }
+      .about-photo-col { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem; }
+      .about-photo-link { max-width: 180px; }
+      .about-text-col { padding: 1.5rem; }
+      .about-hi { font-size: 1.8rem; }
+
+      /* skills */
+      .section-arrows { width: calc(100% - 1.5rem); }
+      .skills-section, .skill-tickers, .gallery-section, .testimonials-section { max-width: calc(100% - 1.5rem); }
+      .skills-grid { grid-template-columns: 1fr; }
+      .skill-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .skill-col:last-child { border-bottom: none; }
+
+      /* gallery */
+      .gallery-strip { height: 160px; }
+
+      /* testimonials */
+      .testimonial-slider { padding: 1.5rem; }
+      .testimonial-nav { padding: 1rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -750,11 +805,12 @@
   <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
 </svg>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="nav-links">
     <a href="/index.html">Portfolio</a>
     <a href="/about/about.html" class="active">About</a>
     <a href="/contact/contact.html">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
@@ -1074,6 +1130,7 @@
       insidePhoto = true;
       cur.style.opacity  = '0';
       ring.style.opacity = '0';
+      startRevealLoop();
     });
 
     photoWrap.addEventListener('mousemove', e => {
@@ -1090,9 +1147,9 @@
       resetCursor();
     });
 
-    (function revealLoop() {
+    let revealFrameId = null;
+    function revealLoop() {
       if (insidePhoto) {
-        // decay speed each frame so circle shrinks when mouse stops
         cursorSpeed *= 0.994;
         const t = Math.min(cursorSpeed / SPEED_SCALE, 1);
         tgtR = MIN_R + (MAX_R - MIN_R) * t;
@@ -1107,8 +1164,17 @@
       curR += (tgtR - curR) * lerpR;
       const r = Math.max(0, curR).toFixed(2);
       photoReveal.style.clipPath = `circle(${r}px at ${revX.toFixed(2)}px ${revY.toFixed(2)}px)`;
-      requestAnimationFrame(revealLoop);
-    })();
+
+      if (insidePhoto || curR > 0.5) {
+        revealFrameId = requestAnimationFrame(revealLoop);
+      } else {
+        revealFrameId = null;
+      }
+    }
+
+    function startRevealLoop() {
+      if (!revealFrameId) revealFrameId = requestAnimationFrame(revealLoop);
+    }
   }
 
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
@@ -1253,7 +1319,23 @@
 
   testimonialSection.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
   testimonialSection.addEventListener('mouseleave', () => resetAutoplay());
-</script>
+
+    // ── HAMBURGER ──
+    (function() {
+      var hb = document.getElementById('hamburger');
+      var nl = document.getElementById('nav-links');
+      if (!hb || !nl) return;
+      hb.addEventListener('click', function() {
+        hb.classList.toggle('open');
+        nl.classList.toggle('open');
+      });
+      nl.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          hb.classList.remove('open');
+          nl.classList.remove('open');
+        });
+      });
+    })();  </script>
 
 </body>
 </html>

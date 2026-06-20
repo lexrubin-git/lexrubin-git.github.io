@@ -1,0 +1,860 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CrosswordLeague.com</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000000;
+      --white: #f0ede8;
+      --gray: #aaa;
+      --border: rgba(255,255,255,0.1);
+      --accent: #c8b89a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 110px;
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 0.5s ease forwards;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo { position: relative; display: flex; }
+    #logo-default, #logo-hover { transition: opacity 0.3s ease; }
+    #logo-hover { position: absolute; top: 0; left: 0; }
+
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      color: #444;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: #aaa;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: #aaa; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: #aaa; }
+    .nav-links a.active::after { width: 100%; background: #aaa; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper { padding: 0 4rem; max-width: 1350px; margin: 0 auto; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── HERO ── */
+    .artwork-hero {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+
+    .artwork-title-row {
+      padding: 3rem 2.5rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .artwork-main-title {
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── SECTION ARROWS ── */
+    .section-arrows {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.25s forwards;
+    }
+    .arrow-cell {
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.6rem 0; color: #333; font-size: 0.9rem;
+      border-right: 1px solid var(--border);
+    }
+    .arrow-cell:last-child { border-right: none; }
+
+    /* ── CASE STUDY ── */
+    .case-study-section {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.28s forwards;
+    }
+    .cs-meta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-meta-cell {
+      padding: 1.6rem 1.5rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-meta-cell:last-child { border-right: none; }
+    .cs-meta-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+    }
+    .cs-meta-val {
+      font-size: 0.85rem;
+      color: #888;
+      font-weight: 400;
+    }
+    .cs-body {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-body:last-child { border-bottom: none; }
+    .cs-col-label {
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+    }
+    .cs-section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 600;
+    }
+    .cs-col-content { padding: 2rem; }
+    .cs-text {
+      font-size: 0.875rem;
+      line-height: 1.9;
+      color: #666;
+      font-weight: 400;
+    }
+    .cs-text strong { color: #999; font-weight: 500; }
+    .cs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0;
+    }
+    .cs-list li {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #666;
+    }
+    .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-subitem {
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .cs-subitem:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+    .cs-subitem-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #777;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+    }
+    .cs-img {
+      width: 100%;
+      display: block;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      filter: brightness(0.55) blur(0.4px);
+      transition: filter 0.35s ease, transform 0.35s ease;
+    }
+    .cs-img:hover { filter: brightness(1.08) blur(0px); transform: scale(1.01); }
+    .cs-img-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .cs-img-pair img, .cs-img-triple img {
+      width: 100%;
+      display: block;
+      border: 1px solid var(--border);
+      filter: brightness(0.55) blur(0.4px);
+      transition: filter 0.35s ease, transform 0.35s ease;
+    }
+    .cs-img-triple {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .cs-img-pair img:hover, .cs-img-triple img:hover { filter: brightness(1.08) blur(0px); transform: scale(1.01); }
+    .cs-img-md {
+      width: 75%;
+      display: block;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      filter: brightness(0.55) blur(0.4px);
+      transition: filter 0.35s ease, transform 0.35s ease;
+    }
+    .cs-img-md:hover { filter: brightness(1.08) blur(0px); transform: scale(1.01); }
+    .cs-img-sm {
+      width: 50%;
+      display: block;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      filter: brightness(0.55) blur(0.4px);
+      transition: filter 0.35s ease, transform 0.35s ease;
+    }
+    .cs-img-sm:hover { filter: brightness(1.08) blur(0px); transform: scale(1.01); }
+
+    /* ── ARTWORK GRID ── */
+    .artworks-section {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.3s forwards;
+    }
+
+    .artworks-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .artwork-card {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      background: #050505;
+    }
+    .artwork-card:nth-child(1n) { border-right: none; }
+    .artwork-card:last-child { border-bottom: none; }
+
+    .artwork-card-img {
+      width: 100%;
+      aspect-ratio: 16/7;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75) blur(0.5px);
+      transition: filter 0.5s ease, transform 0.6s ease;
+    }
+
+    .artwork-card:hover .artwork-card-img {
+      filter: brightness(1) blur(0px);
+      transform: scale(1.03);
+    }
+
+    .artwork-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 2;
+    }
+    .artwork-card:hover .artwork-card-overlay { opacity: 1; }
+
+    .artwork-enlarge-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .artwork-card:hover .artwork-enlarge-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #000000;
+      padding: 0;
+      position: relative;
+      text-align: center;
+    }
+
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 0 3.5rem;
+      gap: 1.4rem;
+    }
+
+    .footer-reached {
+      font-style: italic;
+      font-size: 1rem;
+      color: #444;
+      letter-spacing: 0.90em;
+      word-spacing: 1.3em;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      font-size: 0.85rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+    }
+
+    .footer-bottom span { font-style: normal; }
+
+    .footer-bottom a {
+      color: #444;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-style: normal;
+      letter-spacing: 0.1em;
+      word-spacing: 0.7em;
+      transition: color 0.2s;
+    }
+    .footer-bottom a:hover { color: #888; }
+
+    .footer-scroll-btn { display: none; }
+
+    /* ── CURSOR ── */
+    @media (pointer: fine) { body, * { cursor: none !important; } }
+    @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
+    a, button { pointer-events: auto; }
+
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+                  height 0.35s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.35s, background 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%);
+      opacity: 0.8;
+      mix-blend-mode: difference;
+      filter: grayscale(1);
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1),
+                  height 0.4s cubic-bezier(0.16,1,0.3,1),
+                  border-radius 0.4s, opacity 0.2s, border-width 0.2s;
+    }
+    .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+    /* ── NAV HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 200;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: #666;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #aaa; }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #aaa; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
+      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      .logo { width: 70px !important; height: 70px !important; }
+      .logo svg { width: 70px !important; height: 70px !important; }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 150;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a::after { display: none; }
+      .nav-hamburger { display: flex; }
+      .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
+      .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-img {
+      display: block;
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring0"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="/index.html" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
+    <svg id="logo-default" style="opacity:1;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs><style>.ld-cls-1{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:10px;}</style></defs>
+  <path class="ld-cls-1" d="M206.75,475.25h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="ld-cls-1" d="M294.81,415.38h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="ld-cls-1" points="294.81 475.25 294.81 415.38 294.81 358.86 338.95 358.86"/>
+  <path class="ld-cls-1" d="M297.45,287.84h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="ld-cls-1" x1="294.81" y1="415.38" x2="356.43" y2="415.38"/>
+</svg>
+    <svg id="logo-hover" style="opacity:0;position:absolute;top:0;left:0;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
+  <defs><style>.lh-cls-1{stroke-width:13px;}.lh-cls-1,.lh-cls-2{fill:#fff;stroke:#fff;stroke-miterlimit:10;}.lh-cls-3{fill:none;stroke:#231f20;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;}.lh-cls-2{stroke-width:18px;}</style></defs>
+  <path class="lh-cls-2" d="M388.15,284.82h-67.51l100.96-126.47c8.65-10.83,7.79-25.09-2.09-34.66-33.33-32.27-110.11,41.61-122.6,54.07-12.48-12.46-89.26-86.34-122.59-54.07-9.88,9.57-10.75,23.83-2.09,34.66l100.96,126.47h-66.44c-20.02,0-36.3,13.96-36.3,31.12v131.17c0,17.16,16.28,31.12,36.3,31.12h181.4c20.02,0,36.3-13.96,36.3-31.12v-131.17c0-17.16-16.28-31.12-36.3-31.12Z"/>
+  <path class="lh-cls-3" d="M206.75,475.23h181.4c18.39,0,33.3-12.59,33.3-28.12v-131.17c0-15.53-14.91-28.12-33.3-28.12h-181.4c-18.39,0-33.3,12.59-33.3,28.12v131.17c0,15.53,14.91,28.12,33.3,28.12Z"/>
+  <path class="lh-cls-3" d="M294.81,415.36h-74.87l76.44-127.54h-16.95l-104.85-131.34c-7.52-9.42-7.01-22.07,1.84-30.64,33.82-32.75,119.97,55.63,119.97,55.63v106.34l42.57,71.02"/>
+  <polyline class="lh-cls-3" points="294.81 475.23 294.81 415.36 294.81 358.84 338.95 358.84"/>
+  <path class="lh-cls-3" d="M297.45,287.82h16.95l104.85-131.34c7.52-9.42,7.01-22.07-1.84-30.64-33.82-32.75-119.97,55.63-119.97,55.63v106.34"/>
+  <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
+</svg>
+  </a>
+  <div class="nav-links" id="nav-links">
+    <a href="/index.html" class="active">Portfolio</a>
+    <a href="/about/about.html">About</a>
+    <a href="/contact/contact.html">Contact</a>
+    <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="page-wrapper">
+  <div class="artwork-hero">
+    <div class="artwork-title-row">
+      <h1 class="artwork-main-title">CrosswordLeague.com</h1>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION ARROWS ── -->
+<div class="page-wrapper">
+  <div class="section-arrows">
+    <div class="arrow-cell">∨</div>
+    <div class="arrow-cell">∨</div>
+    <div class="arrow-cell">∨</div>
+  </div>
+</div>
+
+<!-- ── CASE STUDY ── -->
+<div class="page-wrapper">
+  <div class="case-study-section">
+
+    <div class="cs-meta-row">
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Role</div>
+        <div class="cs-meta-val">Designer, Developer</div>
+      </div>
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Stack</div>
+        <div class="cs-meta-val">JS, Node.js, Firebase</div>
+      </div>
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Type</div>
+        <div class="cs-meta-val">Personal Project</div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">Crossword League is a real-time multiplayer crossword platform built from scratch using <strong>vanilla JavaScript, Node.js/Express, and Firebase Realtime Database</strong>. It supports up to a dozen concurrent players across five distinct game modes, with a fully featured lobby system, player progression, accessibility tooling, and an in-game moderation layer - no frameworks, no shortcuts.</p>
+        <div class="cs-img-pair">
+          <img src="../screenshots/01-home-dark.png" alt="Home page, dark mode">
+          <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Problem</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">Existing crossword games are almost entirely single-player. The challenge was to take a fundamentally single-player format and design it for real-time competition between multiple people - while keeping the core experience of actually solving a crossword intact. That meant solving hard synchronization problems (who owns which cell? what happens when two players guess the same word simultaneously?) without sacrificing feel.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Game Modes</div></div>
+      <div class="cs-col-content">
+        <img src="../screenshots/07-create-lobby.png" alt="Create Lobby / game mode selection" class="cs-img">
+        <div class="cs-subitem" style="margin-top:1rem;">
+          <div class="cs-subitem-title">Play Together</div>
+          <p class="cs-text">Collaborative solving; all players share a live grid.</p>
+          <img src="../screenshots/19-multiplayer-cursors.png" alt="Multiple players' colored fills" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Versus</div>
+          <p class="cs-text">1v1 competitive scoring weighted by speed and accuracy.</p>
+          <img src="../screenshots/21-game-over-results.png" alt="End-of-game results/score screen" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Ranked Elimination</div>
+          <p class="cs-text">Players must solve a minimum number of clues each round or get eliminated. Survivors advance; the last player standing wins. A "carry-over" mechanic punishes consistent underperformance across rounds.</p>
+          <img src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Battle Royale</div>
+          <p class="cs-text">Solving words charges an attack meter. Attacks corrupt opponents' grids (cracking or shattering cells). Players manage a corruption meter and survive through a grace period mechanic. Supports team variants (Red vs. Blue).</p>
+          <img src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Race the Clock</div>
+          <p class="cs-text">Time-limited solo solve tracked against other players.</p>
+          <img src="../screenshots/18-game-grid-mid-solve.png" alt="Active crossword grid mid-solve" class="cs-img">
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Architecture</div></div>
+      <div class="cs-col-content">
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Frontend</div>
+          <p class="cs-text">Plain HTML, CSS (custom properties for theming), and ES6 modules - no build step, no bundler, no framework.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Backend</div>
+          <p class="cs-text">Node.js + Express serving both the API and static assets. Firebase credentials stay server-side and are fetched by clients at runtime via /api/config, so nothing sensitive ships in client JavaScript.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Real-time layer</div>
+          <p class="cs-text">Firebase Realtime Database. All live game state - grid cells, player cursors, scores, chat messages, elimination state, battle attacks - is synced through Firebase listeners. No polling, no hand-rolled WebSocket server.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Auth</div>
+          <p class="cs-text">Firebase Authentication with full guest-mode support. Server-side ID token verification via Firebase Admin SDK for protected routes.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Client pattern</div>
+          <p class="cs-text">Loose MVC: HTML files are pure views with no logic; controller files handle all event wiring; state.js holds shared application state; api.service.js centralizes Firebase and REST calls.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Engineering</div></div>
+      <div class="cs-col-content">
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Real-time grid sync</div>
+          <p class="cs-text">Each cell write carries the player ID and color of whoever filled it. Remote writes apply immediately to all connected clients through Firebase listeners. Ranked and battle modes layer additional state (corruption levels, elimination flags) on top of the base grid sync - all without any coordination server beyond Firebase.</p>
+          <img src="../screenshots/19-multiplayer-cursors.png" alt="Grid with multiple players' colored fills" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Ranked elimination logic</div>
+          <p class="cs-text">The host client drives elimination rounds on a configurable timer. Each player tracks _rankedCycleWordsCorrect locally; the host compares against the threshold and writes the elimination list to Firebase, which all clients react to simultaneously. An "all-safe" overlay blocks the elimination countdown when every remaining player has already met the threshold - a small detail that prevents eliminations from feeling arbitrary.</p>
+          <img src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer" class="cs-img-md">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Battle corruption system</div>
+          <p class="cs-text">A 500ms tick increments a corruption meter while a player has unsolved words. Incoming attacks crack or shatter specific cells. Reaching 100% corruption triggers a grace period (temporary invulnerability) rather than instant elimination. Attack targeting supports three modes: Random, Target (click to select), and Payback (auto-targets whoever last attacked you).</p>
+          <img src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Moderation</div>
+          <p class="cs-text">Bans can be applied at three levels: Firebase UID, device token, or IP address. Optional expiry timestamps support temporary bans. Guest IP join rate limiting (10 joins per IP per 10 minutes) prevents abuse without requiring accounts. A full appeal workflow lets banned players submit appeals stored in Firebase for admin review.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Session integrity</div>
+          <p class="cs-text">Each device registers an active session at join. Opening the same game in a second tab evicts the first session, preventing the same player from appearing twice in a lobby. Firebase onDisconnect() cleans up presence data automatically on tab close.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Accessibility</div>
+          <p class="cs-text">Six modes implemented via data attributes on body: light mode, high contrast, colorblind mode, screen reader mode, font size scaling, and dyslexia font selection (OpenDyslexic and Lexend). Because OpenDyslexic renders ~15% taller than Inter at the same pixel size, targeted CSS compensation rules reduce font sizes on compact UI elements to prevent layout overflow - handled entirely in CSS without JavaScript.</p>
+          <div class="cs-img-triple">
+            <img src="../screenshots/04-accessibility-settings.png" alt="Accessibility settings panel">
+            <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
+            <img src="../screenshots/03-home-dyslexic-font.png" alt="Home page with OpenDyslexic font active">
+          </div>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Custom keybinds</div>
+          <p class="cs-text">All game keys (arrow navigation, chat send, hint cycling) are user-configurable and stored as JSON in localStorage. The keybind map is read at runtime wherever a key comparison is made, so remapped keys take effect immediately without a page reload.</p>
+          <img src="../screenshots/25-ingame-keybinds.png" alt="In-game keybinds/settings panel" class="cs-img-sm">
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Engagement</div></div>
+      <div class="cs-col-content">
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">XP and leveling</div>
+          <p class="cs-text">Earned through puzzle completions, wins, and chat activity.</p>
+          <div class="cs-img-pair">
+            <img src="../screenshots/11-profile.png" alt="Player profile overlay">
+            <img src="../screenshots/10-leaderboard.png" alt="Leaderboard overlay">
+          </div>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Achievements</div>
+          <p class="cs-text">13+ unlock conditions (win streaks, chat volume, Z-word guesses, ranked survival, etc.) with animated unlock popups.</p>
+          <img src="../screenshots/12-achievements-stats.png" alt="Achievements and Stats view" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Weekly Challenges</div>
+          <p class="cs-text">Three rotating challenges selected per calendar week via a deterministic seed, tracked against a baseline snapshot taken at week start.</p>
+          <img src="../screenshots/09-weekly-challenges.png" alt="Weekly Challenges overlay" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Friend system</div>
+          <p class="cs-text">Friend requests, a friends list, and in-game direct messaging, all backed by Firebase.</p>
+          <img src="../screenshots/13-friends.png" alt="Friends and Chat overlay" class="cs-img">
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Pixel-art avatar creator</div>
+          <p class="cs-text">A client-side canvas drawing tool for personalizing player icons.</p>
+          <img src="../screenshots/14-avatar-editor.png" alt="Pixel-art avatar editor" class="cs-img">
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Tech Choices</div></div>
+      <div class="cs-col-content">
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">No framework, no bundler</div>
+          <p class="cs-text">The entire frontend ships as raw ES6 modules. This was a deliberate choice to keep the architecture transparent and the page load lean - no hydration cost, no tree-shaking complexity, no dependency surface to maintain.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Firebase as the multiplayer substrate</div>
+          <p class="cs-text">Rather than building a custom WebSocket server, Firebase Realtime Database handles all pub/sub needs. This trades some fine-grained control for massive reliability and latency wins, and eliminates an entire category of infrastructure maintenance.</p>
+        </div>
+        <div class="cs-subitem">
+          <div class="cs-subitem-title">Procedural audio</div>
+          <p class="cs-text">Sound effects are generated at runtime using the Web Audio API (sine and sawtooth oscillators with amplitude envelopes) rather than loading audio files. File-based sounds are used only where procedural generation isn't expressive enough, with OGG/MP3 detected per browser.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Outcome</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">A full-featured, deployable multiplayer game platform with real competitive depth - five distinct modes, a progression system, accessibility support across six dimensions, moderation tooling, and a social layer - built entirely without a frontend framework, a component library, or a managed backend service beyond Firebase.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── ARTWORK GRID ── -->
+<div class="page-wrapper">
+  <div class="artworks-section">
+    <div class="artworks-grid" id="artwork-grid">
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../crossword_index.gif" alt="CrosswordLeague gameplay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div style="border-top: 1px solid rgba(255,255,255,0.1);"></div>
+  <div class="footer-bottom">
+    <div class="footer-reached">You've reached the bottom</div>
+    <div class="footer-links">
+      <span>© 2026 Lex Rubin</span>
+      <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn</a>
+      <a href="/index.html">Home Page</a>
+      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
+    </div>
+    <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
+  </div>
+</footer>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox">
+  <div id="lightbox-img-wrap"></div>
+</div>
+
+<script>
+  const cur  = document.getElementById('cur');
+  const ring = document.getElementById('ring0');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  function setCursor(dotW, dotH, dotRadius, ringW, ringH, ringRadius, ringBorder) {
+    cur.style.width = dotW; cur.style.height = dotH; cur.style.borderRadius = dotRadius;
+    cur.style.background = '#fff';
+    ring.style.width = ringW; ring.style.height = ringH; ring.style.borderRadius = ringRadius;
+    ring.style.borderWidth = ringBorder || '1.5px'; ring.style.opacity = '0.8';
+  }
+  function resetCursor() { setCursor('10px','10px','50%','36px','36px','50%','1.5px'); }
+
+  document.querySelectorAll('nav a').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','52px','52px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+  document.querySelectorAll('.artwork-card').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+  document.querySelectorAll('footer a').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+  document.addEventListener('mousedown', () => cur.classList.add('clicking'));
+  document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
+
+  const logoLink    = document.getElementById('logo-link');
+  const logoDefault = document.getElementById('logo-default');
+  const logoHover   = document.getElementById('logo-hover');
+  logoLink.addEventListener('mouseenter', () => { logoDefault.style.opacity = '0'; logoHover.style.opacity = '1'; });
+  logoLink.addEventListener('mouseleave', () => { logoDefault.style.opacity = '1'; logoHover.style.opacity = '0'; });
+
+  const lightbox = document.getElementById('lightbox');
+  const wrap = document.getElementById('lightbox-img-wrap');
+
+  function openLightbox(src, alt) {
+    wrap.innerHTML = '<img class="lightbox-img" src="' + src + '" alt="' + alt + '">';
+    lightbox.classList.add('open');
+  }
+
+  document.querySelectorAll('.artwork-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const img = card.querySelector('.artwork-card-img');
+      if (img) openLightbox(img.src, 'CrosswordLeague');
+    });
+  });
+
+  document.querySelectorAll('.case-study-section img').forEach(img => {
+    img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    img.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
+    img.addEventListener('mouseleave', resetCursor);
+  });
+
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+
+    // ── HAMBURGER ──
+    (function() {
+      var hb = document.getElementById('hamburger');
+      var nl = document.getElementById('nav-links');
+      if (!hb || !nl) return;
+      hb.addEventListener('click', function() {
+        hb.classList.toggle('open');
+        nl.classList.toggle('open');
+      });
+      nl.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          hb.classList.remove('open');
+          nl.classList.remove('open');
+        });
+      });
+    })();  </script>
+</body>
+</html>

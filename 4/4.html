@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -608,7 +608,68 @@
 
     .artwork-card[data-hidden="true"] { display: none; }
 
-    body, * { cursor: none !important; }
+    /* ── CASE STUDY ── */
+    .case-study-section {
+      max-width: 700px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.28s forwards;
+    }
+    .cs-meta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-meta-cell {
+      padding: 1.6rem 1.5rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-meta-cell:last-child { border-right: none; }
+    .cs-meta-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+    }
+    .cs-meta-val {
+      font-size: 0.85rem;
+      color: #888;
+      font-weight: 400;
+    }
+    .cs-body {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-body:last-child { border-bottom: none; }
+    .cs-col-label {
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+    }
+    .cs-section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 600;
+    }
+    .cs-col-content { padding: 2rem; }
+    .cs-text {
+      font-size: 0.875rem;
+      line-height: 1.9;
+      color: #666;
+      font-weight: 400;
+    }
+    .cs-text strong { color: #999; font-weight: 500; }
+
+    @media (pointer: fine) { body, * { cursor: none !important; } }
+    @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
     a, button { pointer-events: auto; }
 
     .cursor {
@@ -641,6 +702,52 @@
                   border-radius 0.4s, opacity 0.2s, border-width 0.2s;
     }
     .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+    /* ── NAV HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 200;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: #666;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #aaa; }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #aaa; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
+      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      .logo { width: 70px !important; height: 70px !important; }
+      .logo svg { width: 70px !important; height: 70px !important; }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 150;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a::after { display: none; }
+      .nav-hamburger { display: flex; }
+      .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
+      .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+    }
 
 
     .lightbox {
@@ -834,11 +941,12 @@
   <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
 </svg>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="nav-links">
             <a href="#" class="active">Portfolio</a>
       <a href="/about/about.html">About</a>
       <a href="/contact/contact.html">Contact</a>
       <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
@@ -859,6 +967,49 @@
   <div class="arrow-cell">∨</div>
   <div class="arrow-cell">∨</div>
 </div>
+</div>
+
+<!-- ── CASE STUDY ── -->
+<div class="page-wrapper">
+  <div class="case-study-section">
+
+    <div class="cs-meta-row">
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Role</div>
+        <div class="cs-meta-val">Designer, Illustrator</div>
+      </div>
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Tools</div>
+        <div class="cs-meta-val">Illustrator, InDesign</div>
+      </div>
+      <div class="cs-meta-cell">
+        <div class="cs-meta-label">Type</div>
+        <div class="cs-meta-val">PhD Research</div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">Graphics and data visualizations for <strong>PhD research on dam safety</strong> at UC Berkeley, produced for academic publication and presentation.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Challenge</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">The audience included both engineers and non-specialists. The visuals had to hold up under technical scrutiny while staying readable to a broader audience.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Approach</div></div>
+      <div class="cs-col-content">
+        <p class="cs-text">Worked closely with the research team to figure out what each figure needed to say. <strong>Chose clear illustration over decoration</strong> and built a consistent diagram system across all outputs.</p>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ── ARTWORK GRID ── -->
@@ -1113,7 +1264,7 @@
     });
   });
 
-  // Slideshow card click — open lightbox at current slide
+  // Slideshow card click - open lightbox at current slide
   const slideshowCard = document.querySelector('.slideshow-card');
   if (slideshowCard) {
     slideshowCard.addEventListener('click', (e) => {
@@ -1172,6 +1323,22 @@
     autoplayTimer = setInterval(() => showSlide(slideIndex + 1), 3000);
   }
 
-</script>
+
+    // ── HAMBURGER ──
+    (function() {
+      var hb = document.getElementById('hamburger');
+      var nl = document.getElementById('nav-links');
+      if (!hb || !nl) return;
+      hb.addEventListener('click', function() {
+        hb.classList.toggle('open');
+        nl.classList.toggle('open');
+      });
+      nl.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          hb.classList.remove('open');
+          nl.classList.remove('open');
+        });
+      });
+    })();  </script>
 </body>
 </html>

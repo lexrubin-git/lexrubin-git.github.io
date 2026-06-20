@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -262,7 +262,8 @@
     .footer-scroll-btn { display: none; }
 
     /* ── CUSTOM CURSOR ── */
-    body, * { cursor: none !important; }
+    @media (pointer: fine) { body, * { cursor: none !important; } }
+    @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
 
     .cursor {
       position: fixed;
@@ -294,6 +295,57 @@
                   border-radius 0.4s, opacity 0.2s, border-width 0.2s;
     }
     .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
+    /* ── NAV HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 200;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: #666;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #aaa; }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #aaa; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
+      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      .logo { width: 70px !important; height: 70px !important; }
+      .logo svg { width: 70px !important; height: 70px !important; }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 70px; left: 0; right: 0;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 150;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a::after { display: none; }
+      .nav-hamburger { display: flex; }
+      .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
+      .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+
+      /* contact page layout */
+      .page-wrapper { padding: 0 0.75rem; }
+      .content-col { padding: 3rem 1.5rem 8rem; }
+      .contact-heading { font-size: 2rem; }
+    }
   </style>
 </head>
 <body>
@@ -322,11 +374,12 @@
   <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
 </svg>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="nav-links">
     <a href="/index.html">Portfolio</a>
     <a href="/about/about.html">About</a>
     <a href="/contact/contact.html" class="active">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
@@ -526,6 +579,22 @@
     logoDefault.style.opacity = '1';
     logoHover.style.opacity = '0';
   });
-</script>
+
+    // ── HAMBURGER ──
+    (function() {
+      var hb = document.getElementById('hamburger');
+      var nl = document.getElementById('nav-links');
+      if (!hb || !nl) return;
+      hb.addEventListener('click', function() {
+        hb.classList.toggle('open');
+        nl.classList.toggle('open');
+      });
+      nl.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          hb.classList.remove('open');
+          nl.classList.remove('open');
+        });
+      });
+    })();  </script>
 </body>
 </html>
