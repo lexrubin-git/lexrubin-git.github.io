@@ -44,7 +44,7 @@
 
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     .logo { position: relative; display: flex; }
@@ -617,7 +617,8 @@
     /* ── HIDDEN FILTER STATE ── */
     .artwork-card[data-hidden="true"] { display: none; }
 
-    body, * { cursor: none !important; }
+    @media (pointer: fine) { body, * { cursor: none !important; } }
+    @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
 
     .cursor {
       position: fixed;
@@ -650,6 +651,74 @@
     }
     .cursor.clicking { transform: translate(-50%, -50%) scale(0.6); }
 
+    /* ── NAV HAMBURGER ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 200;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: #666;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #aaa; }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #aaa; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; height: 70px; }
+      #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
+      .logo { width: 70px !important; height: 70px !important; }
+      .logo svg { width: 70px !important; height: 70px !important; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%; left: -1.25rem; right: -1.25rem;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+        border-top: 2px solid rgba(255,255,255,0.2);
+        flex-direction: column;
+        gap: 0;
+        z-index: 150;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 1.1rem 1.5rem 1.1rem 2.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a::after { display: none; }
+      .nav-hamburger { display: flex; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); }
+      .footer-links { gap: 1.5rem; justify-content: center; font-size: 0.78rem; }
+      .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+
+      /* page layout */
+      .page-wrapper { padding: 0 0.75rem; }
+      .artwork-hero, .artworks-section { max-width: 100%; }
+      .section-arrows { max-width: 100%; width: calc(100% - 1.5rem); }
+
+      /* hero title row — override inline display:flex styles */
+      .artwork-title-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+        padding: 1.5rem 1.25rem 2rem;
+      }
+      .artwork-main-title { font-size: 2rem; }
+
+      /* artwork grid */
+      .artworks-grid { grid-template-columns: 1fr; }
+      .artwork-card { border-right: none; }
+
+      /* footer */
+      .footer-bottom { padding: 2rem 1rem 2.5rem; }
+    }
 
     .lightbox {
       position: fixed;
@@ -716,12 +785,13 @@
   <line class="lh-cls-3" x1="294.81" y1="415.36" x2="356.43" y2="415.36"/>
 </svg>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="nav-links">
     <a href="/index.html">Work</a>
     <a href="/artwork/artwork.html" class="active">Artworks</a>
     <a href="/about/about.html">About</a>
     <a href="/cdn-cgi/l/email-protection#fc9499909093bc9099848e899e9592d29f9391">Contact</a>
   </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ── HERO ── -->
@@ -833,7 +903,28 @@
     logoDefault.style.opacity = '1';
     logoHover.style.opacity   = '0';
   });
+  logoLink.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    logoDefault.style.opacity = '0';
+    logoHover.style.opacity   = '1';
+    setTimeout(() => { window.location.href = logoLink.href; }, 350);
+  }, { passive: false });
 
+  // ── HAMBURGER ──
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+  }
 
   // ── CUSTOM CURSOR ──
   const cur  = document.getElementById('cur');
