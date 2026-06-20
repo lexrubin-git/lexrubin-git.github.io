@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -44,7 +44,7 @@
 
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     .logo { position: relative; display: flex; }
@@ -79,7 +79,7 @@
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     /* ── HERO ── */
@@ -443,26 +443,62 @@
 
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
-      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
-      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      nav { padding: 0 1.25rem; height: 70px; }
+      #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
       .logo { width: 70px !important; height: 70px !important; }
       .logo svg { width: 70px !important; height: 70px !important; }
       .nav-links {
         display: none;
-        position: fixed;
-        top: 70px; left: 0; right: 0;
+        position: absolute;
+        top: 100%; left: -1.25rem; right: -1.25rem;
         background: #000;
         border-bottom: 1px solid var(--border);
+        border-top: 2px solid rgba(255,255,255,0.2);
         flex-direction: column;
         gap: 0;
         z-index: 150;
       }
       .nav-links.open { display: flex; }
-      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a { padding: 1.1rem 1.5rem 1.1rem 2.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
       .nav-links a::after { display: none; }
-      .nav-hamburger { display: flex; }
+      .nav-hamburger { display: flex; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); }
       .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
       .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
+
+      /* page layout */
+      .page-wrapper { padding: 0 0.75rem; }
+      .artwork-hero, .section-arrows, .case-study-section, .artworks-section {
+        max-width: 100%;
+      }
+
+      /* hero */
+      .artwork-title-row { padding: 2rem 1.5rem 1.5rem; }
+      .artwork-main-title { font-size: 2rem; }
+
+      /* metadata row — stack to 1 col on very narrow screens */
+      .cs-meta-row { grid-template-columns: 1fr 1fr; }
+      .cs-meta-cell:nth-child(2n) { border-right: none; }
+      .cs-meta-cell:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .cs-meta-cell { padding: 1.1rem 1rem; }
+
+      /* case study body — stack label above content */
+      .cs-body { grid-template-columns: 1fr; }
+      .cs-col-label {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding: 1rem 1.25rem 0.5rem;
+      }
+      .cs-col-content { padding: 1rem 1.25rem 1.5rem; }
+
+      /* images — expand percentage-based sizes to full width */
+      .cs-img-md, .cs-img-sm { width: 100%; }
+
+      /* image grids — single column on mobile */
+      .cs-img-pair { grid-template-columns: 1fr; }
+      .cs-img-triple { grid-template-columns: 1fr 1fr; }
+
+      /* footer padding */
+      .footer-bottom { padding: 2rem 1rem 2.5rem; }
     }
 
     /* ── LIGHTBOX ── */
@@ -518,8 +554,8 @@
     <a href="/about/about.html">About</a>
     <a href="/contact/contact.html">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ── HERO ── -->
@@ -816,6 +852,14 @@
   const logoHover   = document.getElementById('logo-hover');
   logoLink.addEventListener('mouseenter', () => { logoDefault.style.opacity = '0'; logoHover.style.opacity = '1'; });
   logoLink.addEventListener('mouseleave', () => { logoDefault.style.opacity = '1'; logoHover.style.opacity = '0'; });
+  logoLink.addEventListener('click', function(e) {
+    if (window.matchMedia('(pointer: coarse)').matches && logoHover.style.opacity !== '1') {
+      e.preventDefault();
+      logoDefault.style.opacity = '0';
+      logoHover.style.opacity   = '1';
+      setTimeout(() => { window.location.href = logoLink.href; }, 350);
+    }
+  });
 
   const lightbox = document.getElementById('lightbox');
   const wrap = document.getElementById('lightbox-img-wrap');

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -44,7 +44,7 @@
 
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     .logo { position: relative; display: flex; }
@@ -732,14 +732,14 @@
 
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
-      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
-      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      nav { padding: 0 1.25rem; height: 70px; }
+      #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
       .logo { width: 70px !important; height: 70px !important; }
       .logo svg { width: 70px !important; height: 70px !important; }
       .nav-links {
         display: none;
-        position: fixed;
-        top: 70px; left: 0; right: 0;
+        position: absolute;
+        top: 100%; left: -1.25rem; right: -1.25rem;
         background: #000;
         border-bottom: 1px solid var(--border);
         flex-direction: column;
@@ -747,35 +747,55 @@
         z-index: 150;
       }
       .nav-links.open { display: flex; }
-      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a { padding: 1.1rem 1.5rem 1.1rem 2.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
       .nav-links a::after { display: none; }
-      .nav-hamburger { display: flex; }
+      .nav-hamburger { display: flex; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); }
       .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
       .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
 
-      /* about page layout */
+      /* about hero */
       .page-wrapper { padding: 0 0.75rem; }
       .content-col { max-width: 100%; }
       .about-hero { grid-template-columns: 1fr; }
-      .about-label { grid-column: 1; }
-      .about-photo-col { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem; }
-      .about-photo-link { max-width: 180px; }
+      .about-label { grid-column: 1; padding: 1.2rem 1.5rem; }
+      .about-photo-col { border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
+      .about-photo-link { max-width: 160px; }
       .about-text-col { padding: 1.5rem; }
-      .about-hi { font-size: 1.8rem; }
+      .about-hi { font-size: 1.8rem; margin-bottom: 1rem; }
+      .about-bio { font-size: 0.85rem; }
 
-      /* skills */
+      /* below-fold sections */
       .section-arrows { width: calc(100% - 1.5rem); }
-      .skills-section, .skill-tickers, .gallery-section, .testimonials-section { max-width: calc(100% - 1.5rem); }
+      .skills-section, .skill-tickers, .gallery-section, .testimonials-section {
+        max-width: calc(100% - 1.5rem);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .skill-tickers { margin-bottom: 2rem; }
+
+      /* skills grid */
       .skills-grid { grid-template-columns: 1fr; }
       .skill-col { border-right: none; border-bottom: 1px solid var(--border); }
       .skill-col:last-child { border-bottom: none; }
+      .skill-col-header { padding: 1rem 1.5rem; }
+      .skill-col-body { padding: 1.2rem 1.5rem; }
+
+      /* ticker */
+      .ticker-label { width: 110px; padding: 0 0.75rem; font-size: 0.62rem; letter-spacing: 0.18em; }
 
       /* gallery */
-      .gallery-strip { height: 160px; }
+      .gallery-strip { height: 150px; }
+      .gallery-category { width: 32px; }
+      .gallery-category-label { font-size: 0.6rem; letter-spacing: 0.2em; }
 
       /* testimonials */
-      .testimonial-slider { padding: 1.5rem; }
-      .testimonial-nav { padding: 1rem 1.5rem; }
+      .testimonials-header { font-size: 1.1rem; padding: 1.5rem 0; }
+      .testimonial-slider { padding: 1.5rem; min-height: auto; }
+      .testimonial-nav { padding: 0.8rem 1.5rem; }
+      .testimonial-quote { font-size: 0.83rem; }
+
+      /* footer */
+      .footer-bottom { padding: 2rem 1rem 2.5rem; }
     }
   </style>
 </head>
@@ -810,8 +830,8 @@
     <a href="/about/about.html" class="active">About</a>
     <a href="/contact/contact.html">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -1280,6 +1300,14 @@
   logoLink.addEventListener('mouseleave', () => {
     logoDefault.style.opacity = '1';
     logoHover.style.opacity = '0';
+  });
+  logoLink.addEventListener('click', function(e) {
+    if (window.matchMedia('(pointer: coarse)').matches && logoHover.style.opacity !== '1') {
+      e.preventDefault();
+      logoDefault.style.opacity = '0';
+      logoHover.style.opacity   = '1';
+      setTimeout(() => { window.location.href = logoLink.href; }, 350);
+    }
   });
 
   document.querySelectorAll('.gallery-img-slot').forEach(el => {

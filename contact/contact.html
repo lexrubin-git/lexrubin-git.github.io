@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -46,7 +46,7 @@
 
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     .logo { position: relative; display: flex; }
@@ -100,7 +100,7 @@
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; }
     }
 
     .contact-container {
@@ -320,14 +320,14 @@
 
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
-      nav { padding: 0 1.25rem; height: 70px; overflow: hidden; }
-      #logo-link { width: 70px !important; height: 70px !important; overflow: hidden; }
+      nav { padding: 0 1.25rem; height: 70px; }
+      #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
       .logo { width: 70px !important; height: 70px !important; }
       .logo svg { width: 70px !important; height: 70px !important; }
       .nav-links {
         display: none;
-        position: fixed;
-        top: 70px; left: 0; right: 0;
+        position: absolute;
+        top: 100%; left: -1.25rem; right: -1.25rem;
         background: #000;
         border-bottom: 1px solid var(--border);
         flex-direction: column;
@@ -335,9 +335,9 @@
         z-index: 150;
       }
       .nav-links.open { display: flex; }
-      .nav-links a { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+      .nav-links a { padding: 1.1rem 1.5rem 1.1rem 2.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
       .nav-links a::after { display: none; }
-      .nav-hamburger { display: flex; }
+      .nav-hamburger { display: flex; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); }
       .footer-links { flex-direction: column; gap: 0.8rem; align-items: center; }
       .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
 
@@ -379,8 +379,8 @@
     <a href="/about/about.html">About</a>
     <a href="/contact/contact.html" class="active">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- MAIN -->
@@ -578,6 +578,14 @@
   logoLink.addEventListener('mouseleave', () => {
     logoDefault.style.opacity = '1';
     logoHover.style.opacity = '0';
+  });
+  logoLink.addEventListener('click', function(e) {
+    if (window.matchMedia('(pointer: coarse)').matches && logoHover.style.opacity !== '1') {
+      e.preventDefault();
+      logoDefault.style.opacity = '0';
+      logoHover.style.opacity   = '1';
+      setTimeout(() => { window.location.href = logoLink.href; }, 350);
+    }
   });
 
     // ── HAMBURGER ──
