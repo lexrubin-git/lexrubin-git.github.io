@@ -197,10 +197,18 @@
       filter: brightness(1) blur(0px);
       transform: scale(1.03);
     }
-    .img-pyxd    { background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 60%, #3d3d3d 100%); }
-    .img-arctic  { background: linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #555 100%); }
-    .img-watch   { background: linear-gradient(135deg, #111 0%, #222 60%, #333 100%); }
-    .img-dam     { background: linear-gradient(135deg, #383838 0%, #4f4f4f 50%, #666 100%); }
+    .img-pyxd       { background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 60%, #3d3d3d 100%); }
+    .img-arctic     { background: linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #555 100%); }
+    .img-watch      { background: linear-gradient(135deg, #111 0%, #222 60%, #333 100%); }
+    .img-dam        { background: linear-gradient(135deg, #383838 0%, #4f4f4f 50%, #666 100%); }
+    .img-crossword  { background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 50%, #2a2a2a 100%); }
+
+    .portfolio-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .portfolio-item.full-width .item-image {
+      aspect-ratio: 8 / 3;
+    }
 
     .overlay { display: contents; }
 
@@ -346,6 +354,7 @@
     .portfolio-item:nth-child(2) { animation-delay: 0.15s; }
     .portfolio-item:nth-child(3) { animation-delay: 0.25s; }
     .portfolio-item:nth-child(4) { animation-delay: 0.35s; }
+    .portfolio-item:nth-child(5) { animation-delay: 0.45s; }
 
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -469,6 +478,22 @@
   <!-- GRID -->
   <div class="grid-wrapper">
   <main class="portfolio-grid">
+
+    <!-- CrosswordLeague -->
+    <div class="portfolio-item full-width" onclick="window.location='#'">
+      <canvas class="halftone-canvas"></canvas>
+      <div class="item-header">
+        <div class="item-title">CrosswordLeague.com</div>
+        <div class="item-tags">Web App, Game Design, UI/UX</div>
+      </div>
+      <div class="item-image">
+        <img src="crossword_index.gif" alt="CrosswordLeague.com" />
+        <div class="brightness-overlay"></div>
+        <div class="overlay">
+          <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
 
     <!-- Pyxd -->
     <div class="portfolio-item" onclick="window.location='1/1.html'">
