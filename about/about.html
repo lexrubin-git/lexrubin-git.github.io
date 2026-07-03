@@ -356,9 +356,9 @@
       will-change: transform;
     }
 
-    .ticker-row:nth-child(1) .ticker-inner { animation: tickerLeft 22s linear infinite; }
-    .ticker-row:nth-child(2) .ticker-inner { animation: tickerRight 28s linear infinite; }
-    .ticker-row:nth-child(3) .ticker-inner { animation: tickerLeft 20s linear infinite; }
+    .ticker-row:nth-child(1) .ticker-inner { animation: tickerLeft 22s ease-in-out infinite; }
+    .ticker-row:nth-child(2) .ticker-inner { animation: tickerRight 28s ease-in-out infinite; }
+    .ticker-row:nth-child(3) .ticker-inner { animation: tickerLeft 20s ease-in-out infinite; }
 
     @keyframes tickerLeft {
       0%   { transform: translateX(0); }
