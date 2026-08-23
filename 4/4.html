@@ -667,6 +667,35 @@
       font-weight: 400;
     }
     .cs-text strong { color: #999; font-weight: 500; }
+    .cs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0;
+    }
+    .cs-list li {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #666;
+    }
+    .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
+    }
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
@@ -1005,7 +1034,7 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Designer, Illustrator</div>
+        <div class="cs-meta-val">Information Designer — Data Visualization</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
@@ -1017,10 +1046,27 @@
       </div>
     </div>
 
+    <div class="cs-tags-row">
+      <span class="cs-tag">Data Visualization</span>
+      <span class="cs-tag">Information Design</span>
+      <span class="cs-tag">Visual Communication</span>
+    </div>
+
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Graphics and data visualizations for PhD research on dam data across Ecuador, produced for academic publication and presentation.</p>
+        <p class="cs-text">Data visualization and information design for PhD-level dam research across Ecuador, translating dense technical datasets into diagrams built for academic publication and presentation. Every figure was designed to hold up under expert scrutiny while staying legible to a non-specialist audience encountering the material for the first time.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-content">
+        <ul class="cs-list">
+          <li><strong>One visual system, many figures:</strong> Designed a consistent diagram and figure system so complex, multi-source dam data reads as one coherent visual language across the full research output, not a set of disconnected charts.</li>
+          <li><strong>Dual-audience clarity:</strong> Translated dense technical datasets into visual hierarchies a non-specialist could grasp at a glance, while preserving the precision engineers needed to trust the data.</li>
+          <li><strong>Content before decoration:</strong> Partnered directly with the research team to define what each figure needed to communicate before designing it, prioritizing clarity of information over decorative illustration.</li>
+        </ul>
       </div>
     </div>
 

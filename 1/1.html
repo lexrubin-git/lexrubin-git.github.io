@@ -678,6 +678,35 @@
       font-weight: 400;
     }
     .cs-text strong { color: #999; font-weight: 500; }
+    .cs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0;
+    }
+    .cs-list li {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #666;
+    }
+    .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
+    }
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
@@ -888,7 +917,7 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Designer</div>
+        <div class="cs-meta-val">UI/UX Designer — Design Systems &amp; Brand Identity</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
@@ -900,10 +929,27 @@
       </div>
     </div>
 
+    <div class="cs-tags-row">
+      <span class="cs-tag">UI/UX Design</span>
+      <span class="cs-tag">Design Systems</span>
+      <span class="cs-tag">Brand Identity</span>
+    </div>
+
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Brand, web, and apparel work for <strong>Pyxd</strong>, a phone AI furniture photography company. The scope covered a lot of ground for a small team.</p>
+        <p class="cs-text">End-to-end design system and brand identity work for <strong>Pyxd</strong>, a phone-based AI furniture photography product, spanning icons, marketing pages, and physical apparel. The goal was a cohesive visual language flexible enough to hold up across a wide range of digital and physical touchpoints for a small, fast-moving team.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-content">
+        <ul class="cs-list">
+          <li><strong>Scalable component system:</strong> Built a UI component and iconography system from a shared type and color foundation, so new screens and marketing assets could ship quickly without drifting from the brand.</li>
+          <li><strong>Custom iconography:</strong> Designed interface icons and visual elements tailored to the product's photography workflow, keeping the UI legible and on-brand across app, web, and print.</li>
+          <li><strong>Cross-touchpoint alignment:</strong> Unified the brand across web, product UI, and apparel, so the product felt consistent whether a customer encountered it on-screen or in hand.</li>
+        </ul>
       </div>
     </div>
 

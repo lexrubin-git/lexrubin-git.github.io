@@ -676,6 +676,35 @@
       font-weight: 400;
     }
     .cs-text strong { color: #999; font-weight: 500; }
+    .cs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0;
+    }
+    .cs-list li {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #666;
+    }
+    .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
+    }
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
@@ -944,7 +973,7 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Designer</div>
+        <div class="cs-meta-val">UI/UX Designer — Constrained Interaction &amp; Micro-UI</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
@@ -956,10 +985,27 @@
       </div>
     </div>
 
+    <div class="cs-tags-row">
+      <span class="cs-tag">UI/UX Design</span>
+      <span class="cs-tag">Micro-Interactions</span>
+      <span class="cs-tag">Typography &amp; Hierarchy</span>
+    </div>
+
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">A personal project built around designing a watch face that prioritizes <strong>type and motion</strong> over data. No complications, just something that looks good on the wrist.</p>
+        <p class="cs-text">A wearable interface system designed under one of the tightest constraints in UI design: a screen glanced at for under a second. The project is built entirely around <strong>typographic hierarchy and micro-interactions</strong> that let critical information register instantly, with no complications competing for attention.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-content">
+        <ul class="cs-list">
+          <li><strong>Glanceable hierarchy:</strong> Designed a strict typographic hierarchy so the most important information reads first, solving for glanceability rather than density — the defining constraint of wearable UI.</li>
+          <li><strong>Type at watch-face scale:</strong> Iterated through multiple type pairings to find a system that stayed legible and cohesive at a few square inches, where small shifts in weight or tracking change the whole read.</li>
+          <li><strong>Motion in service of state:</strong> Added micro-interactions only after the static hierarchy was solid, using animation specifically to soften state changes rather than to decorate the interface.</li>
+        </ul>
       </div>
     </div>
 

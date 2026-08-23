@@ -665,6 +665,35 @@
       font-weight: 400;
     }
     .cs-text strong { color: #999; font-weight: 500; }
+    .cs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0;
+    }
+    .cs-list li {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: #666;
+    }
+    .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
+    }
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
@@ -1054,7 +1083,7 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Designer</div>
+        <div class="cs-meta-val">UI/UX Designer — Information Architecture &amp; Wayfinding</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
@@ -1066,10 +1095,27 @@
       </div>
     </div>
 
+    <div class="cs-tags-row">
+      <span class="cs-tag">UI/UX Design</span>
+      <span class="cs-tag">Information Architecture</span>
+      <span class="cs-tag">Wayfinding</span>
+    </div>
+
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Full brand and web design for a fictional <strong>arctic-themed zoo and aquarium</strong>. Logo, color system, and site design all developed from scratch.</p>
+        <p class="cs-text">A full visitor-facing brand and web experience for a fictional <strong>arctic-themed zoo and aquarium</strong>, designed around how people actually navigate a zoo: on their phones, outdoors, and short on patience. The information architecture and interface prioritize fast wayfinding and high-contrast legibility over decoration.</p>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-content">
+        <ul class="cs-list">
+          <li><strong>Visitor-first information architecture:</strong> Structured navigation around what visitors actually need on-site — plan a visit, find an animal, check hours — so wayfinding takes one tap instead of a search.</li>
+          <li><strong>High-contrast, mobile-first interface:</strong> Designed for real outdoor viewing conditions, where glare and quick glances matter more than dense on-screen detail.</li>
+          <li><strong>Restrained visual system:</strong> Kept the logo and color palette simple so photography and animal content stay the focus, reducing cognitive load for visitors scanning quickly.</li>
+        </ul>
       </div>
     </div>
 

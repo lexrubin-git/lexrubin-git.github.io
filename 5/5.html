@@ -201,6 +201,22 @@
       color: #666;
     }
     .cs-list li strong { color: #999; font-weight: 500; }
+    .cs-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
+    }
     .cs-subitem {
       padding-bottom: 1rem;
       margin-bottom: 1rem;
@@ -583,10 +599,10 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Designer, Developer</div>
+        <div class="cs-meta-val">Product Designer — UI/UX, Interaction &amp; Game Design</div>
       </div>
       <div class="cs-meta-cell">
-        <div class="cs-meta-label">Stack</div>
+        <div class="cs-meta-label">Prototype Stack</div>
         <div class="cs-meta-val">JS, Node.js, Firebase</div>
       </div>
       <div class="cs-meta-cell">
@@ -595,14 +611,32 @@
       </div>
     </div>
 
+    <div class="cs-tags-row">
+      <span class="cs-tag">UI/UX Design</span>
+      <span class="cs-tag">Interaction Design</span>
+      <span class="cs-tag">Game Design</span>
+      <span class="cs-tag">Rapid Prototyping</span>
+    </div>
+
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Crossword League is a real-time multiplayer crossword platform built from scratch using <strong>vanilla JavaScript, Node.js/Express, and Firebase Realtime Database</strong>. It supports up to a dozen concurrent players across five distinct game modes, with a fully featured lobby system, player progression, accessibility tooling, and an in-game moderation layer - no frameworks, no shortcuts.</p>
+        <p class="cs-text">Crossword League reimagines a solitary format as a live, social competition, designed around real-time multiplayer flows for up to a dozen players across five distinct game modes. Every screen balances a fast-moving game board against chat, scoring, and social overlays, with interactive prototypes built to test live usability and game-state feedback under real network conditions.</p>
         <div class="cs-img-pair">
           <img src="../screenshots/01-home-dark.png" alt="Home page, dark mode">
           <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
         </div>
+      </div>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-content">
+        <ul class="cs-list">
+          <li><strong>Onboarding &amp; matchmaking:</strong> Designed the lobby and mode-selection flow to get players from landing page to first move in seconds, cutting the friction points (mode selection, lobby setup, ready-checks) that typically stall multiplayer games before they start.</li>
+          <li><strong>Screen real estate under pressure:</strong> Solved the core layout problem of live multiplayer — keeping the crossword grid legible while surfacing chat, opponent cursors, and score state without crowding the primary task.</li>
+          <li><strong>Prototyping for feasibility:</strong> Built functioning interactive prototypes, not static comps, to pressure-test usability and game-state feedback — corruption meters, elimination countdowns, live cursors — under real multiplayer conditions that static mockups can't surface.</li>
+        </ul>
       </div>
     </div>
 
