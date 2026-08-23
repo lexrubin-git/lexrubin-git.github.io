@@ -680,71 +680,33 @@
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Architecture</div></div>
+      <div class="cs-col-label"><div class="cs-section-label">Design-to-Code Feasibility</div></div>
       <div class="cs-col-content">
         <div class="cs-subitem">
-          <div class="cs-subitem-title">Frontend</div>
-          <p class="cs-text">Plain HTML, CSS (custom properties for theming), and ES6 modules - no build step, no bundler, no framework.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Backend</div>
-          <p class="cs-text">Node.js + Express serving both the API and static assets. Firebase credentials stay server-side and are fetched by clients at runtime via /api/config, so nothing sensitive ships in client JavaScript.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Real-time layer</div>
-          <p class="cs-text">Firebase Realtime Database. All live game state - grid cells, player cursors, scores, chat messages, elimination state, battle attacks - is synced through Firebase listeners. No polling, no hand-rolled WebSocket server.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Auth</div>
-          <p class="cs-text">Firebase Authentication with full guest-mode support. Server-side ID token verification via Firebase Admin SDK for protected routes.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Client pattern</div>
-          <p class="cs-text">Loose MVC: HTML files are pure views with no logic; controller files handle all event wiring; state.js holds shared application state; api.service.js centralizes Firebase and REST calls.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Engineering</div></div>
-      <div class="cs-col-content">
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Real-time grid sync</div>
-          <p class="cs-text">Each cell write carries the player ID and color of whoever filled it. Remote writes apply immediately to all connected clients through Firebase listeners. Ranked and battle modes layer additional state (corruption levels, elimination flags) on top of the base grid sync - all without any coordination server beyond Firebase.</p>
+          <div class="cs-subitem-title">Instant feedback, not staleness</div>
+          <p class="cs-text">Every player's fills, cursor, and score update on everyone else's screen the moment they happen. That immediacy was the whole design bet of this project — a shared board only feels "live" if nothing about it ever feels delayed or out of sync.</p>
           <img src="../screenshots/19-multiplayer-cursors.png" alt="Grid with multiple players' colored fills" class="cs-img">
         </div>
         <div class="cs-subitem">
-          <div class="cs-subitem-title">Ranked elimination logic</div>
-          <p class="cs-text">The host client drives elimination rounds on a configurable timer. Each player tracks _rankedCycleWordsCorrect locally; the host compares against the threshold and writes the elimination list to Firebase, which all clients react to simultaneously. An "all-safe" overlay blocks the elimination countdown when every remaining player has already met the threshold - a small detail that prevents eliminations from feeling arbitrary.</p>
+          <div class="cs-subitem-title">Designing fairness, not just logic</div>
+          <p class="cs-text">Ranked mode's elimination countdown includes an "all-safe" state that holds off the timer once every remaining player has already met the threshold — a small interaction decision that exists purely so eliminations never feel arbitrary or unfair to the player on the receiving end.</p>
           <img src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer" class="cs-img-md">
         </div>
         <div class="cs-subitem">
-          <div class="cs-subitem-title">Battle corruption system</div>
-          <p class="cs-text">A 500ms tick increments a corruption meter while a player has unsolved words. Incoming attacks crack or shatter specific cells. Reaching 100% corruption triggers a grace period (temporary invulnerability) rather than instant elimination. Attack targeting supports three modes: Random, Target (click to select), and Payback (auto-targets whoever last attacked you).</p>
+          <div class="cs-subitem-title">Making an abstract meter readable</div>
+          <p class="cs-text">Battle mode's corruption meter needed to communicate danger at a glance mid-game, so it's shown as cracking, shattering cells rather than a numeric readout — extending the same glanceable-hierarchy thinking from the UI into the gameplay itself.</p>
           <img src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells" class="cs-img">
         </div>
         <div class="cs-subitem">
-          <div class="cs-subitem-title">Moderation</div>
-          <p class="cs-text">Bans can be applied at three levels: Firebase UID, device token, or IP address. Optional expiry timestamps support temporary bans. Guest IP join rate limiting (10 joins per IP per 10 minutes) prevents abuse without requiring accounts. A full appeal workflow lets banned players submit appeals stored in Firebase for admin review.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Session integrity</div>
-          <p class="cs-text">Each device registers an active session at join. Opening the same game in a second tab evicts the first session, preventing the same player from appearing twice in a lobby. Firebase onDisconnect() cleans up presence data automatically on tab close.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Accessibility</div>
-          <p class="cs-text">Six modes implemented via data attributes on body: light mode, high contrast, colorblind mode, screen reader mode, font size scaling, and dyslexia font selection (OpenDyslexic and Lexend). Because OpenDyslexic renders ~15% taller than Inter at the same pixel size, targeted CSS compensation rules reduce font sizes on compact UI elements to prevent layout overflow - handled entirely in CSS without JavaScript.</p>
+          <div class="cs-subitem-title">Accessibility as a core mode, not an add-on</div>
+          <p class="cs-text">Six accessible modes were designed in from the start rather than retrofitted: high contrast, colorblind mode, screen reader support, adjustable font scaling, dyslexia-friendly typefaces, and fully remappable controls.</p>
           <div class="cs-img-triple">
             <img src="../screenshots/04-accessibility-settings.png" alt="Accessibility settings panel">
             <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
             <img src="../screenshots/03-home-dyslexic-font.png" alt="Home page with OpenDyslexic font active">
           </div>
         </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Custom keybinds</div>
-          <p class="cs-text">All game keys (arrow navigation, chat send, hint cycling) are user-configurable and stored as JSON in localStorage. The keybind map is read at runtime wherever a key comparison is made, so remapped keys take effect immediately without a page reload.</p>
-          <img src="../screenshots/25-ingame-keybinds.png" alt="In-game keybinds/settings panel" class="cs-img-sm">
-        </div>
+        <p class="cs-text" style="margin-top:0.5rem;">All of it was validated the same way the rest of the product was: use AI-assisted development to get a real, working version in front of real players fast, then iterate on what the interaction data and player feedback actually showed.</p>
       </div>
     </div>
 
@@ -783,27 +745,9 @@
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Tech Choices</div></div>
-      <div class="cs-col-content">
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">No framework, no bundler</div>
-          <p class="cs-text">The entire frontend ships as raw ES6 modules. This was a deliberate choice to keep the architecture transparent and the page load lean - no hydration cost, no tree-shaking complexity, no dependency surface to maintain.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Firebase as the multiplayer substrate</div>
-          <p class="cs-text">Rather than building a custom WebSocket server, Firebase Realtime Database handles all pub/sub needs. This trades some fine-grained control for massive reliability and latency wins, and eliminates an entire category of infrastructure maintenance.</p>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Procedural audio</div>
-          <p class="cs-text">Sound effects are generated at runtime using the Web Audio API (sine and sawtooth oscillators with amplitude envelopes) rather than loading audio files. File-based sounds are used only where procedural generation isn't expressive enough, with OGG/MP3 detected per browser.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Outcome</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">A full-featured, deployable multiplayer game platform with real competitive depth - five distinct modes, a progression system, accessibility support across six dimensions, moderation tooling, and a social layer - built entirely without a frontend framework, a component library, or a managed backend service beyond Firebase.</p>
+        <p class="cs-text">Designed, shipped, and launched a live multiplayer game platform that reached thousands of pageviews and converted early visitors into 20+ registered active players. The final product delivers five distinct competitive modes, a full progression and social layer, and accessibility support across six dimensions — validated with real players, not just usability tests in a vacuum.</p>
       </div>
     </div>
 
