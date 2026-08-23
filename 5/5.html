@@ -635,7 +635,7 @@
         <ul class="cs-list">
           <li><strong>Onboarding &amp; matchmaking:</strong> Designed the lobby and mode-selection flow to get players from landing page to first move in seconds, cutting the friction points (mode selection, lobby setup, ready-checks) that typically stall multiplayer games before they start.</li>
           <li><strong>Screen real estate under pressure:</strong> Solved the core layout problem of live multiplayer — keeping the crossword grid legible while surfacing chat, opponent cursors, and score state without crowding the primary task.</li>
-          <li><strong>Prototyping for feasibility:</strong> Built functioning interactive prototypes, not static comps, to pressure-test usability and game-state feedback — corruption meters, elimination countdowns, live cursors — under real multiplayer conditions that static mockups can't surface.</li>
+          <li><strong>AI-assisted rapid prototyping:</strong> Used AI-assisted development to move past static comps and ship a fully working product concept — a design validation approach that let the interaction design (corruption meters, elimination countdowns, live multiplayer cursors) get pressure-tested by real players under real conditions, not just clicked through in a prototyping tool.</li>
         </ul>
       </div>
     </div>
@@ -643,7 +643,7 @@
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Problem</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Existing crossword games are almost entirely single-player. The challenge was to take a fundamentally single-player format and design it for real-time competition between multiple people - while keeping the core experience of actually solving a crossword intact. That meant solving hard synchronization problems (who owns which cell? what happens when two players guess the same word simultaneously?) without sacrificing feel.</p>
+        <p class="cs-text">Crossword solving is built as a solitary experience, so there was no existing product pattern to design against. The core problem was translating a single-player interaction model into a shared, real-time space without breaking the feel of actually solving a puzzle — deciding whose progress counts when two players land on the same word at once, how that's shown fairly, and how the board stays readable when several people are acting on it simultaneously.</p>
       </div>
     </div>
 
