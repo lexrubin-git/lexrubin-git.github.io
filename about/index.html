@@ -208,22 +208,21 @@
       inset: 0;
       z-index: 2;
       display: grid;
-      grid-template-columns: repeat(19, 1fr);
-      grid-template-rows: repeat(25, 1fr);
-      perspective: 500px;
+      grid-template-columns: repeat(27, 1fr);
+      grid-template-rows: repeat(35, 1fr);
     }
 
     .flip-tile {
       background-repeat: no-repeat;
-      filter: blur(2.5px) brightness(0.35) saturate(0.7);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
-      backface-visibility: hidden;
-      transform: rotateX(0deg);
-      transition: transform 0.5s cubic-bezier(0.4,0.1,0.2,1);
+      background-blend-mode: color;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+      transform: scaleY(1);
+      transform-origin: top;
+      transition: transform 0.4s cubic-bezier(0.4,0.1,0.2,1);
     }
 
     .flip-tile.open {
-      transform: rotateX(-110deg);
+      transform: scaleY(0.05);
     }
 
     .about-text-col {
@@ -920,51 +919,72 @@
     const truth = document.getElementById('photo-truth');
     if (!wrap || !grid || !truth) return;
 
-    const COLS = 19, ROWS = 25;
+    const COLS = 27, ROWS = 35;
     const REVEAL_FRACTION = 0.48; // reveal radius as a fraction of the photo's smaller dimension
+    const TINT = '#1c5a63';       // duotone tint blended over each tile's photo slice
     const photoSrc = truth.getAttribute('src');
     const tiles = [];
 
+    const frag = document.createDocumentFragment();
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const tile = document.createElement('div');
         tile.className = 'flip-tile';
-        tile.style.backgroundImage = `url("${photoSrc}")`;
-        tile.style.backgroundSize = `${COLS * 100}% ${ROWS * 100}%`;
-        tile.style.backgroundPosition =
-          `${COLS > 1 ? (c / (COLS - 1)) * 100 : 0}% ${ROWS > 1 ? (r / (ROWS - 1)) * 100 : 0}%`;
-        grid.appendChild(tile);
-        tiles.push({ el: tile, r, c });
+        const xPos = COLS > 1 ? (c / (COLS - 1)) * 100 : 0;
+        const yPos = ROWS > 1 ? (r / (ROWS - 1)) * 100 : 0;
+        tile.style.backgroundImage = `linear-gradient(${TINT}, ${TINT}), url("${photoSrc}")`;
+        tile.style.backgroundSize = `100% 100%, ${COLS * 100}% ${ROWS * 100}%`;
+        tile.style.backgroundPosition = `0 0, ${xPos}% ${yPos}%`;
+        frag.appendChild(tile);
+        tiles.push({ el: tile, r, c, open: false });
       }
     }
+    grid.appendChild(frag);
 
-    function updateTiles(mx, my) {
-      const rect   = wrap.getBoundingClientRect();
-      const radius = Math.min(rect.width, rect.height) * REVEAL_FRACTION;
-      const cellW  = rect.width / COLS;
-      const cellH  = rect.height / ROWS;
+    let rect = null;
+    let pendingX = 0, pendingY = 0;
+    let rafId = null;
+
+    function computeAndApply() {
+      rafId = null;
+      if (!rect) return;
+      const radius   = Math.min(rect.width, rect.height) * REVEAL_FRACTION;
+      const radiusSq = radius * radius;
+      const cellW    = rect.width / COLS;
+      const cellH    = rect.height / ROWS;
       tiles.forEach(t => {
-        const cx   = (t.c + 0.5) * cellW;
-        const cy   = (t.r + 0.5) * cellH;
-        const dx   = mx - cx;
-        const dy   = my - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        t.el.classList.toggle('open', dist < radius);
+        const cx = (t.c + 0.5) * cellW;
+        const cy = (t.r + 0.5) * cellH;
+        const dx = pendingX - cx;
+        const dy = pendingY - cy;
+        const isOpen = (dx * dx + dy * dy) < radiusSq;
+        if (isOpen !== t.open) {
+          t.open = isOpen;
+          t.el.classList.toggle('open', isOpen);
+        }
       });
     }
 
+    function scheduleUpdate(x, y) {
+      pendingX = x;
+      pendingY = y;
+      if (rafId === null) rafId = requestAnimationFrame(computeAndApply);
+    }
+
     wrap.addEventListener('mouseenter', () => {
+      rect = wrap.getBoundingClientRect();
       cur.style.opacity  = '0';
       ring.style.opacity = '0';
     });
 
     wrap.addEventListener('mousemove', e => {
-      const rect = wrap.getBoundingClientRect();
-      updateTiles(e.clientX - rect.left, e.clientY - rect.top);
+      const r = rect || wrap.getBoundingClientRect();
+      scheduleUpdate(e.clientX - r.left, e.clientY - r.top);
     });
 
     wrap.addEventListener('mouseleave', () => {
-      tiles.forEach(t => t.el.classList.remove('open'));
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+      tiles.forEach(t => { t.open = false; t.el.classList.remove('open'); });
       cur.style.opacity  = '1';
       ring.style.opacity = '0.8';
       resetCursor();
