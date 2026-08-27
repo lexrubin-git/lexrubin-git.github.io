@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pyxd, Inc.</title>
+  <title>U.C. Berkeley Dam Research</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -86,18 +86,16 @@
     .nav-links a.active::after { width: 100%; background: #aaa; }
 
     /* ── PAGE WRAPPER ── */
-    .page-wrapper { padding: 0 4rem; }
+    .page-wrapper { padding: 0 4rem; max-width: 1350px; margin: 0 auto; }
 
     .content-col {
-      max-width: 680px;
-      margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
     }
 
     /* ── HERO HEADER ── */
     .artwork-hero {
-      max-width: 680px;
+      max-width: 700px;
       margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
@@ -156,8 +154,6 @@
 
     /* ── FILTER BAR ── */
     .filter-bar {
-      max-width: 680px;
-      margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
@@ -195,8 +191,8 @@
       border-bottom: 1px solid var(--border);
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
-      max-width: 680px;
-      width: calc(100% - 8rem);
+      max-width: 700px;
+      width: 100%;
       margin: 0 auto;
       opacity: 0;
       animation: fadeUp 0.7s ease 0.25s forwards;
@@ -210,11 +206,10 @@
 
     /* ── ARTWORK GRID ── */
     .artworks-section {
-      max-width: 680px;
+      max-width: 700px;
       margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
       opacity: 0;
       animation: fadeUp 0.7s ease 0.3s forwards;
     }
@@ -232,12 +227,14 @@
       background: #050505;
     }
     .artwork-card:nth-child(2n) { border-right: none; }
-    .artwork-card:nth-last-child(-n+2) { border-bottom: none; }
+    .artwork-card:last-child { border-bottom: none; }
     .artwork-card:last-child { border-bottom: none; }
 
     .artwork-card-img {
       width: 100%;
-      aspect-ratio: 4/4;
+      height: 400px;
+      object-fit: cover;
+      aspect-ratio: 16/7;
       object-fit: cover;
       display: block;
       filter: brightness(0.75) blur(0.5px);
@@ -246,7 +243,7 @@
 
     .artwork-card-placeholder {
       width: 100%;
-      aspect-ratio: 4/4;
+      aspect-ratio: 16/7;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -308,8 +305,6 @@
 
     /* ── FEATURED WORK ── */
     .featured-section {
-      max-width: 680px;
-      margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
@@ -423,8 +418,6 @@
 
     /* ── MEDIUM STATS ── */
     .stats-section {
-      max-width: 680px;
-      margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
@@ -458,8 +451,6 @@
 
     /* ── PROCESS TICKER ── */
     .ticker-section {
-      max-width: 680px;
-      margin: 0 auto;
       border: 1px solid var(--border);
       margin-top: 3rem;
       margin-bottom: 4rem;
@@ -552,8 +543,6 @@
       flex-direction: column;
       align-items: center;
       padding: 2.5rem 0 3.5rem;
-      max-width: 680px;
-      margin: 0 auto;
       gap: 1.4rem;
     }
 
@@ -621,7 +610,7 @@
 
     /* ── CASE STUDY ── */
     .case-study-section {
-      max-width: 680px;
+      max-width: 700px;
       margin: 0 auto;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
@@ -710,6 +699,7 @@
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
+    a, button { pointer-events: auto; }
 
     .cursor {
       position: fixed;
@@ -789,8 +779,7 @@
 
       /* page layout */
       .page-wrapper { padding: 0 0.75rem; }
-      .artwork-hero, .artworks-section, .case-study-section { max-width: 100%; }
-      .section-arrows { max-width: 100%; width: calc(100% - 1.5rem); }
+      .artwork-hero, .artworks-section, .case-study-section, .section-arrows { max-width: 100%; }
 
       /* hero title row — override inline display:flex styles */
       .artwork-title-row {
@@ -856,6 +845,132 @@
       display: contents;
     }
     .lightbox-placeholder svg { opacity: 0.2; }
+    /* ── BOTTOM NAV BAR ── */
+    .bottom-nav-wrap {
+      max-width: 1350px;
+      margin: 3rem auto 0;
+      padding: 0 4rem;
+    }
+
+    .bottom-nav {
+      display: flex;
+      border: 1px solid var(--border);
+      background: #000;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.5s forwards;
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.4rem 0.5rem;
+      text-decoration: none;
+      color: #444;
+      border-right: 1px solid var(--border);
+      transition: color 0.25s ease, background 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .bottom-nav-item:last-child { border-right: none; }
+
+    .bottom-nav-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.03);
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bottom-nav-item:hover::before { transform: translateY(0); }
+
+    .bottom-nav-item:hover { color: var(--white); }
+
+    .bottom-nav-item svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), stroke 0.25s;
+    }
+    .bottom-nav-item:hover svg { transform: translateY(-3px); }
+
+    .bottom-nav-item span {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bottom-nav-item:hover span { transform: translateY(-2px); }
+
+
+    /* ── SLIDESHOW ── */
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      font-size: 2.5rem;
+      width: 2.8rem;
+      height: 5rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .lightbox-arrow:hover { background: rgba(0,0,0,0.85); }
+    .lightbox-arrow.lightbox-prev { left: 0.5rem; }
+    .lightbox-arrow.lightbox-next { right: 0.5rem; }
+    .lightbox-arrow.visible { display: flex; }
+
+    .slideshow-card { overflow: hidden; }
+    .slideshow-wrapper { position: relative; width: 100%; }
+    .slideshow-img {
+      display: none;
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+    .slideshow-img.active { display: block; }
+    .slideshow-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: none;
+      font-size: 2rem;
+      width: 2.2rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .slideshow-btn:hover { background: rgba(0,0,0,0.85); }
+    .slideshow-btn.prev { left: 0; }
+    .slideshow-btn.next { right: 0; }
+    .slideshow-counter {
+      position: absolute;
+      bottom: 0.6rem;
+      right: 0.7rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.55);
+      background: rgba(0,0,0,0.45);
+      padding: 0.15rem 0.5rem;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -885,10 +1000,10 @@
 </svg>
   </a>
   <div class="nav-links" id="nav-links">
-         <a href="#" class="active">Portfolio</a>
-      <a href="/about/about.html">About</a>
-      <a href="/artwork/artwork.html">Artwork</a>
-      <a href="/contact/contact.html">Contact</a>
+            <a href="#" class="active">Portfolio</a>
+      <a href="/about/">About</a>
+      <a href="/artwork/">Artwork</a>
+      <a href="/contact/">Contact</a>
       <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -898,17 +1013,19 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
-      <h1 class="artwork-main-title">Pyxd, Inc.</h1>
-      <span style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:#666;">Paid Work</span>
+      <h1 class="artwork-main-title">U.C. Berkeley Dam Research</h1>
+      <span style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:#666; white-space:nowrap;">PhD Research</span>
     </div>
   </div>
 </div>
 
 <!-- ── SECTION ARROWS ── -->
+<div class="page-wrapper">
 <div class="section-arrows">
   <div class="arrow-cell">∨</div>
   <div class="arrow-cell">∨</div>
   <div class="arrow-cell">∨</div>
+</div>
 </div>
 
 <!-- ── CASE STUDY ── -->
@@ -918,28 +1035,28 @@
     <div class="cs-meta-row">
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">UI/UX Designer — Design Systems &amp; Brand Identity</div>
+        <div class="cs-meta-val">Information Designer — Data Visualization</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
-        <div class="cs-meta-val">Illustrator, Figma, Photoshop</div>
+        <div class="cs-meta-val">Illustrator, InDesign, ArcGIS, Photoshop</div>
       </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">Paid Work</div>
+        <div class="cs-meta-val">PhD Research</div>
       </div>
     </div>
 
     <div class="cs-tags-row">
-      <span class="cs-tag">UI/UX Design</span>
-      <span class="cs-tag">Design Systems</span>
-      <span class="cs-tag">Brand Identity</span>
+      <span class="cs-tag">Data Visualization</span>
+      <span class="cs-tag">Information Design</span>
+      <span class="cs-tag">Visual Communication</span>
     </div>
 
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">End-to-end design system and brand identity work for <strong>Pyxd</strong>, a phone-based AI furniture photography product, spanning icons, marketing pages, and physical apparel. The goal was a cohesive visual language flexible enough to hold up across a wide range of digital and physical touchpoints for a small, fast-moving team.</p>
+        <p class="cs-text">Data visualization and information design for PhD-level dam research across Ecuador, translating dense technical datasets into diagrams built for academic publication and presentation. Every figure was designed to hold up under expert scrutiny while staying legible to a non-specialist audience encountering the material for the first time.</p>
       </div>
     </div>
 
@@ -947,9 +1064,9 @@
       <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
       <div class="cs-col-content">
         <ul class="cs-list">
-          <li><strong>Scalable component system:</strong> Built a UI component and iconography system from a shared type and color foundation, so new screens and marketing assets could ship quickly without drifting from the brand.</li>
-          <li><strong>Custom iconography:</strong> Designed interface icons and visual elements tailored to the product's photography workflow, keeping the UI legible and on-brand across app, web, and print.</li>
-          <li><strong>Cross-touchpoint alignment:</strong> Unified the brand across web, product UI, and apparel, so the product felt consistent whether a customer encountered it on-screen or in hand.</li>
+          <li><strong>One visual system, many figures:</strong> Designed a consistent diagram and figure system so complex, multi-source dam data reads as one coherent visual language across the full research output, not a set of disconnected charts.</li>
+          <li><strong>Dual-audience clarity:</strong> Translated dense technical datasets into visual hierarchies a non-specialist could grasp at a glance, while preserving the precision engineers needed to trust the data.</li>
+          <li><strong>Content before decoration:</strong> Partnered directly with the research team to define what each figure needed to communicate before designing it, prioritizing clarity of information over decorative illustration.</li>
         </ul>
       </div>
     </div>
@@ -957,14 +1074,14 @@
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Challenge</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Icons, marketing pages, and apparel each come with their own visual conventions, and for a small, fast-moving team the risk is that every touchpoint starts to feel like a different product. The challenge was building a system rigid enough to hold the brand together across all of them without slowing the team down.</p>
+        <p class="cs-text">The research spanned dense, technical dam datasets meant for two very different audiences at once — engineers who would scrutinize every value, and non-specialist readers who needed the finding, not the dataset. The challenge was designing an information system precise enough to satisfy the first group without losing the second.</p>
       </div>
     </div>
 
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Approach</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Defined the brand at the system level first — type, color, and a shared icon language — so every new surface could be assembled from the same visual vocabulary instead of designed from scratch. <strong>Kept execution restrained</strong> across every touchpoint so the product itself, not the branding, stayed the focal point.</p>
+        <p class="cs-text">Worked directly with the research team to identify what each figure actually needed to communicate before designing it, then built a consistent diagram language — shared iconography, color logic, and layout conventions — across every output. <strong>Chose clear illustration over decoration</strong> so dense data resolved into a hierarchy a reader could parse at a glance, with technical precision preserved underneath.</p>
       </div>
     </div>
 
@@ -977,74 +1094,83 @@
     <div class="artworks-grid" id="artwork-grid">
 
       <!-- Card 1 -->
-      <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img1.png" alt="Shoot">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_1.png" alt="Image 1">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 2 -->
-      <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img2.png" alt="Create">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_2.png" alt="Image 2">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 3 -->
-      <div class="artwork-card" data-category="product">
-        <img class="artwork-card-img" src="img3.png" alt="Sell">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_3.png" alt="Image 3">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 4 -->
-      <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img4.png" alt="Unleash your iPhone">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_4.png" alt="Image 4">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 5 -->
-      <div class="artwork-card" data-category="icons">
-        <img class="artwork-card-img" src="img5.png" alt="Icons">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_5.png" alt="Image 5">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 6 -->
-      <div class="artwork-card" data-category="app">
-        <img class="artwork-card-img" src="img6.png" alt="pyxMAGIC app">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_6.png" alt="Image 6">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
       <!-- Card 7 -->
-      <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img7.png" alt="iPhone photo studio">
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="dam_7.png" alt="Image 7">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
-      <!-- Card 8 -->
-      <div class="artwork-card" data-category="promo">
-        <img class="artwork-card-img" src="img8.png" alt="T-shirt mockup">
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
-      </div>
-
-      <!-- Card 9 -->
-      <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img9.png" alt="Manufacturers">
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
-      </div>
-
-      <!-- Card 10 -->
-      <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img10.png" alt="Purpose Built">
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
-      </div>
-
-      <!-- Card 11 -->
-      <div class="artwork-card" data-category="marketing">
-        <img class="artwork-card-img" src="img11.png" alt="Retailers">
+      <!-- Card 8 - Slideshow -->
+      <div class="artwork-card slideshow-card">
+        <div class="slideshow-wrapper">
+          <img class="artwork-card-img slideshow-img active" src="dam_slideshow_1.png" alt="Slideshow 1">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_2.png" alt="Slideshow 2">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_3.png" alt="Slideshow 3">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_4.png" alt="Slideshow 4">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_5.png" alt="Slideshow 5">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_6.png" alt="Slideshow 6">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_7.png" alt="Slideshow 7">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_8.png" alt="Slideshow 8">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_9.png" alt="Slideshow 9">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_10.png" alt="Slideshow 10">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_11.png" alt="Slideshow 11">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_12.png" alt="Slideshow 12">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_13.png" alt="Slideshow 13">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_14.png" alt="Slideshow 14">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_15.png" alt="Slideshow 15">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_16.png" alt="Slideshow 16">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_17.png" alt="Slideshow 17">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_18.png" alt="Slideshow 18">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_19.png" alt="Slideshow 19">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_20.png" alt="Slideshow 20">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_21.png" alt="Slideshow 21">
+          <img class="artwork-card-img slideshow-img" src="dam_slideshow_22.png" alt="Slideshow 22">
+          <button class="slideshow-btn prev" onclick="slideshowMove(-1, event)">&#8249;</button>
+          <button class="slideshow-btn next" onclick="slideshowMove(1, event)">&#8250;</button>
+          <div class="slideshow-counter"><span id="slideshow-current">1</span> / 22</div>
+        </div>
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 
     </div>
   </div>
 </div>
+
 
 <!-- ── FOOTER ── -->
 <footer>
@@ -1065,10 +1191,12 @@
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner">
+    <button class="lightbox-arrow lightbox-prev" id="lightbox-prev">&#8249;</button>
     <div class="lightbox-placeholder" id="lightbox-img-wrap">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       Image Preview
     </div>
+    <button class="lightbox-arrow lightbox-next" id="lightbox-next">&#8250;</button>
   </div>
 </div>
 
@@ -1184,23 +1312,100 @@
   const lightbox      = document.getElementById('lightbox');
   const lightboxTitle = document.getElementById('lightbox-title');
   const lightboxMeta  = document.getElementById('lightbox-meta');
+  const lightboxPrev  = document.getElementById('lightbox-prev');
+  const lightboxNext  = document.getElementById('lightbox-next');
 
-  cards.forEach((card, index) => {
+  let lightboxIsSlideshow = false;
+
+  function openLightboxImage(src) {
+    const wrap = document.getElementById('lightbox-img-wrap');
+    wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+      + '<img class="lightbox-img" src="' + src + '" alt="Artwork" style="display:block;">'
+      + '</div>';
+    lightbox.classList.add('open');
+  }
+
+  cards.forEach((card) => {
     card.addEventListener('click', () => {
-      const imgEl = card.querySelector('.artwork-card-img');
-      const wrap  = document.getElementById('lightbox-img-wrap');
-      if (imgEl) {
-        wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
-          + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
-          + '</div>';
+      if (card.classList.contains('slideshow-card')) return; // handled separately
+      const mediaEl = card.querySelector('.artwork-card-img');
+      const wrap    = document.getElementById('lightbox-img-wrap');
+      lightboxIsSlideshow = false;
+      lightboxPrev.classList.remove('visible');
+      lightboxNext.classList.remove('visible');
+      if (mediaEl) {
+        if (mediaEl.tagName === 'VIDEO') {
+          wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+            + '<video class="lightbox-img" src="' + mediaEl.src + '" autoplay loop muted playsinline style="display:block;"></video>'
+            + '</div>';
+        } else {
+          wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+            + '<img class="lightbox-img" src="' + mediaEl.src + '" alt="Artwork" style="display:block;">'
+            + '</div>';
+        }
       }
       lightbox.classList.add('open');
     });
   });
 
+  // Slideshow card click - open lightbox at current slide
+  const slideshowCard = document.querySelector('.slideshow-card');
+  if (slideshowCard) {
+    slideshowCard.addEventListener('click', (e) => {
+      if (e.target.classList.contains('slideshow-btn')) return;
+      lightboxIsSlideshow = true;
+      lightboxPrev.classList.add('visible');
+      lightboxNext.classList.add('visible');
+      openLightboxImage(slideImgs[slideIndex].src);
+      lightbox.classList.add('open');
+    });
+  }
+
+  lightboxPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex - 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
+  });
+
+  lightboxNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIsSlideshow) {
+      showSlide(slideIndex + 1);
+      openLightboxImage(slideImgs[slideIndex].src);
+    }
+  });
+
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox) lightbox.classList.remove('open');
   });
+
+  // ── SLIDESHOW ──
+  let slideIndex = 0;
+  const slideImgs = document.querySelectorAll('.slideshow-img');
+  const slideCounter = document.getElementById('slideshow-current');
+  const totalSlides = slideImgs.length;
+
+  function showSlide(n) {
+    slideImgs[slideIndex].classList.remove('active');
+    slideIndex = (n + totalSlides) % totalSlides;
+    slideImgs[slideIndex].classList.add('active');
+    if (slideCounter) slideCounter.textContent = slideIndex + 1;
+  }
+
+  function slideshowMove(dir, e) {
+    if (e) e.stopPropagation();
+    showSlide(slideIndex + dir);
+    resetAutoplay();
+  }
+
+  let autoplayTimer = setInterval(() => showSlide(slideIndex + 1), 3000);
+
+  function resetAutoplay() {
+    clearInterval(autoplayTimer);
+    autoplayTimer = setInterval(() => showSlide(slideIndex + 1), 3000);
+  }
 
 
     // ── HAMBURGER ──
