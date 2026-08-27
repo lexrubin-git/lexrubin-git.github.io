@@ -208,14 +208,14 @@
       inset: 0;
       z-index: 2;
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(8, 1fr);
+      grid-template-columns: repeat(19, 1fr);
+      grid-template-rows: repeat(25, 1fr);
       perspective: 500px;
     }
 
     .flip-tile {
       background-repeat: no-repeat;
-      filter: blur(4px) brightness(0.55) saturate(0.8);
+      filter: blur(2.5px) brightness(0.35) saturate(0.7);
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
       backface-visibility: hidden;
       transform: rotateX(0deg);
@@ -920,7 +920,7 @@
     const truth = document.getElementById('photo-truth');
     if (!wrap || !grid || !truth) return;
 
-    const COLS = 6, ROWS = 8;
+    const COLS = 19, ROWS = 25;
     const REVEAL_FRACTION = 0.48; // reveal radius as a fraction of the photo's smaller dimension
     const photoSrc = truth.getAttribute('src');
     const tiles = [];
