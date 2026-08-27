@@ -524,6 +524,13 @@
       align-items: center;
       justify-content: center;
     }
+    .lightbox-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+      max-width: calc(100% - 150px);
+    }
     .lightbox-inner {
       display: block;
       line-height: 0;
@@ -538,6 +545,13 @@
       width: auto;
       height: auto;
       object-fit: contain;
+    }
+    .lightbox-caption {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #888;
+      text-align: center;
     }
     .lightbox-placeholder {
       display: contents;
@@ -678,27 +692,27 @@
         <div class="gallery-track">
           <div class="gallery-img-slot artwork-lightbox-trigger">
             <div class="gallery-shimmer"></div>
-            <img src="artwork_1.png" alt="Artwork 1" />
+            <img src="artwork_1.png" alt="Artwork 1" data-caption="White colored pencil on blackboard" />
             <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
           </div>
           <div class="gallery-img-slot artwork-lightbox-trigger">
             <div class="gallery-shimmer"></div>
-            <img src="artwork_5.png" alt="Artwork 2" />
+            <img src="artwork_5.png" alt="Artwork 2" data-caption="Acrylic self-portrait(s)" />
             <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
           </div>
           <div class="gallery-img-slot artwork-lightbox-trigger">
             <div class="gallery-shimmer"></div>
-            <img src="artwork_4.png" alt="Artwork 3" />
+            <img src="artwork_4.png" alt="Artwork 3" data-caption="Pencil figure study" />
             <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
           </div>
           <div class="gallery-img-slot artwork-lightbox-trigger">
             <div class="gallery-shimmer"></div>
-            <img src="artwork_3.png" alt="Artwork 4" />
+            <img src="artwork_3.png" alt="Artwork 4" data-caption="Pencil figure study" />
             <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
           </div>
           <div class="gallery-img-slot artwork-lightbox-trigger">
             <div class="gallery-shimmer"></div>
-            <img src="artwork_2.png" alt="Artwork 5" />
+            <img src="artwork_2.png" alt="Artwork 5" data-caption="Pencil figure study" />
             <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
           </div>
         </div>
@@ -729,8 +743,11 @@
 <div class="lightbox" id="lightbox">
   <div class="lightbox-stage">
     <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous artwork">‹</button>
-    <div class="lightbox-inner">
-      <div id="lightbox-img-wrap"></div>
+    <div class="lightbox-content">
+      <div class="lightbox-inner">
+        <div id="lightbox-img-wrap"></div>
+      </div>
+      <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
     <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next artwork">›</button>
   </div>
@@ -837,11 +854,12 @@
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
 
 
-  const lightbox     = document.getElementById('lightbox');
-  const lightboxWrap = document.getElementById('lightbox-img-wrap');
-  const lightboxPrev = document.getElementById('lightbox-prev');
-  const lightboxNext = document.getElementById('lightbox-next');
-  const artworkSlots  = Array.from(document.querySelectorAll('.artwork-lightbox-trigger'));
+  const lightbox        = document.getElementById('lightbox');
+  const lightboxWrap    = document.getElementById('lightbox-img-wrap');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxPrev    = document.getElementById('lightbox-prev');
+  const lightboxNext    = document.getElementById('lightbox-next');
+  const artworkSlots    = Array.from(document.querySelectorAll('.artwork-lightbox-trigger'));
   let lightboxIndex = 0;
 
   function showLightbox(i) {
@@ -851,6 +869,7 @@
       lightboxWrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
         + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
         + '</div>';
+      lightboxCaption.textContent = imgEl.dataset.caption || '';
     }
   }
 
