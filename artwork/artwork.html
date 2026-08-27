@@ -154,40 +154,6 @@
       font-weight: 400;
     }
 
-    /* ── FILTER BAR ── */
-    .filter-bar {
-      max-width: 900px;
-      margin: 0 auto;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      overflow-x: auto;
-      scrollbar-width: none;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.2s forwards;
-    }
-    .filter-bar::-webkit-scrollbar { display: none; }
-
-    .filter-btn {
-      flex-shrink: 0;
-      padding: 1.2rem 2rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #444;
-      background: none;
-      border: none;
-      border-right: 1px solid var(--border);
-      transition: color 0.2s, background 0.2s;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-    }
-    .filter-btn:last-child { border-right: none; }
-    .filter-btn:hover { color: #aaa; }
-    .filter-btn.active { color: var(--white); background: rgba(255,255,255,0.03); }
-
     /* ── SECTION ARROWS ── */
     .section-arrows {
       display: grid;
@@ -208,335 +174,137 @@
     }
     .arrow-cell:last-child { border-right: none; }
 
-    /* ── ARTWORK GRID ── */
-    .artworks-section {
-      max-width: 900px;
-      margin: 0 auto;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.3s forwards;
-    }
-
-    .artworks-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .artwork-card {
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      background: #050505;
-    }
-    .artwork-card:nth-child(2n) { border-right: none; }
-    .artwork-card:nth-last-child(-n+2) { border-bottom: none; }
-
-    .artwork-card-img {
-      width: 100%;
-      aspect-ratio: 4/4;
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.75) blur(0.5px);
-      transition: filter 0.5s ease, transform 0.6s ease;
-    }
-
-    .artwork-card-placeholder {
-      width: 100%;
-      aspect-ratio: 4/4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8rem;
-      color: #1e1e1e;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      border: 1px dashed #111;
-      background: #030303;
-      transition: border-color 0.3s, color 0.3s;
-    }
-    .artwork-card:hover .artwork-card-placeholder {
-      border-color: #222;
-      color: #333;
-    }
-    .artwork-card-placeholder svg { opacity: 0.15; }
-
-    .artwork-card:hover .artwork-card-img {
-      filter: brightness(1) blur(0px);
-      transform: scale(1.03);
-    }
-
-    .artwork-card-overlay {
-      position: absolute;
-      inset: 0;
-      background: transparent;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.4rem;
-    }
-    .artwork-card:hover .artwork-card-overlay { opacity: 1; }
-
-    .artwork-card-title {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--white);
-      letter-spacing: 0.04em;
-      margin-bottom: 0.3rem;
-      transform: translateY(6px);
-      transition: transform 0.3s ease;
-    }
-    .artwork-card:hover .artwork-card-title { transform: translateY(0); }
-
-    .artwork-card-meta {
-      font-size: 0.65rem;
-      color: rgba(240,237,232,0.5);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transform: translateY(6px);
-      transition: transform 0.35s ease;
-    }
-    .artwork-card:hover .artwork-card-meta { transform: translateY(0); }
-
-    /* ── FEATURED WORK ── */
-    .featured-section {
-      max-width: 900px;
-      margin: 0 auto;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.35s forwards;
-      margin-top: 3rem;
-    }
-
-    .featured-label {
-      border-bottom: 1px solid var(--border);
-      padding: 1.8rem 2.5rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: #444;
-      font-weight: 400;
-    }
-
-    .featured-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .featured-img-col {
-      border-right: 1px solid var(--border);
-      overflow: hidden;
-      position: relative;
-      background: #050505;
-      min-height: 340px;
-    }
-
-    .featured-img-col-placeholder {
-      width: 100%;
-      height: 100%;
-      min-height: 340px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8rem;
-      color: #1e1e1e;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      border: 1px dashed #111;
-    }
-    .featured-img-col-placeholder svg { opacity: 0.15; }
-
-    .featured-img-col img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.8);
-      transition: filter 0.5s ease, transform 0.6s ease;
-    }
-    .featured-img-col:hover img {
-      filter: brightness(1);
-      transform: scale(1.03);
-    }
-
-    .featured-info-col {
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .featured-tag {
-      font-size: 0.7rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 1.2rem;
-    }
-
-    .featured-title {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.2;
-      margin-bottom: 1.4rem;
-    }
-
-    .featured-desc {
-      font-size: 0.85rem;
-      line-height: 1.85;
-      color: #666;
-      flex: 1;
-      margin-bottom: 2rem;
-    }
-
-    .featured-desc strong { color: #999; font-weight: 500; }
-
-    .featured-details {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      border-top: 1px solid var(--border);
-      padding-top: 1.4rem;
-    }
-
-    .featured-detail-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-    }
-    .featured-detail-label { color: #444; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.68rem; }
-    .featured-detail-val { color: #777; }
-
-    /* ── MEDIUM STATS ── */
-    .stats-section {
-      max-width: 900px;
-      margin: 0 auto;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.4s forwards;
-    }
-
-    .stat-cell {
-      padding: 2.2rem 2rem;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .stat-cell:last-child { border-right: none; }
-
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.68rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #444;
-    }
-
-    /* ── PROCESS TICKER ── */
-    .ticker-section {
+    /* ── SELECTED WORKS PANELS ── */
+    .gallery-section {
       max-width: 900px;
       margin: 0 auto;
       border: 1px solid var(--border);
-      margin-top: 3rem;
-      margin-bottom: 4rem;
       opacity: 0;
-      animation: fadeUp 0.7s ease 0.45s forwards;
-    }
-
-    .ticker-row {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.7s ease 0.3s forwards;
       overflow: hidden;
-      height: 52px;
     }
-    .ticker-row:last-child { border-bottom: none; }
 
-    .ticker-label {
+    .gallery-strip {
+      display: flex;
+      height: 220px;
+      position: relative;
+    }
+
+    .gallery-category {
       flex-shrink: 0;
-      width: 180px;
-      padding: 0 1.5rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #aaa;
-      font-weight: 600;
+      width: 44px;
       border-right: 1px solid var(--border);
-      height: 100%;
       display: flex;
       align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
-    .ticker-track {
+    .gallery-category-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .gallery-images {
+      display: flex;
       flex: 1;
       overflow: hidden;
+    }
+
+    .gallery-img-slot {
+      flex: 1;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
       position: relative;
-      height: 100%;
-      mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      cursor: pointer;
+      background: #0a0a0a;
     }
+    .gallery-img-slot:last-child { border-right: none; }
 
-    .ticker-inner {
+    .gallery-slot-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
       display: flex;
-      align-items: center;
-      height: 100%;
-      white-space: nowrap;
-      will-change: transform;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 12px;
+      transition: background 0.4s;
+      pointer-events: none;
+      z-index: 2;
     }
+    .gallery-img-slot:hover .gallery-slot-overlay { background: rgba(0,0,0,0.15); }
 
-    .ticker-row:nth-child(1) .ticker-inner { animation: tickerLeft 22s linear infinite; }
-    .ticker-row:nth-child(2) .ticker-inner { animation: tickerRight 28s linear infinite; }
-    .ticker-row:nth-child(3) .ticker-inner { animation: tickerLeft 20s linear infinite; }
-
-    @keyframes tickerLeft {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    @keyframes tickerRight {
-      0%   { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-
-    .ticker-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 1.2rem;
-      padding: 0 1.6rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      color: #555;
+    .gallery-slot-overlay-text {
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
-    .ticker-dot {
-      width: 3px; height: 3px;
-      border-radius: 50%;
-      background: #333;
-      flex-shrink: 0;
+    .gallery-img-slot:hover .gallery-slot-overlay-text {
+      opacity: 1;
+      transform: translateY(0);
     }
-    .ticker-item.highlight { color: #999; }
+
+    .gallery-img-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.6s ease, filter 0.5s ease;
+      filter: brightness(0.6);
+    }
+
+    .gallery-img-slot:hover img {
+      filter: brightness(1);
+      transform: scale(1.04);
+    }
+
+    /* ── SHIMMER PLACEHOLDER ── */
+    .gallery-shimmer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        #0d0d0d 0%,
+        #161616 30%,
+        #1e1e1e 50%,
+        #161616 70%,
+        #0d0d0d 100%
+      );
+      background-size: 250% 100%;
+      animation: shimmerSlide 2.8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes shimmerSlide {
+      0%   { background-position: 200% 0; opacity: 0.9; }
+      50%  { background-position: -50% 0; opacity: 1; }
+      100% { background-position: 200% 0; opacity: 0.9; }
+    }
+
+    .gallery-img-slot:has(img) .gallery-shimmer { display: none; }
+
+    .gallery-divider {
+      height: 1px;
+      background: var(--border);
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -591,31 +359,6 @@
 
     .footer-scroll-btn { display: none; }
 
-
-    .artwork-enlarge-label {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%) translateY(6px);
-      background: rgba(0,0,0,0.72);
-      color: var(--white);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      padding: 4px 10px;
-      border: 1px solid rgba(255,255,255,0.18);
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-      z-index: 20;
-      pointer-events: none;
-    }
-    .artwork-card:hover .artwork-enlarge-label {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    /* ── HIDDEN FILTER STATE ── */
-    .artwork-card[data-hidden="true"] { display: none; }
 
     @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
@@ -700,7 +443,7 @@
 
       /* page layout */
       .page-wrapper { padding: 0 0.75rem; }
-      .artwork-hero, .artworks-section { max-width: 100%; }
+      .artwork-hero, .gallery-section { max-width: 100%; }
       .section-arrows { max-width: 100%; width: calc(100% - 1.5rem); }
 
       /* hero title row — override inline display:flex styles */
@@ -712,9 +455,10 @@
       }
       .artwork-main-title { font-size: 2rem; }
 
-      /* artwork grid */
-      .artworks-grid { grid-template-columns: 1fr; }
-      .artwork-card { border-right: none; }
+      /* gallery strip */
+      .gallery-strip { height: 150px; }
+      .gallery-category { width: 32px; }
+      .gallery-category-label { font-size: 0.6rem; letter-spacing: 0.2em; }
 
       /* footer */
       .footer-bottom { padding: 2rem 1rem 2.5rem; }
@@ -812,36 +556,71 @@
   <div class="arrow-cell">∨</div>
 </div>
 
-<!-- ── ARTWORK GRID ── -->
+<!-- ── SELECTED WORKS ── -->
 <div class="page-wrapper">
-  <div class="artworks-section">
-    <div class="artworks-grid" id="artwork-grid">
+  <div class="gallery-section">
 
-      <!-- Card 1 -->
-      <div class="artwork-card" data-category="oil">
-        <img class="artwork-card-img" src="artwork_1.png" alt="Artwork 1" />
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+    <!-- DESIGNS row -->
+    <div class="gallery-strip">
+      <div class="gallery-category">
+        <span class="gallery-category-label">Designs</span>
       </div>
-
-      <!-- Card 2 -->
-      <div class="artwork-card" data-category="digital">
-        <img class="artwork-card-img" src="artwork_2.png" alt="Artwork 2" />
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      <div class="gallery-images">
+        <div class="gallery-img-slot">
+          <div class="gallery-shimmer"></div>
+          <img src="/about/1.png" alt="Design 1" />
+          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+          </a>
+        </div>
+        <div class="gallery-img-slot">
+          <div class="gallery-shimmer"></div>
+          <img src="/about/2.png" alt="Design 2" />
+          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+          </a>
+        </div>
+        <div class="gallery-img-slot">
+          <div class="gallery-shimmer"></div>
+          <img src="/about/3.png" alt="Design 3" />
+          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+          </a>
+        </div>
       </div>
-
-      <!-- Card 3 -->
-      <div class="artwork-card" data-category="mixed">
-        <img class="artwork-card-img" src="artwork_3.png" alt="Artwork 3" />
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="artwork-card" data-category="photography">
-        <img class="artwork-card-img" src="artwork_4.png" alt="Artwork 4" />
-        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
-      </div>
-
     </div>
+
+    <div class="gallery-divider"></div>
+
+    <!-- ARTWORK row -->
+    <div class="gallery-strip">
+      <div class="gallery-category">
+        <span class="gallery-category-label">Artwork</span>
+      </div>
+      <div class="gallery-images">
+        <div class="gallery-img-slot artwork-lightbox-trigger">
+          <div class="gallery-shimmer"></div>
+          <img src="artwork_1.png" alt="Artwork 1" />
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+        </div>
+        <div class="gallery-img-slot artwork-lightbox-trigger">
+          <div class="gallery-shimmer"></div>
+          <img src="artwork_2.png" alt="Artwork 2" />
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+        </div>
+        <div class="gallery-img-slot artwork-lightbox-trigger">
+          <div class="gallery-shimmer"></div>
+          <img src="artwork_3.png" alt="Artwork 3" />
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+        </div>
+        <div class="gallery-img-slot artwork-lightbox-trigger">
+          <div class="gallery-shimmer"></div>
+          <img src="artwork_4.png" alt="Artwork 4" />
+          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -870,27 +649,6 @@
 
 
 <script>
-
-  // ── FILTER ──
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const cards      = document.querySelectorAll('.artwork-card');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const filter = btn.dataset.filter;
-      cards.forEach(card => {
-        if (filter === 'all' || card.dataset.category === filter) {
-          card.removeAttribute('data-hidden');
-        } else {
-          card.setAttribute('data-hidden', 'true');
-        }
-      });
-    });
-  });
-
-  // ── LIGHTBOX ──
 
   // ── LOGO HOVER SWAP ──
   const logoLink    = document.getElementById('logo-link');
@@ -966,17 +724,12 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card').forEach(el => {
+  document.querySelectorAll('.gallery-img-slot').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.filter-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
-    el.addEventListener('mouseleave', resetCursor);
-  });
-
-  document.querySelectorAll('h1, h2, h3, h4, p, span, label, li, .artwork-main-title, .section-label, .filter-btn, .ticker-item, .ticker-label, .stat-number, .stat-label, footer, .footer-reached').forEach(el => {
+  document.querySelectorAll('h1, h2, h3, h4, p, span, label, li, .artwork-main-title, footer, .footer-reached').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -990,13 +743,11 @@
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
 
 
-  const lightbox      = document.getElementById('lightbox');
-  const lightboxTitle = document.getElementById('lightbox-title');
-  const lightboxMeta  = document.getElementById('lightbox-meta');
+  const lightbox = document.getElementById('lightbox');
 
-  cards.forEach((card, index) => {
-    card.addEventListener('click', () => {
-      const imgEl = card.querySelector('.artwork-card-img');
+  document.querySelectorAll('.artwork-lightbox-trigger').forEach(slot => {
+    slot.addEventListener('click', () => {
+      const imgEl = slot.querySelector('img');
       const wrap  = document.getElementById('lightbox-img-wrap');
       if (imgEl) {
         wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
