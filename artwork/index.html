@@ -535,6 +535,36 @@
       display: contents;
     }
     .lightbox-placeholder svg { opacity: 0.2; }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 56px;
+      height: 140px;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.55);
+      color: var(--white);
+      font-size: 1.4rem;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: background 0.2s, opacity 0.2s, border-color 0.2s;
+      z-index: 1001;
+    }
+    .lightbox-nav:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.35); opacity: 1; }
+    .lightbox-prev { left: 24px; }
+    .lightbox-next { right: 24px; }
+
+    @media (max-width: 768px) {
+      .lightbox-nav { width: 38px; height: 88px; font-size: 1.1rem; }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -689,9 +719,11 @@
 
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox">
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous artwork">‹</button>
   <div class="lightbox-inner">
     <div id="lightbox-img-wrap"></div>
   </div>
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next artwork">›</button>
 </div>
 
 
@@ -795,23 +827,47 @@
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
 
 
-  const lightbox = document.getElementById('lightbox');
+  const lightbox     = document.getElementById('lightbox');
+  const lightboxWrap = document.getElementById('lightbox-img-wrap');
+  const lightboxPrev = document.getElementById('lightbox-prev');
+  const lightboxNext = document.getElementById('lightbox-next');
+  const artworkSlots  = Array.from(document.querySelectorAll('.artwork-lightbox-trigger'));
+  let lightboxIndex = 0;
 
-  document.querySelectorAll('.artwork-lightbox-trigger').forEach(slot => {
+  function showLightbox(i) {
+    lightboxIndex = (i + artworkSlots.length) % artworkSlots.length;
+    const imgEl = artworkSlots[lightboxIndex].querySelector('img');
+    if (imgEl) {
+      lightboxWrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
+        + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
+        + '</div>';
+    }
+  }
+
+  artworkSlots.forEach((slot, i) => {
     slot.addEventListener('click', () => {
-      const imgEl = slot.querySelector('img');
-      const wrap  = document.getElementById('lightbox-img-wrap');
-      if (imgEl) {
-        wrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
-          + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
-          + '</div>';
-      }
+      showLightbox(i);
       lightbox.classList.add('open');
     });
   });
 
+  lightboxPrev.addEventListener('click', () => showLightbox(lightboxIndex - 1));
+  lightboxNext.addEventListener('click', () => showLightbox(lightboxIndex + 1));
+
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox) lightbox.classList.remove('open');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') showLightbox(lightboxIndex - 1);
+    else if (e.key === 'ArrowRight') showLightbox(lightboxIndex + 1);
+    else if (e.key === 'Escape') lightbox.classList.remove('open');
+  });
+
+  document.querySelectorAll('.lightbox-nav').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
   });
 
   // ── STRIP CAROUSELS ──
