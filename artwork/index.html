@@ -516,6 +516,14 @@
       opacity: 1;
       pointer-events: all;
     }
+    .lightbox-stage {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .lightbox-inner {
       display: block;
       line-height: 0;
@@ -719,11 +727,13 @@
 
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox">
-  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous artwork">‹</button>
-  <div class="lightbox-inner">
-    <div id="lightbox-img-wrap"></div>
+  <div class="lightbox-stage">
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous artwork">‹</button>
+    <div class="lightbox-inner">
+      <div id="lightbox-img-wrap"></div>
+    </div>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next artwork">›</button>
   </div>
-  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next artwork">›</button>
 </div>
 
 
