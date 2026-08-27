@@ -214,11 +214,10 @@
 
     .flip-tile {
       background-repeat: no-repeat;
-      background-blend-mode: color;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
       transform: scaleY(1);
       transform-origin: top;
-      transition: transform 0.4s cubic-bezier(0.4,0.1,0.2,1);
+      transition: transform 0.15s cubic-bezier(0.4,0.1,0.2,1);
     }
 
     .flip-tile.open {
@@ -921,25 +920,71 @@
 
     const COLS = 27, ROWS = 35;
     const REVEAL_FRACTION = 0.48; // reveal radius as a fraction of the photo's smaller dimension
-    const TINT = '#1c5a63';       // duotone tint blended over each tile's photo slice
-    const photoSrc = truth.getAttribute('src');
+    const TINT = '#1c5a63';       // duotone tint baked once into the tile image
     const tiles = [];
 
-    const frag = document.createDocumentFragment();
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const tile = document.createElement('div');
-        tile.className = 'flip-tile';
-        const xPos = COLS > 1 ? (c / (COLS - 1)) * 100 : 0;
-        const yPos = ROWS > 1 ? (r / (ROWS - 1)) * 100 : 0;
-        tile.style.backgroundImage = `linear-gradient(${TINT}, ${TINT}), url("${photoSrc}")`;
-        tile.style.backgroundSize = `100% 100%, ${COLS * 100}% ${ROWS * 100}%`;
-        tile.style.backgroundPosition = `0 0, ${xPos}% ${yPos}%`;
-        frag.appendChild(tile);
-        tiles.push({ el: tile, r, c, open: false });
-      }
+    // Pre-bake the duotone tint once (canvas), instead of blending it live on
+    // every tile every paint — much cheaper at high tile counts.
+    function buildTintedImage() {
+      const naturalW = truth.naturalWidth;
+      const naturalH = truth.naturalHeight;
+      if (!naturalW || !naturalH) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = naturalW;
+      canvas.height = naturalH;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(truth, 0, 0, naturalW, naturalH);
+      ctx.globalCompositeOperation = 'color';
+      ctx.fillStyle = TINT;
+      ctx.fillRect(0, 0, naturalW, naturalH);
+
+      canvas.toBlob(blob => {
+        buildTiles(URL.createObjectURL(blob), naturalW, naturalH);
+      }, 'image/jpeg', 0.85);
     }
-    grid.appendChild(frag);
+
+    function buildTiles(tintedUrl, naturalW, naturalH) {
+      const frag = document.createDocumentFragment();
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const tile = document.createElement('div');
+          tile.className = 'flip-tile';
+          tile.style.backgroundImage = `url("${tintedUrl}")`;
+          frag.appendChild(tile);
+          tiles.push({ el: tile, r, c, open: false });
+        }
+      }
+      grid.appendChild(frag);
+      layoutTiles(naturalW, naturalH);
+      window.addEventListener('resize', () => layoutTiles(naturalW, naturalH));
+    }
+
+    // Match #photo-truth's `object-fit: cover; object-position: center top;`
+    // exactly, so each tile's slice lines up with the sharp photo beneath it
+    // instead of stretching the whole image to fit the grid.
+    function layoutTiles(naturalW, naturalH) {
+      const wrapW = wrap.clientWidth;
+      const wrapH = wrap.clientHeight;
+      const scale = Math.max(wrapW / naturalW, wrapH / naturalH);
+      const bgW   = naturalW * scale;
+      const bgH   = naturalH * scale;
+      const offsetX = (wrapW - bgW) / 2; // object-position: center
+      const offsetY = 0;                 // object-position: top
+      const tileW = wrapW / COLS;
+      const tileH = wrapH / ROWS;
+
+      tiles.forEach(t => {
+        t.el.style.backgroundSize     = `${bgW}px ${bgH}px`;
+        t.el.style.backgroundPosition = `${offsetX - t.c * tileW}px ${offsetY - t.r * tileH}px`;
+      });
+    }
+
+    if (truth.complete && truth.naturalWidth) {
+      buildTintedImage();
+    } else {
+      truth.addEventListener('load', buildTintedImage);
+    }
 
     let rect = null;
     let pendingX = 0, pendingY = 0;
