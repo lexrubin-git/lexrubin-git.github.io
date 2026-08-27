@@ -213,13 +213,19 @@
     }
 
     .gallery-images {
-      display: flex;
+      position: relative;
       flex: 1;
       overflow: hidden;
     }
 
+    .gallery-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.45s cubic-bezier(0.65,0,0.35,1);
+    }
+
     .gallery-img-slot {
-      flex: 1;
+      flex: 0 0 auto;
       border-right: 1px solid var(--border);
       overflow: hidden;
       position: relative;
@@ -227,6 +233,33 @@
       background: #0a0a0a;
     }
     .gallery-img-slot:last-child { border-right: none; }
+
+    /* ── STRIP NAV ARROWS ── */
+    .gallery-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.55);
+      color: var(--white);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: background 0.2s, opacity 0.2s, border-color 0.2s;
+    }
+    .gallery-nav-btn:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.35); opacity: 1; }
+    .gallery-nav-btn:disabled { opacity: 0.15; pointer-events: none; }
+    .gallery-nav-prev { left: 8px; }
+    .gallery-nav-next { right: 8px; }
+    .gallery-nav-btn[hidden] { display: none; }
 
     .gallery-slot-overlay {
       position: absolute;
@@ -459,6 +492,7 @@
       .gallery-strip { height: 150px; }
       .gallery-category { width: 32px; }
       .gallery-category-label { font-size: 0.6rem; letter-spacing: 0.2em; }
+      .gallery-nav-btn { width: 26px; height: 26px; font-size: 0.85rem; }
 
       /* footer */
       .footer-bottom { padding: 2rem 1rem 2.5rem; }
@@ -566,27 +600,31 @@
         <span class="gallery-category-label">Designs</span>
       </div>
       <div class="gallery-images">
-        <div class="gallery-img-slot">
-          <div class="gallery-shimmer"></div>
-          <img src="/about/1.png" alt="Design 1" />
-          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
-          </a>
+        <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous design" hidden>‹</button>
+        <div class="gallery-track">
+          <div class="gallery-img-slot">
+            <div class="gallery-shimmer"></div>
+            <img src="/about/1.png" alt="Design 1" />
+            <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+            </a>
+          </div>
+          <div class="gallery-img-slot">
+            <div class="gallery-shimmer"></div>
+            <img src="/about/2.png" alt="Design 2" />
+            <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+            </a>
+          </div>
+          <div class="gallery-img-slot">
+            <div class="gallery-shimmer"></div>
+            <img src="/about/3.png" alt="Design 3" />
+            <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
+            </a>
+          </div>
         </div>
-        <div class="gallery-img-slot">
-          <div class="gallery-shimmer"></div>
-          <img src="/about/2.png" alt="Design 2" />
-          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
-          </a>
-        </div>
-        <div class="gallery-img-slot">
-          <div class="gallery-shimmer"></div>
-          <img src="/about/3.png" alt="Design 3" />
-          <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram ↗</span></div>
-          </a>
-        </div>
+        <button class="gallery-nav-btn gallery-nav-next" aria-label="Next design" hidden>›</button>
       </div>
     </div>
 
@@ -598,26 +636,35 @@
         <span class="gallery-category-label">Artwork</span>
       </div>
       <div class="gallery-images">
-        <div class="gallery-img-slot artwork-lightbox-trigger">
-          <div class="gallery-shimmer"></div>
-          <img src="artwork_1.png" alt="Artwork 1" />
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+        <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous artwork" hidden>‹</button>
+        <div class="gallery-track">
+          <div class="gallery-img-slot artwork-lightbox-trigger">
+            <div class="gallery-shimmer"></div>
+            <img src="artwork_1.png" alt="Artwork 1" />
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+          </div>
+          <div class="gallery-img-slot artwork-lightbox-trigger">
+            <div class="gallery-shimmer"></div>
+            <img src="artwork_2.png" alt="Artwork 2" />
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+          </div>
+          <div class="gallery-img-slot artwork-lightbox-trigger">
+            <div class="gallery-shimmer"></div>
+            <img src="artwork_3.png" alt="Artwork 3" />
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+          </div>
+          <div class="gallery-img-slot artwork-lightbox-trigger">
+            <div class="gallery-shimmer"></div>
+            <img src="artwork_4.png" alt="Artwork 4" />
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+          </div>
+          <div class="gallery-img-slot artwork-lightbox-trigger">
+            <div class="gallery-shimmer"></div>
+            <img src="artwork_5.png" alt="Artwork 5" />
+            <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
+          </div>
         </div>
-        <div class="gallery-img-slot artwork-lightbox-trigger">
-          <div class="gallery-shimmer"></div>
-          <img src="artwork_2.png" alt="Artwork 2" />
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
-        </div>
-        <div class="gallery-img-slot artwork-lightbox-trigger">
-          <div class="gallery-shimmer"></div>
-          <img src="artwork_3.png" alt="Artwork 3" />
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
-        </div>
-        <div class="gallery-img-slot artwork-lightbox-trigger">
-          <div class="gallery-shimmer"></div>
-          <img src="artwork_4.png" alt="Artwork 4" />
-          <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
-        </div>
+        <button class="gallery-nav-btn gallery-nav-next" aria-label="Next artwork" hidden>›</button>
       </div>
     </div>
 
@@ -729,6 +776,11 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
+  document.querySelectorAll('.gallery-nav-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
   document.querySelectorAll('h1, h2, h3, h4, p, span, label, li, .artwork-main-title, footer, .footer-reached').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
@@ -761,6 +813,58 @@
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox) lightbox.classList.remove('open');
   });
+
+  // ── STRIP CAROUSELS ──
+  function initCarousel(strip, visibleCount) {
+    const viewport = strip.querySelector('.gallery-images');
+    const track    = viewport.querySelector('.gallery-track');
+    const prevBtn  = viewport.querySelector('.gallery-nav-prev');
+    const nextBtn  = viewport.querySelector('.gallery-nav-next');
+    const slots    = Array.from(track.children);
+    const total    = slots.length;
+
+    if (total <= visibleCount) return;
+
+    prevBtn.hidden = false;
+    nextBtn.hidden = false;
+
+    let index = 0;
+    const maxIndex = total - visibleCount;
+
+    function layout() {
+      const slotWidth = viewport.clientWidth / visibleCount;
+      slots.forEach(slot => {
+        slot.style.width = slotWidth + 'px';
+        slot.style.flexBasis = slotWidth + 'px';
+      });
+      index = Math.min(index, maxIndex);
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(' + (-index * slotWidth) + 'px)';
+      void track.offsetWidth;
+      track.style.transition = '';
+      updateButtons();
+    }
+
+    function goTo(i) {
+      index = Math.max(0, Math.min(maxIndex, i));
+      const slotWidth = viewport.clientWidth / visibleCount;
+      track.style.transform = 'translateX(' + (-index * slotWidth) + 'px)';
+      updateButtons();
+    }
+
+    function updateButtons() {
+      prevBtn.disabled = index <= 0;
+      nextBtn.disabled = index >= maxIndex;
+    }
+
+    prevBtn.addEventListener('click', () => goTo(index - 1));
+    nextBtn.addEventListener('click', () => goTo(index + 1));
+    window.addEventListener('resize', layout);
+
+    layout();
+  }
+
+  document.querySelectorAll('.gallery-strip').forEach(strip => initCarousel(strip, 3));
 
 </script>
 </body>
