@@ -199,13 +199,31 @@
       object-position: center top;
     }
 
-    #photo-nothover {
-      opacity: 1;
-      filter: brightness(0.9);
+    #photo-truth {
+      z-index: 1;
     }
 
-    #photo-hover {
-      clip-path: circle(0px at 50% 50%);
+    .flip-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      perspective: 500px;
+    }
+
+    .flip-tile {
+      background-repeat: no-repeat;
+      filter: blur(4px) brightness(0.55) saturate(0.8);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
+      backface-visibility: hidden;
+      transform: rotateX(0deg);
+      transition: transform 0.5s cubic-bezier(0.4,0.1,0.2,1);
+    }
+
+    .flip-tile.open {
+      transform: rotateX(-110deg);
     }
 
     .about-text-col {
@@ -697,8 +715,8 @@
         <canvas id="snakeCanvas"></canvas>
         <div class="about-photo-linkedin-label">View LinkedIn ↗</div>
         <div class="about-photo-wrap" id="photo-wrap">
-          <img id="photo-nothover" src="101.png" alt="Lex Rubin" />
-          <img id="photo-hover" src="102.png" alt="Lex Rubin hover" />
+          <img id="photo-truth" src="102.png" alt="Lex Rubin" />
+          <div class="flip-grid" id="flipGrid"></div>
         </div>
         </a>
       </div>
@@ -895,88 +913,63 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  // ── PHOTO CURSOR REVEAL ──
-  const photoWrap   = document.querySelector('.about-photo-wrap');
-  const photoReveal = document.getElementById('photo-hover');
+  // ── PHOTO FLIP REVEAL ──
+  (function() {
+    const wrap  = document.querySelector('.about-photo-wrap');
+    const grid  = document.getElementById('flipGrid');
+    const truth = document.getElementById('photo-truth');
+    if (!wrap || !grid || !truth) return;
 
-  const MIN_R       = 20;   // radius when fully idle
-  const MAX_R       = 80;   // radius at peak speed
-  const SPEED_SCALE = 0.08; // tiny — absolute minimum movement hits MAX_R
+    const COLS = 6, ROWS = 8;
+    const REVEAL_FRACTION = 0.48; // reveal radius as a fraction of the photo's smaller dimension
+    const photoSrc = truth.getAttribute('src');
+    const tiles = [];
 
-  let revX = 50, revY = 50;
-  let tgtX = 50, tgtY = 50;
-  let curR = 0,  tgtR = 0;
-  let insidePhoto = false;
-
-  // speed tracking
-  let lastMX = 0, lastMY = 0, lastMT = 0;
-  let cursorSpeed = 0; // smoothed px/ms
-
-  document.addEventListener('mousemove', e => {
-    const now = performance.now();
-    const dt  = now - lastMT;
-    if (dt > 0) {
-      const dx  = e.clientX - lastMX;
-      const dy  = e.clientY - lastMY;
-      const raw = Math.sqrt(dx*dx + dy*dy) / dt;
-      cursorSpeed += (raw - cursorSpeed) * 0.35;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const tile = document.createElement('div');
+        tile.className = 'flip-tile';
+        tile.style.backgroundImage = `url("${photoSrc}")`;
+        tile.style.backgroundSize = `${COLS * 100}% ${ROWS * 100}%`;
+        tile.style.backgroundPosition =
+          `${COLS > 1 ? (c / (COLS - 1)) * 100 : 0}% ${ROWS > 1 ? (r / (ROWS - 1)) * 100 : 0}%`;
+        grid.appendChild(tile);
+        tiles.push({ el: tile, r, c });
+      }
     }
-    lastMX = e.clientX;
-    lastMY = e.clientY;
-    lastMT = now;
-  });
 
-  if (photoWrap && photoReveal) {
-    photoWrap.addEventListener('mouseenter', () => {
-      insidePhoto = true;
+    function updateTiles(mx, my) {
+      const rect   = wrap.getBoundingClientRect();
+      const radius = Math.min(rect.width, rect.height) * REVEAL_FRACTION;
+      const cellW  = rect.width / COLS;
+      const cellH  = rect.height / ROWS;
+      tiles.forEach(t => {
+        const cx   = (t.c + 0.5) * cellW;
+        const cy   = (t.r + 0.5) * cellH;
+        const dx   = mx - cx;
+        const dy   = my - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        t.el.classList.toggle('open', dist < radius);
+      });
+    }
+
+    wrap.addEventListener('mouseenter', () => {
       cur.style.opacity  = '0';
       ring.style.opacity = '0';
-      startRevealLoop();
     });
 
-    photoWrap.addEventListener('mousemove', e => {
-      const rect = photoWrap.getBoundingClientRect();
-      tgtX = e.clientX - rect.left;
-      tgtY = e.clientY - rect.top;
+    wrap.addEventListener('mousemove', e => {
+      const rect = wrap.getBoundingClientRect();
+      updateTiles(e.clientX - rect.left, e.clientY - rect.top);
     });
 
-    photoWrap.addEventListener('mouseleave', () => {
-      insidePhoto = false;
-      tgtR = 0;
+    wrap.addEventListener('mouseleave', () => {
+      tiles.forEach(t => t.el.classList.remove('open'));
       cur.style.opacity  = '1';
       ring.style.opacity = '0.8';
       resetCursor();
     });
-
-    let revealFrameId = null;
-    function revealLoop() {
-      if (insidePhoto) {
-        cursorSpeed *= 0.994;
-        const t = Math.min(cursorSpeed / SPEED_SCALE, 1);
-        tgtR = MIN_R + (MAX_R - MIN_R) * t;
-      }
-
-      const LERP_POS = 0.18;
-      const LERP_IN  = 0.06;
-      const LERP_OUT = 0.012;
-      revX += (tgtX - revX) * LERP_POS;
-      revY += (tgtY - revY) * LERP_POS;
-      const lerpR = curR < tgtR ? LERP_IN : LERP_OUT;
-      curR += (tgtR - curR) * lerpR;
-      const r = Math.max(0, curR).toFixed(2);
-      photoReveal.style.clipPath = `circle(${r}px at ${revX.toFixed(2)}px ${revY.toFixed(2)}px)`;
-
-      if (insidePhoto || curR > 0.5) {
-        revealFrameId = requestAnimationFrame(revealLoop);
-      } else {
-        revealFrameId = null;
-      }
-    }
-
-    function startRevealLoop() {
-      if (!revealFrameId) revealFrameId = requestAnimationFrame(revealLoop);
-    }
-  }
+  })();
 
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
