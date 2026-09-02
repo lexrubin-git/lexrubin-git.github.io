@@ -130,19 +130,39 @@
 
     .artwork-title-row {
       padding: 3rem 2.5rem 2.5rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: end;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border);
     }
 
     .artwork-main-title {
-      font-size: 3rem;
+      font-size: 2.1rem;
       font-weight: 600;
       color: var(--white);
-      line-height: 1.1;
+      line-height: 1.3;
       letter-spacing: -0.01em;
+      max-width: 32rem;
+    }
+
+    /* ── HERO SUMMARY ── */
+    .hero-summary { padding: 1.75rem 2.5rem 2rem; }
+    .hero-subtitle {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #888;
+      font-weight: 400;
+      max-width: 34rem;
+    }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+    .hero-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
     }
 
     .artwork-subtitle {
@@ -779,14 +799,11 @@
       .page-wrapper { padding: 0 0.75rem; }
       .artwork-hero, .artworks-section, .case-study-section, .section-arrows { max-width: 100%; }
 
-      /* hero title row — override inline display:flex styles */
-      .artwork-title-row {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem;
-        padding: 1.5rem 1.25rem 2rem;
-      }
-      .artwork-main-title { font-size: 2rem; }
+      /* hero */
+      .artwork-title-row { padding: 2rem 1.5rem 1.5rem; }
+      .artwork-main-title { font-size: 1.6rem; }
+      .hero-summary { padding: 1.25rem 1.5rem 1.75rem; }
+      .hero-subtitle { font-size: 0.9rem; }
 
       /* case study */
       .cs-meta-row { grid-template-columns: 1fr 1fr; }
@@ -1060,9 +1077,16 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
-      <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium</h1>
-      <span style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:#666; white-space:nowrap;">School Project</span>
+    <div class="artwork-title-row">
+      <h1 class="artwork-main-title">Brand &amp; wayfinding design: Arctic Zoo &amp; Aquarium</h1>
+    </div>
+    <div class="hero-summary">
+      <p class="hero-subtitle">A visitor-facing brand and web experience built around fast, mobile-first wayfinding</p>
+      <div class="hero-tags">
+        <span class="hero-tag">UI/UX Design</span>
+        <span class="hero-tag">Information Architecture</span>
+        <span class="hero-tag">Wayfinding</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1093,12 +1117,6 @@
         <div class="cs-meta-label">Type</div>
         <div class="cs-meta-val">Branding Project</div>
       </div>
-    </div>
-
-    <div class="cs-tags-row">
-      <span class="cs-tag">UI/UX Design</span>
-      <span class="cs-tag">Information Architecture</span>
-      <span class="cs-tag">Wayfinding</span>
     </div>
 
     <div class="cs-body">

@@ -152,6 +152,28 @@
     }
     .portfolio-item.full-width .item-title { margin-bottom: 0; }
 
+    /* ── 2-col cards: same treatment, flex column so images stay row-aligned ── */
+    .portfolio-item:not(.full-width) {
+      display: flex;
+      flex-direction: column;
+    }
+    .portfolio-item:not(.full-width) .item-header {
+      height: auto;
+      min-height: 150px;
+      flex: 0 0 auto;
+      padding: 1.5rem 2rem;
+      gap: 0.7rem;
+    }
+    .portfolio-item:not(.full-width) .item-title {
+      font-size: 1.1rem;
+      line-height: 1.3;
+      margin-bottom: 0;
+      overflow-wrap: anywhere;
+    }
+    .portfolio-item:not(.full-width) .item-image {
+      flex: 1 1 auto;
+    }
+
     .item-subtitle {
       font-size: 0.92rem;
       color: #888;
@@ -465,7 +487,9 @@
 
       .item-header { height: auto; padding: 1rem 1.5rem 1.2rem; }
       .portfolio-item.full-width .item-header { padding: 1.4rem 1.5rem; gap: 0.7rem; }
+      .portfolio-item:not(.full-width) .item-header { min-height: 0; padding: 1.25rem 1.5rem 1.4rem; gap: 0.55rem; }
       .item-title { font-size: 1.1rem; }
+      .portfolio-item:not(.full-width) .item-title { font-size: 1.05rem; }
       .item-tags { font-size: 0.78rem; }
       .item-subtitle { font-size: 0.82rem; }
 
@@ -882,8 +906,13 @@
     <div class="portfolio-item" onclick="window.location='1/'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
-        <div class="item-title">Pyxd, Inc.</div>
-        <div class="item-tags">UI/UX Design, Design Systems, Brand Identity</div>
+        <div class="item-title">Design systems &amp; brand identity: Pyxd, Inc.</div>
+        <div class="item-subtitle">A cohesive UI and brand language spanning app, web, and apparel for an AI photography product</div>
+        <div class="item-chips">
+          <span class="item-chip">UI/UX Design</span>
+          <span class="item-chip">Design Systems</span>
+          <span class="item-chip">Brand Identity</span>
+        </div>
       </div>
       <div class="item-image">
         <img src="index1.png" alt="Pyxd, Inc." />
@@ -897,8 +926,13 @@
     <div class="portfolio-item" onclick="window.location='2/'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
-        <div class="item-title">Arctic Zoo &amp; Aquarium</div>
-        <div class="item-tags">UI/UX Design, Information Architecture, Wayfinding</div>
+        <div class="item-title">Brand &amp; wayfinding design: Arctic Zoo &amp; Aquarium</div>
+        <div class="item-subtitle">A visitor-facing brand and web experience built around fast, mobile-first wayfinding</div>
+        <div class="item-chips">
+          <span class="item-chip">UI/UX Design</span>
+          <span class="item-chip">Information Architecture</span>
+          <span class="item-chip">Wayfinding</span>
+        </div>
       </div>
       <div class="item-image">
         <img src="index2.png" alt="Arctic Zoo & Aquarium" />
@@ -912,8 +946,13 @@
     <div class="portfolio-item" onclick="window.location='3/'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
-        <div class="item-title">Apple Watch Face</div>
-        <div class="item-tags">UI/UX Design, Micro-Interactions, Typography &amp; Hierarchy</div>
+        <div class="item-title">Glanceable UI design: Apple Watch face</div>
+        <div class="item-subtitle">A wearable interface system built for information that has to register in under a second</div>
+        <div class="item-chips">
+          <span class="item-chip">UI/UX Design</span>
+          <span class="item-chip">Micro-Interactions</span>
+          <span class="item-chip">Typography &amp; Hierarchy</span>
+        </div>
       </div>
       <div class="item-image">
         <img src="index3.png" alt="Apple Watch Face" />
@@ -927,8 +966,13 @@
     <div class="portfolio-item" onclick="window.location='4/'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
-        <div class="item-title">U.C. Berkeley Dam Research</div>
-        <div class="item-tags">Data Visualization, Information Design, Visual Communication</div>
+        <div class="item-title">Information design: U.C. Berkeley dam research</div>
+        <div class="item-subtitle">Dense technical datasets turned into figures built for academic publication and a lay audience</div>
+        <div class="item-chips">
+          <span class="item-chip">Data Visualization</span>
+          <span class="item-chip">Information Design</span>
+          <span class="item-chip">Visual Communication</span>
+        </div>
       </div>
       <div class="item-image">
         <img src="index4.png" alt="U.C. Berkeley Dam Research" />
