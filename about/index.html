@@ -201,27 +201,19 @@
 
     #photo-truth {
       z-index: 1;
+      filter: blur(7px);
+      transform: scale(1.06);
+      transition: filter 0.45s ease, transform 0.45s ease;
     }
 
-    .flip-grid {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: repeat(27, 1fr);
-      grid-template-rows: repeat(35, 1fr);
+    .about-photo-link:hover #photo-truth {
+      filter: blur(0);
+      transform: scale(1);
     }
 
-    .flip-tile {
-      background-repeat: no-repeat;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
-      transform: scaleY(1);
-      transform-origin: top;
-      transition: transform 0.15s cubic-bezier(0.4,0.1,0.2,1);
-    }
-
-    .flip-tile.open {
-      transform: scaleY(0.05);
+    /* No hover (touch) — show the photo sharp, nothing to reveal it otherwise */
+    @media (hover: none) {
+      #photo-truth { filter: none; transform: none; }
     }
 
     .about-text-col {
@@ -713,7 +705,6 @@
         <div class="about-photo-linkedin-label">View LinkedIn ↗</div>
         <div class="about-photo-wrap" id="photo-wrap">
           <img id="photo-truth" src="102.png" alt="Lex Rubin" />
-          <div class="flip-grid" id="flipGrid"></div>
         </div>
         </a>
       </div>
@@ -910,130 +901,11 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  // ── PHOTO FLIP REVEAL ──
-  (function() {
-    const wrap  = document.querySelector('.about-photo-wrap');
-    const grid  = document.getElementById('flipGrid');
-    const truth = document.getElementById('photo-truth');
-    if (!wrap || !grid || !truth) return;
-
-    const COLS = 27, ROWS = 35;
-    const REVEAL_FRACTION = 0.48; // reveal radius as a fraction of the photo's smaller dimension
-    const TINT = '#1c5a63';       // duotone tint baked once into the tile image
-    const tiles = [];
-
-    // Pre-bake the duotone tint once (canvas), instead of blending it live on
-    // every tile every paint — much cheaper at high tile counts.
-    function buildTintedImage() {
-      const naturalW = truth.naturalWidth;
-      const naturalH = truth.naturalHeight;
-      if (!naturalW || !naturalH) return;
-
-      const canvas = document.createElement('canvas');
-      canvas.width  = naturalW;
-      canvas.height = naturalH;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(truth, 0, 0, naturalW, naturalH);
-      ctx.globalCompositeOperation = 'color';
-      ctx.fillStyle = TINT;
-      ctx.fillRect(0, 0, naturalW, naturalH);
-
-      canvas.toBlob(blob => {
-        buildTiles(URL.createObjectURL(blob), naturalW, naturalH);
-      }, 'image/jpeg', 0.85);
-    }
-
-    function buildTiles(tintedUrl, naturalW, naturalH) {
-      const frag = document.createDocumentFragment();
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const tile = document.createElement('div');
-          tile.className = 'flip-tile';
-          tile.style.backgroundImage = `url("${tintedUrl}")`;
-          frag.appendChild(tile);
-          tiles.push({ el: tile, r, c, open: false });
-        }
-      }
-      grid.appendChild(frag);
-      layoutTiles(naturalW, naturalH);
-      window.addEventListener('resize', () => layoutTiles(naturalW, naturalH));
-    }
-
-    // Match #photo-truth's `object-fit: cover; object-position: center top;`
-    // exactly, so each tile's slice lines up with the sharp photo beneath it
-    // instead of stretching the whole image to fit the grid.
-    function layoutTiles(naturalW, naturalH) {
-      const wrapW = wrap.clientWidth;
-      const wrapH = wrap.clientHeight;
-      const scale = Math.max(wrapW / naturalW, wrapH / naturalH);
-      const bgW   = naturalW * scale;
-      const bgH   = naturalH * scale;
-      const offsetX = (wrapW - bgW) / 2; // object-position: center
-      const offsetY = 0;                 // object-position: top
-      const tileW = wrapW / COLS;
-      const tileH = wrapH / ROWS;
-
-      tiles.forEach(t => {
-        t.el.style.backgroundSize     = `${bgW}px ${bgH}px`;
-        t.el.style.backgroundPosition = `${offsetX - t.c * tileW}px ${offsetY - t.r * tileH}px`;
-      });
-    }
-
-    if (truth.complete && truth.naturalWidth) {
-      buildTintedImage();
-    } else {
-      truth.addEventListener('load', buildTintedImage);
-    }
-
-    let rect = null;
-    let pendingX = 0, pendingY = 0;
-    let rafId = null;
-
-    function computeAndApply() {
-      rafId = null;
-      if (!rect) return;
-      const radius   = Math.min(rect.width, rect.height) * REVEAL_FRACTION;
-      const radiusSq = radius * radius;
-      const cellW    = rect.width / COLS;
-      const cellH    = rect.height / ROWS;
-      tiles.forEach(t => {
-        const cx = (t.c + 0.5) * cellW;
-        const cy = (t.r + 0.5) * cellH;
-        const dx = pendingX - cx;
-        const dy = pendingY - cy;
-        const isOpen = (dx * dx + dy * dy) < radiusSq;
-        if (isOpen !== t.open) {
-          t.open = isOpen;
-          t.el.classList.toggle('open', isOpen);
-        }
-      });
-    }
-
-    function scheduleUpdate(x, y) {
-      pendingX = x;
-      pendingY = y;
-      if (rafId === null) rafId = requestAnimationFrame(computeAndApply);
-    }
-
-    wrap.addEventListener('mouseenter', () => {
-      rect = wrap.getBoundingClientRect();
-      cur.style.opacity  = '0';
-      ring.style.opacity = '0';
-    });
-
-    wrap.addEventListener('mousemove', e => {
-      const r = rect || wrap.getBoundingClientRect();
-      scheduleUpdate(e.clientX - r.left, e.clientY - r.top);
-    });
-
-    wrap.addEventListener('mouseleave', () => {
-      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
-      tiles.forEach(t => { t.open = false; t.el.classList.remove('open'); });
-      cur.style.opacity  = '1';
-      ring.style.opacity = '0.8';
-      resetCursor();
-    });
-  })();
+  // ── PHOTO HOVER CURSOR ──
+  document.querySelectorAll('.about-photo-link').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
 
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
