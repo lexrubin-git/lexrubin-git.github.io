@@ -188,27 +188,10 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: brightness(0.75) blur(0.5px);
-      transition: filter 0.5s ease, transform 0.6s ease;
+      transition: transform 0.6s ease;
     }
     .portfolio-item:hover .item-image img {
-      filter: brightness(1) blur(0px);
-      transform: scale(1.03);
-      animation: none;
-    }
-
-    @keyframes pulseBlur {
-      0%   { filter: blur(1px) brightness(0.90); }
-      50%  { filter: blur(1.8px) brightness(0.65); }
-      100% { filter: blur(1px) brightness(0.90); }
-    }
-
-    @keyframes pulseBrightness {
-      0%   { filter: blur(1px) brightness(0.90); }
-      25%  { filter: blur(1.2px) brightness(0.70); }
-      50%  { filter: blur(1.5px) brightness(0.65); }
-      75%  { filter: blur(1px) brightness(0.80); }
-      100% { filter: blur(1px) brightness(0.90); }
+      transform: scale(1.06);
     }
 
     /* placeholder images via gradient */
@@ -223,12 +206,10 @@
       text-transform: uppercase;
       color: var(--gray);
       position: relative;
-      filter: brightness(0.75) blur(0.5px);
-      transition: filter 0.5s ease, transform 0.6s ease;
+      transition: transform 0.6s ease;
     }
     .portfolio-item:hover .img-placeholder {
-      filter: brightness(1) blur(0px);
-      transform: scale(1.03);
+      transform: scale(1.06);
     }
     .img-pyxd       { background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 60%, #3d3d3d 100%); }
     .img-arctic     { background: linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #555 100%); }
@@ -244,30 +225,6 @@
     }
 
     .overlay { display: contents; }
-
-    /* ── BRIGHTNESS OVERLAY ── */
-    .brightness-overlay {
-      position: absolute;
-      inset: 0;
-      background: #000;
-      opacity: 0.45;
-      z-index: 5;
-      pointer-events: none;
-      animation: brightnessFlicker 3s ease-in-out infinite;
-      transition: opacity 0.5s ease;
-    }
-    .portfolio-item:hover .brightness-overlay {
-      opacity: 0 !important;
-      animation: none;
-    }
-
-    @keyframes brightnessFlicker {
-      0%   { opacity: 0.35; }
-      30%  { opacity: 0.55; }
-      60%  { opacity: 0.28; }
-      80%  { opacity: 0.50; }
-      100% { opacity: 0.35; }
-    }
 
     .overlay-text {
       position: absolute;
@@ -915,7 +872,6 @@
       </div>
       <div class="item-image">
         <img src="crossword_index.gif" alt="CrosswordLeague.com" />
-        <div class="brightness-overlay"></div>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -931,7 +887,6 @@
       </div>
       <div class="item-image">
         <img src="index1.png" alt="Pyxd, Inc." />
-        <div class="brightness-overlay"></div>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -947,7 +902,6 @@
       </div>
       <div class="item-image">
         <img src="index2.png" alt="Arctic Zoo & Aquarium" />
-        <div class="brightness-overlay"></div>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -963,7 +917,6 @@
       </div>
       <div class="item-image">
         <img src="index3.png" alt="Apple Watch Face" />
-        <div class="brightness-overlay"></div>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -979,7 +932,6 @@
       </div>
       <div class="item-image">
         <img src="index4.png" alt="U.C. Berkeley Dam Research" />
-        <div class="brightness-overlay"></div>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1181,41 +1133,6 @@
     document.querySelectorAll('footer a').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
-    });
-
-    // Stagger brightness overlay animations so cards pulse independently
-    const allOverlays = document.querySelectorAll('.brightness-overlay');
-    allOverlays.forEach(overlay => {
-      const delay = -(Math.random() * 3).toFixed(2);
-      const duration = (5 + Math.random() * 3).toFixed(2);
-      overlay.style.animationDelay = `${delay}s`;
-      overlay.style.animationDuration = `${duration}s`;
-    });
-
-    // Pause all other overlays when any card is hovered
-    document.querySelectorAll('.portfolio-item').forEach(item => {
-      item.addEventListener('mouseenter', () => {
-        allOverlays.forEach(overlay => {
-          if (overlay.closest('.portfolio-item') !== item) {
-            overlay.style.animationPlayState = 'paused';
-          }
-        });
-      });
-      item.addEventListener('mouseleave', () => {
-        allOverlays.forEach(overlay => {
-          overlay.style.animationPlayState = 'running';
-        });
-      });
-    });
-
-    // Randomize blur/brightness animation per card
-    document.querySelectorAll('.item-image img').forEach(img => {
-      const blurDelay      = (Math.random() * 3).toFixed(2);
-      const brightnessDelay = (Math.random() * 4).toFixed(2);
-      const blurDuration   = (2 + Math.random() * 2).toFixed(2);
-      const brightDuration = (2.5 + Math.random() * 2).toFixed(2);
-      img.style.animationDelay    = `-${blurDelay}s, -${brightnessDelay}s`;
-      img.style.animationDuration = `${blurDuration}s, ${brightDuration}s`;
     });
 
     // Logo hover swap
