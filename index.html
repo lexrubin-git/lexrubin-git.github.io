@@ -110,7 +110,7 @@
       transition: opacity 0.4s ease;
     }
 
-    .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags {
+    .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags, .item-subtitle, .item-chips, .item-chip {
       pointer-events: none;
     }
     .portfolio-item:hover .halftone-canvas { opacity: 1; }
@@ -141,6 +141,39 @@
       font-size: 0.9rem;
       color: #777;
       letter-spacing: 0.08em;
+    }
+
+    /* full-width hero card — descriptive title, summary line, tag chips */
+    .portfolio-item.full-width .item-header {
+      height: auto;
+      min-height: 120px;
+      padding: 2rem 2.5rem;
+      gap: 0.85rem;
+    }
+    .portfolio-item.full-width .item-title { margin-bottom: 0; }
+
+    .item-subtitle {
+      font-size: 0.92rem;
+      color: #888;
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 40rem;
+    }
+
+    .item-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      justify-content: center;
+    }
+    .item-chip {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      white-space: nowrap;
     }
 
     .item-image {
@@ -474,8 +507,10 @@
       }
 
       .item-header { height: auto; padding: 1rem 1.5rem 1.2rem; }
+      .portfolio-item.full-width .item-header { padding: 1.4rem 1.5rem; gap: 0.7rem; }
       .item-title { font-size: 1.1rem; }
       .item-tags { font-size: 0.78rem; }
+      .item-subtitle { font-size: 0.82rem; }
 
       .footer-links { gap: 1.5rem; justify-content: center; font-size: 0.78rem; }
       .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
@@ -870,8 +905,13 @@
     <div class="portfolio-item full-width" onclick="window.location='5/'">
       <canvas class="halftone-canvas"></canvas>
       <div class="item-header">
-        <div class="item-title">CrosswordLeague.com</div>
-        <div class="item-tags">UI/UX Design, Game Design, Product Design</div>
+        <div class="item-title">End-to-end product design for a multiplayer crossword game</div>
+        <div class="item-subtitle">Designed and built a multiplayer crossword platform from concept to product</div>
+        <div class="item-chips">
+          <span class="item-chip">UI/UX Design</span>
+          <span class="item-chip">Game Design</span>
+          <span class="item-chip">Product Design</span>
+        </div>
       </div>
       <div class="item-image">
         <img src="crossword_index.gif" alt="CrosswordLeague.com" />
