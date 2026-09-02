@@ -17,7 +17,21 @@
       --accent: #c8b89a;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a #000;
+    }
+
+    /* ── CUSTOM SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.16);
+      border: 3px solid #000;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(200,184,154,0.55); }
+    ::-webkit-scrollbar-corner { background: #000; }
 
     body {
       background: var(--black);
