@@ -671,7 +671,7 @@
     }
     .cs-meta-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       border-bottom: 1px solid var(--border);
     }
     .cs-meta-cell {
@@ -865,9 +865,6 @@
       .artwork-card { border-right: none; }
 
       /* case study */
-      .cs-meta-row { grid-template-columns: 1fr 1fr; }
-      .cs-meta-cell:nth-child(2n) { border-right: none; }
-      .cs-meta-cell:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
       .cs-meta-cell { padding: 1.2rem 1rem; }
       .cs-body { grid-template-columns: 1fr; }
       .cs-col-label { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem 0.5rem; }
@@ -972,10 +969,6 @@
   <div class="case-study-section">
 
     <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">UI/UX Designer — Design Systems &amp; Brand Identity</div>
-      </div>
       <div class="cs-meta-cell">
         <div class="cs-meta-label">Tools</div>
         <div class="cs-meta-val">Illustrator, Figma, Photoshop</div>
