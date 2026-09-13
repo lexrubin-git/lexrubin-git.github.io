@@ -147,9 +147,35 @@
     .artwork-title-row {
       padding: 3rem 2.5rem;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 1.5rem;
+    }
+
+    .hero-type {
+      margin-top: 1rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .hero-tags-col { display: flex; flex-direction: column; align-items: flex-end; }
+
+    .hero-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.9rem;
+      color: #777;
+      font-size: 0.75rem;
+    }
+    .hero-tools-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      opacity: 0.6;
     }
 
     .artwork-main-title {
@@ -857,6 +883,7 @@
       .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
       .artwork-main-title { font-size: 1.6rem; }
       .hero-tags { justify-content: flex-start; }
+      .hero-tags-col { align-items: flex-start; }
       .hero-summary { padding: 1.25rem 1.5rem 1.75rem; }
       .hero-subtitle { font-size: 0.9rem; }
 
@@ -954,11 +981,22 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand&nbsp;identity</span></h1>
-      <div class="hero-tags">
-        <span class="hero-tag">UI/UX</span>
-        <span class="hero-tag">Systems</span>
-        <span class="hero-tag">Branding</span>
+      <div class="hero-title-col">
+        <h1 class="artwork-main-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand&nbsp;identity</span></h1>
+        <div class="hero-type">Paid Work</div>
+      </div>
+      <div class="hero-tags-col">
+        <div class="hero-tags">
+          <span class="hero-tag">UI/UX</span>
+          <span class="hero-tag">Systems</span>
+          <span class="hero-tag">Branding</span>
+        </div>
+        <div class="hero-tools">
+          <svg class="hero-tools-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+          </svg>
+          <span>Illustrator, Figma, Photoshop</span>
+        </div>
       </div>
     </div>
   </div>
@@ -967,17 +1005,6 @@
 <!-- ── CASE STUDY ── -->
 <div class="page-wrapper">
   <div class="case-study-section">
-
-    <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Tools</div>
-        <div class="cs-meta-val">Illustrator, Figma, Photoshop</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">Paid Work</div>
-      </div>
-    </div>
 
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
