@@ -145,11 +145,11 @@
     }
 
     .artwork-title-row {
-      padding: 3rem 2.5rem 2.5rem;
+      padding: 3rem 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      gap: 1.5rem;
     }
 
     .artwork-main-title {
@@ -176,7 +176,7 @@
       font-weight: 400;
       max-width: 34rem;
     }
-    .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; flex-shrink: 0; justify-content: flex-end; }
     .hero-tag {
       font-size: 0.68rem;
       letter-spacing: 0.12em;
@@ -854,8 +854,9 @@
       .section-arrows { max-width: 100%; width: calc(100% - 1.5rem); }
 
       /* hero */
-      .artwork-title-row { padding: 2rem 1.5rem 1.5rem; }
+      .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
       .artwork-main-title { font-size: 1.6rem; }
+      .hero-tags { justify-content: flex-start; }
       .hero-summary { padding: 1.25rem 1.5rem 1.75rem; }
       .hero-subtitle { font-size: 0.9rem; }
 
@@ -956,10 +957,7 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand identity</span></h1>
-    </div>
-    <div class="hero-summary">
-      <p class="hero-subtitle">A cohesive UI and brand language spanning app, web, and apparel for an AI photography product</p>
+      <h1 class="artwork-main-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand&nbsp;identity</span></h1>
       <div class="hero-tags">
         <span class="hero-tag">UI/UX</span>
         <span class="hero-tag">Systems</span>
@@ -967,13 +965,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- ── SECTION ARROWS ── -->
-<div class="section-arrows">
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
 </div>
 
 <!-- ── CASE STUDY ── -->
