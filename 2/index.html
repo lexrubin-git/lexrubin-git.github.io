@@ -156,12 +156,30 @@
     }
 
     .artwork-title-row {
-      padding: 3rem 2.5rem 2.5rem;
+      padding: 3rem 2.5rem;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      gap: 1.5rem;
     }
+
+    .hero-type {
+      margin-top: 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .hero-tags-col { display: flex; flex-direction: column; align-items: flex-end; }
+
+    .hero-tools {
+      margin-top: 0.9rem;
+      color: #777;
+      font-size: 0.75rem;
+    }
+    .hero-tools strong { color: #999; font-weight: 500; }
 
     .artwork-main-title {
       font-size: 2.1rem;
@@ -187,7 +205,7 @@
       font-weight: 400;
       max-width: 34rem;
     }
-    .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; flex-shrink: 0; justify-content: flex-end; }
     .hero-tag {
       font-size: 0.68rem;
       letter-spacing: 0.12em;
@@ -706,9 +724,30 @@
       border-bottom: 1px solid var(--border);
     }
     .cs-body:last-child { border-bottom: none; }
+
+    /* ── CHAPTER HEADER (Process / Gallery dividers) ── */
+    .cs-chapter {
+      padding: 1.3rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-chapter-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #aaa;
+      letter-spacing: 0.02em;
+    }
+
     .cs-col-label {
       border-right: 1px solid var(--border);
       padding: 2rem 1.5rem;
+    }
+    .cs-process-num {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: #3a3a3a;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-variant-numeric: tabular-nums;
     }
     .cs-section-label {
       font-size: 0.65rem;
@@ -840,19 +879,19 @@
       .artwork-hero, .artworks-section, .case-study-section, .section-arrows { max-width: 100%; }
 
       /* hero */
-      .artwork-title-row { padding: 2rem 1.5rem 1.5rem; }
+      .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
       .artwork-main-title { font-size: 1.6rem; }
+      .hero-tags { justify-content: flex-start; }
+      .hero-tags-col { align-items: flex-start; }
       .hero-summary { padding: 1.25rem 1.5rem 1.75rem; }
       .hero-subtitle { font-size: 0.9rem; }
 
       /* case study */
-      .cs-meta-row { grid-template-columns: 1fr 1fr; }
-      .cs-meta-cell:nth-child(2n) { border-right: none; }
-      .cs-meta-cell:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
       .cs-meta-cell { padding: 1.2rem 1rem; }
       .cs-body { grid-template-columns: 1fr; }
       .cs-col-label { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem 0.5rem; }
       .cs-col-content { padding: 1rem 1.25rem 1.5rem; }
+      .cs-chapter { padding: 1rem 1.25rem; }
 
       /* CTA section */
       .cta-wrap { max-width: 100%; }
@@ -1129,46 +1168,25 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Brand &amp; wayfinding design</span></h1>
-    </div>
-    <div class="hero-summary">
-      <p class="hero-subtitle">A visitor-facing brand and web experience built around fast, mobile-first wayfinding</p>
-      <div class="hero-tags">
-        <span class="hero-tag">UI/UX</span>
-        <span class="hero-tag">Web Design</span>
-        <span class="hero-tag">Wayfinding</span>
+      <div class="hero-title-col">
+        <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Brand &amp; wayfinding design</span></h1>
+      </div>
+      <div class="hero-tags-col">
+        <div class="hero-tags">
+          <span class="hero-tag">UI/UX</span>
+          <span class="hero-tag">Web Design</span>
+          <span class="hero-tag">Wayfinding</span>
+        </div>
+        <div class="hero-tools"><strong>Tools used:</strong> Figma, Illustrator</div>
+        <div class="hero-type">Branding Project</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── SECTION ARROWS ── -->
-<div class="page-wrapper">
-<div class="section-arrows">
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
-</div>
-</div>
-
 <!-- ── CASE STUDY ── -->
 <div class="page-wrapper">
   <div class="case-study-section">
-
-    <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">UI/UX Designer — Information Architecture &amp; Wayfinding</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Tools</div>
-        <div class="cs-meta-val">Figma, Illustrator</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">Branding Project</div>
-      </div>
-    </div>
 
     <div class="cs-body">
       <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
@@ -1177,28 +1195,46 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ── SECTION ARROWS ── -->
+<div class="section-arrows">
+  <div class="arrow-cell">∨</div>
+  <div class="arrow-cell">∨</div>
+  <div class="arrow-cell">∨</div>
+</div>
+
+<div class="page-wrapper">
+  <div class="case-study-section">
+
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">001</div>
+        <div class="cs-section-label">Ideation</div>
+      </div>
       <div class="cs-col-content">
-        <ul class="cs-list">
-          <li><strong>Visitor-first information architecture:</strong> Structured navigation around what visitors actually need on-site — plan a visit, find an animal, check hours — so wayfinding takes one tap instead of a search.</li>
-          <li><strong>High-contrast, mobile-first interface:</strong> Designed for real outdoor viewing conditions, where glare and quick glances matter more than dense on-screen detail.</li>
-          <li><strong>Restrained visual system:</strong> Kept the logo and color palette simple so photography and animal content stay the focus, reducing cognitive load for visitors scanning quickly.</li>
-        </ul>
+        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Challenge</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">002</div>
+        <div class="cs-section-label">Refine Concepts</div>
+      </div>
       <div class="cs-col-content">
-        <p class="cs-text">Zoo and aquarium sites tend to default to generic brochure layouts that ignore how visitors actually use them — on a phone, outdoors, mid-visit, trying to find the next exhibit before it closes. The challenge was designing a distinctive arctic identity without losing sight of that real-world, on-the-go use case.</p>
+        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Approach</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">003</div>
+        <div class="cs-section-label">Final Design</div>
+      </div>
       <div class="cs-col-content">
-        <p class="cs-text">Structured the site's information hierarchy around visitor tasks — locate an animal, plan a route, check hours — instead of around organizational content, and built the interface with high-contrast, glare-resistant legibility for outdoor mobile viewing. Kept the logo and palette restrained so <strong>wayfinding and animal photography stayed the visual priority</strong>, not decoration.</p>
+        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
       </div>
     </div>
 
@@ -1208,6 +1244,7 @@
 <!-- ── ARTWORK GRID ── -->
 <div class="page-wrapper">
   <div class="artworks-section">
+    <div class="cs-chapter"><span class="cs-chapter-title">Project Gallery</span></div>
     <div class="artworks-grid" id="artwork-grid">
 
       <!-- Card 1 -->
