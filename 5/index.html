@@ -938,7 +938,10 @@
     img.addEventListener('mouseleave', resetCursor);
   });
 
-  lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+  lightbox.addEventListener('click', e => {
+    if (e.target.closest('.lightbox-img, .lightbox-nav')) return;
+    lightbox.classList.remove('open');
+  });
 
     // ── HAMBURGER ──
     (function() {
