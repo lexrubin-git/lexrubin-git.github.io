@@ -757,6 +757,18 @@
       font-weight: 600;
     }
     .cs-col-content { padding: 2rem; }
+    .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
+    .cs-caption-frame {
+      display: inline-block;
+      border-top: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+      padding: 0.9rem 1.5rem 0 0;
+    }
+    .cs-process-group + .cs-process-group {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
     .cs-text {
       font-size: 0.875rem;
       line-height: 1.9;
@@ -1214,7 +1226,10 @@
         <div class="cs-section-label">Ideation</div>
       </div>
       <div class="cs-col-content">
-        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
+        <div class="cs-process-group">
+          <p class="cs-text">Kicked off from a lightweight creative brief: a fictional arctic-themed zoo and aquarium run by passionate scientists and zoo-tenders, with keywords of colorful, fun, and simple guiding the direction, and app design plus brand identity as the deliverables. Built an early moodboard around a cool, pastel ice-and-glacier palette and reference photography — arctic ice, polar wildlife, and tundra flora — to ground the identity before any screens were drawn.</p>
+          <img class="cs-process-img" src="process-ideation.png" alt="Early moodboard: arctic ice photography, a pastel color palette, and reference wildlife photography">
+        </div>
       </div>
     </div>
 
@@ -1224,7 +1239,18 @@
         <div class="cs-section-label">Refine Concepts</div>
       </div>
       <div class="cs-col-content">
-        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
+        <div class="cs-process-group">
+          <div class="cs-caption-frame">
+            <p class="cs-text">I used Illustrator for the logo, starting with a rudimentary idea of an idea, and then refining and simplifying for the final version of the product.</p>
+          </div>
+          <img class="cs-process-img" src="process-logo-evolution.png" alt="Logo evolution from an early sketch through a snowflake motif to the final owl-and-snowflake lockup">
+        </div>
+        <div class="cs-process-group">
+          <div class="cs-caption-frame">
+            <p class="cs-text">I fully designed and annotated a functional mobile app for a zoo. I worked in Illustrator to build out the wireframe from a concept to a deliverable product.</p>
+          </div>
+          <img class="cs-process-img" src="process-wireframes-mockups.png" alt="Annotated wireframes for the app's navigation and exhibit screens, carried through to the finished exhibit and info mockups">
+        </div>
       </div>
     </div>
 
@@ -1234,7 +1260,10 @@
         <div class="cs-section-label">Final Design</div>
       </div>
       <div class="cs-col-content">
-        <p class="cs-text">[Write 2–3 sentences on this phase — what you explored, tried, or decided, and why.]</p>
+        <div class="cs-process-group">
+          <p class="cs-text">I created a fully designed interface for the mobile app, and a complete brand identity that accurately follows the project brief. <span style="color:#555;">(Click to view a fully functional interactive mockup via Figma)</span></p>
+          <img class="cs-process-img" src="process-final-mockups.png" alt="The finished app interface across the splash, exhibit, and about screens">
+        </div>
       </div>
     </div>
 
