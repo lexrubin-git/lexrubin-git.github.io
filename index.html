@@ -1452,7 +1452,8 @@
     lightboxNext.addEventListener('click', () => showLightbox(lightboxIndex + 1));
 
     lightbox.addEventListener('click', e => {
-      if (e.target === lightbox) lightbox.classList.remove('open');
+      if (e.target.closest('.lightbox-img, .lightbox-nav')) return;
+      lightbox.classList.remove('open');
     });
 
     document.addEventListener('keydown', e => {
