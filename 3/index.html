@@ -98,6 +98,17 @@
     .nav-links a:hover::after { width: 100%; }
     .nav-links a.active { color: #aaa; }
     .nav-links a.active::after { width: 100%; background: #aaa; }
+    .nav-link-icon {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      margin-left: 5px;
+      vertical-align: -1px;
+      opacity: 0;
+      transform: translate(-4px, 2px) scale(0.85);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .nav-links a:hover .nav-link-icon { opacity: 1; transform: translate(0, 0) scale(1); }
 
     /* ── PAGE WRAPPER ── */
     .page-wrapper { padding: 0 4rem; max-width: 1350px; margin: 0 auto; }
@@ -998,7 +1009,7 @@
          <a href="#" class="active">Portfolio</a>
       <a href="/about/">About</a>
       <a href="/contact/">Contact</a>
-      <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume</a>
+      <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume<svg class="nav-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
