@@ -105,6 +105,7 @@
     .content-col {
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
+      background: var(--black);
     }
 
     /* ── HERO HEADER ── */
@@ -116,6 +117,7 @@
       border-bottom: 1px solid var(--border);
       opacity: 0;
       animation: fadeUp 0.7s ease 0.1s forwards;
+      background: var(--black);
     }
 
     @keyframes fadeUp {
@@ -203,6 +205,7 @@
       scrollbar-width: none;
       opacity: 0;
       animation: fadeUp 0.7s ease 0.2s forwards;
+      background: var(--black);
     }
     .filter-bar::-webkit-scrollbar { display: none; }
 
@@ -236,6 +239,7 @@
       margin: 0 auto;
       opacity: 0;
       animation: fadeUp 0.7s ease 0.25s forwards;
+      background: var(--black);
     }
     .arrow-cell {
       display: flex; align-items: center; justify-content: center;
@@ -252,6 +256,7 @@
       border-right: 1px solid var(--border);
       opacity: 0;
       animation: fadeUp 0.7s ease 0.3s forwards;
+      background: var(--black);
     }
 
     .artworks-grid {
@@ -349,6 +354,7 @@
       opacity: 0;
       animation: fadeUp 0.7s ease 0.35s forwards;
       margin-top: 3rem;
+      background: var(--black);
     }
 
     .featured-label {
@@ -463,6 +469,7 @@
       grid-template-columns: 1fr 1fr 1fr 1fr;
       opacity: 0;
       animation: fadeUp 0.7s ease 0.4s forwards;
+      background: var(--black);
     }
 
     .stat-cell {
@@ -494,6 +501,7 @@
       margin-bottom: 4rem;
       opacity: 0;
       animation: fadeUp 0.7s ease 0.45s forwards;
+      background: var(--black);
     }
 
     .ticker-row {
@@ -570,7 +578,6 @@
 
     /* ── FOOTER ── */
     footer {
-      background: #000000;
       padding: 0;
       position: relative;
       text-align: center;
@@ -655,6 +662,7 @@
       border-bottom: 1px solid var(--border);
       opacity: 0;
       animation: fadeUp 0.7s ease 0.28s forwards;
+      background: var(--black);
     }
     .cs-meta-row {
       display: grid;
@@ -893,6 +901,7 @@
       border-bottom: 1px solid var(--border);
       opacity: 0;
       animation: fadeUp 0.7s ease 0.45s forwards;
+      background: var(--black);
     }
 
     .cta-section {
@@ -1057,10 +1066,20 @@
     }
     .bottom-nav-item:hover span { transform: translateY(-2px); }
 
+    /* ── AMBIENT BACKGROUND HALFTONE ── */
+    .bg-halftone {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
   </style>
 </head>
 <body>
 
+<canvas id="bgHalftone" class="bg-halftone"></canvas>
 <div class="cursor" id="cur"></div>
 <div class="cursor-ring" id="ring0"></div>
 
@@ -1391,6 +1410,64 @@
           nl.classList.remove('open');
         });
       });
-    })();  </script>
+    })();
+
+    // ── AMBIENT BACKGROUND HALFTONE ──
+    (function() {
+      const bgCanvas = document.getElementById('bgHalftone');
+      if (!bgCanvas) return;
+      const bgCtx = bgCanvas.getContext('2d');
+      const BG_SPACING = 20, BG_RADIUS = 1, BG_REPEL = 140, BG_STRENGTH = 60;
+      let bgDots = [];
+      let bgMx = -9999, bgMy = -9999;
+
+      function bgBuildDots() {
+        const w = bgCanvas.width  = window.innerWidth;
+        const h = bgCanvas.height = window.innerHeight;
+        bgDots = [];
+        for (let x = BG_SPACING / 2; x < w; x += BG_SPACING) {
+          for (let y = BG_SPACING / 2; y < h; y += BG_SPACING) {
+            bgDots.push({ ox: x, oy: y, x, y });
+          }
+        }
+      }
+
+      function bgDraw() {
+        const w = bgCanvas.width, h = bgCanvas.height;
+        bgCtx.clearRect(0, 0, w, h);
+        bgDots.forEach(d => {
+          const dx = d.x - bgMx;
+          const dy = d.y - bgMy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          let tx = d.ox, ty = d.oy;
+          if (dist < BG_REPEL) {
+            const force = (1 - dist / BG_REPEL) * BG_STRENGTH;
+            tx = d.ox + (dx / dist) * force;
+            ty = d.oy + (dy / dist) * force;
+          }
+          d.x += (tx - d.x) * 0.18;
+          d.y += (ty - d.y) * 0.18;
+          bgCtx.beginPath();
+          bgCtx.arc(d.x, d.y, BG_RADIUS, 0, Math.PI * 2);
+          bgCtx.fillStyle = 'rgba(255,255,255,0.15)';
+          bgCtx.fill();
+        });
+        requestAnimationFrame(bgDraw);
+      }
+
+      bgBuildDots();
+      bgDraw();
+
+      document.addEventListener('mousemove', e => { bgMx = e.clientX; bgMy = e.clientY; });
+      document.addEventListener('mouseleave', () => { bgMx = -9999; bgMy = -9999; });
+      window.addEventListener('resize', bgBuildDots);
+
+      // Fade out while hovering a project card, ease back in after
+      document.querySelectorAll('.portfolio-item').forEach(item => {
+        item.addEventListener('mouseenter', () => { bgCanvas.style.opacity = '0'; });
+        item.addEventListener('mouseleave', () => { bgCanvas.style.opacity = '1'; });
+      });
+    })();
+  </script>
 </body>
 </html>
