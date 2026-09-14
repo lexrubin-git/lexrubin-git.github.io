@@ -962,10 +962,15 @@
     const TAPER_FRAC = 0.28;
     const SPEED      = 0.00018;
     const LINE_W     = 2.5;
-    const SEGMENTS   = 180;
+    const SEGMENTS   = 80;   // was 180 — halves the per-frame stroke() calls
+    const FRAME_MS   = 33;   // cap to ~30fps; plenty smooth for a slow-moving line, half the GPU work of 60fps
 
     let progress = 0;
     let lastTime = null;
+    let acc = 0;
+    let snakeRafId = null;
+    let pageVisible = true;
+    let photoVisible = true;
 
     function easeInOut(t) {
       return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -998,44 +1003,70 @@
       canvas.height = r.height;
     }
 
+    function shouldRun() { return pageVisible && photoVisible; }
+
+    function startSnake() {
+      if (snakeRafId === null && shouldRun()) {
+        lastTime = null;
+        snakeRafId = requestAnimationFrame(draw);
+      }
+    }
+
     function draw(ts) {
+      if (!shouldRun()) { snakeRafId = null; return; }
       if (!lastTime) lastTime = ts;
       const dt = ts - lastTime;
       lastTime = ts;
-      progress = (progress + SPEED * dt) % 1;
+      acc += dt;
 
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
+      // Only redraw ~30x/sec instead of every rAF tick (up to 60-144x/sec)
+      if (acc >= FRAME_MS) {
+        progress = (progress + SPEED * acc) % 1;
+        acc = 0;
 
-      ctx.save();
-      ctx.lineWidth   = LINE_W;
-      ctx.lineCap     = 'round';
-      ctx.shadowColor = 'rgba(255,255,255,0.6)';
-      ctx.shadowBlur  = 7;
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.lineWidth = LINE_W;
+        ctx.lineCap   = 'round';
+        // No shadowBlur — a per-stroke canvas shadow is one of the most expensive
+        // things to composite and this ran on every one of ~180 strokes, forever.
 
-      for (let i = 0; i < SEGMENTS; i++) {
-        const frac = i / SEGMENTS;
-        const f0   = progress - SNAKE_LEN * (1 - frac);
-        const f1   = progress - SNAKE_LEN * (1 - (i + 1) / SEGMENTS);
-        const p0   = perimeterPoint(f0, w, h);
-        const p1   = perimeterPoint(f1, w, h);
+        for (let i = 0; i < SEGMENTS; i++) {
+          const frac = i / SEGMENTS;
+          const f0   = progress - SNAKE_LEN * (1 - frac);
+          const f1   = progress - SNAKE_LEN * (1 - (i + 1) / SEGMENTS);
+          const p0   = perimeterPoint(f0, w, h);
+          const p1   = perimeterPoint(f1, w, h);
 
-        const alpha = taper(frac) * 0.92;
-        ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-        ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y);
-        ctx.lineTo(p1.x, p1.y);
-        ctx.stroke();
+          const alpha = taper(frac) * 0.92;
+          ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y);
+          ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+        }
       }
 
-      ctx.restore();
-      requestAnimationFrame(draw);
+      snakeRafId = requestAnimationFrame(draw);
     }
 
     resize();
     window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
+
+    // Pause entirely when the tab is backgrounded or the photo scrolls off-screen
+    document.addEventListener('visibilitychange', () => {
+      pageVisible = document.visibilityState !== 'hidden';
+      if (shouldRun()) startSnake(); else if (snakeRafId !== null) { cancelAnimationFrame(snakeRafId); snakeRafId = null; }
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => {
+        photoVisible = entries[0].isIntersecting;
+        if (shouldRun()) startSnake(); else if (snakeRafId !== null) { cancelAnimationFrame(snakeRafId); snakeRafId = null; }
+      }).observe(photoWrap);
+    }
+
+    startSnake();
   })();
 
   const logoLink    = document.getElementById('logo-link');
@@ -1111,14 +1142,16 @@
       });
     })();
 
-    // ── AMBIENT BACKGROUND HALFTONE ──
+    // ── AMBIENT BACKGROUND HALFTONE (perf: batched draw + auto-sleep when idle) ──
     (function() {
       const bgCanvas = document.getElementById('bgHalftone');
       if (!bgCanvas) return;
       const bgCtx = bgCanvas.getContext('2d');
-      const BG_SPACING = 20, BG_RADIUS = 1, BG_REPEL = 140, BG_STRENGTH = 60;
+      const BG_SPACING = 24, BG_RADIUS = 1, BG_REPEL = 140, BG_STRENGTH = 60;
+      const BG_REPEL_SQ = BG_REPEL * BG_REPEL;
       let bgDots = [];
       let bgMx = -9999, bgMy = -9999;
+      let bgRafId = null;
 
       function bgBuildDots() {
         const w = bgCanvas.width  = window.innerWidth;
@@ -1134,32 +1167,54 @@
       function bgDraw() {
         const w = bgCanvas.width, h = bgCanvas.height;
         bgCtx.clearRect(0, 0, w, h);
-        bgDots.forEach(d => {
+        let moving = false;
+        bgCtx.beginPath();
+        for (let i = 0; i < bgDots.length; i++) {
+          const d = bgDots[i];
           const dx = d.x - bgMx;
           const dy = d.y - bgMy;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
           let tx = d.ox, ty = d.oy;
-          if (dist < BG_REPEL) {
+          if (distSq < BG_REPEL_SQ) {
+            const dist = Math.sqrt(distSq) || 0.001;
             const force = (1 - dist / BG_REPEL) * BG_STRENGTH;
             tx = d.ox + (dx / dist) * force;
             ty = d.oy + (dy / dist) * force;
           }
           d.x += (tx - d.x) * 0.18;
           d.y += (ty - d.y) * 0.18;
-          bgCtx.beginPath();
+          if (Math.abs(d.x - d.ox) > 0.15 || Math.abs(d.y - d.oy) > 0.15) moving = true;
+          bgCtx.moveTo(d.x + BG_RADIUS, d.y);
           bgCtx.arc(d.x, d.y, BG_RADIUS, 0, Math.PI * 2);
-          bgCtx.fillStyle = 'rgba(255,255,255,0.15)';
-          bgCtx.fill();
-        });
-        requestAnimationFrame(bgDraw);
+        }
+        bgCtx.fillStyle = 'rgba(255,255,255,0.15)';
+        bgCtx.fill();
+
+        // Stop redrawing once every dot has settled — bgWake() restarts it
+        if (!moving) { bgRafId = null; return; }
+        bgRafId = requestAnimationFrame(bgDraw);
+      }
+
+      function bgWake() {
+        if (bgRafId === null && document.visibilityState !== 'hidden') {
+          bgRafId = requestAnimationFrame(bgDraw);
+        }
       }
 
       bgBuildDots();
       bgDraw();
 
-      document.addEventListener('mousemove', e => { bgMx = e.clientX; bgMy = e.clientY; });
-      document.addEventListener('mouseleave', () => { bgMx = -9999; bgMy = -9999; });
-      window.addEventListener('resize', bgBuildDots);
+      document.addEventListener('mousemove', e => { bgMx = e.clientX; bgMy = e.clientY; bgWake(); });
+      document.addEventListener('mouseleave', () => { bgMx = -9999; bgMy = -9999; bgWake(); });
+      window.addEventListener('resize', () => { bgBuildDots(); bgWake(); });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden' && bgRafId !== null) {
+          cancelAnimationFrame(bgRafId);
+          bgRafId = null;
+        } else {
+          bgWake();
+        }
+      });
 
       // Fade out while hovering a project card, ease back in after
       document.querySelectorAll('.portfolio-item').forEach(item => {
