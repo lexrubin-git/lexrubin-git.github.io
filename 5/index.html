@@ -612,6 +612,44 @@
       opacity: 1;
       transition: opacity 0.6s ease;
     }
+  
+    /* ── CASE-STUDY LAYOUT (matches the Arctic Zoo page) ── */
+    .artwork-title-row {
+      padding: 3rem 2.5rem;
+      align-items: flex-start;
+      gap: 1.5rem;
+      border-bottom: none;
+    }
+    .hero-tags-col { display: flex; flex-direction: column; align-items: flex-end; }
+    .hero-tags { margin-top: 0; flex-shrink: 0; justify-content: flex-end; }
+    .hero-tools { margin-top: 0.9rem; color: #777; font-size: 0.75rem; }
+    .hero-tools strong { color: #999; font-weight: 500; }
+    .hero-type {
+      margin-top: 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+    }
+    .cs-process-num {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: #3a3a3a;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .cs-chapter { padding: 1.3rem 2rem; border-bottom: 1px solid var(--border); }
+    .cs-body { grid-template-columns: 130px 1fr; }
+    .cs-chapter-title { font-size: 1rem; font-weight: 600; color: #aaa; letter-spacing: 0.02em; }
+    @media (max-width: 768px) {
+      .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+      .hero-tags { justify-content: flex-start; }
+      .hero-tags-col { align-items: flex-start; }
+      .cs-chapter { padding: 1rem 1.25rem; }
+      .cs-body { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -655,14 +693,17 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">CrosswordLeague.com<span class="title-sub">End-to-end product design</span></h1>
-    </div>
-    <div class="hero-summary">
-      <p class="hero-subtitle">Designed and built a multiplayer crossword platform from concept to product</p>
-      <div class="hero-tags">
-        <span class="hero-tag">UI/UX</span>
-        <span class="hero-tag">Game Design</span>
-        <span class="hero-tag">Product</span>
+      <div class="hero-title-col">
+        <h1 class="artwork-main-title">CrosswordLeague.com<span class="title-sub">End-to-end product design</span></h1>
+      </div>
+      <div class="hero-tags-col">
+        <div class="hero-tags">
+          <span class="hero-tag">UI/UX</span>
+          <span class="hero-tag">Game Design</span>
+          <span class="hero-tag">Product</span>
+        </div>
+        <div class="hero-tools"><strong>Prototype stack:</strong> JS, Node.js, Firebase</div>
+        <div class="hero-type">Personal Project</div>
       </div>
     </div>
   </div>
@@ -677,155 +718,33 @@
   </div>
 </div>
 
-<!-- ── CASE STUDY ── -->
 <div class="page-wrapper">
   <div class="case-study-section">
 
-    <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Product Designer — UI/UX, Interaction &amp; Game Design</div>
+    <div class="cs-body">
+      <div class="cs-col-label">
+        <div class="cs-process-num">001</div>
+        <div class="cs-section-label">Ideation</div>
       </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Prototype Stack</div>
-        <div class="cs-meta-val">JS, Node.js, Firebase</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">Personal Project</div>
+      <div class="cs-col-content">
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">002</div>
+        <div class="cs-section-label">Refine Concepts</div>
+      </div>
       <div class="cs-col-content">
-        <p class="cs-text">Crossword League reimagines a solitary format as a live, social competition, designed around real-time multiplayer flows for up to a dozen players across five distinct game modes. Every screen balances a fast-moving game board against chat, scoring, and social overlays, with interactive prototypes built to test live usability and game-state feedback under real network conditions.</p>
-        <div class="cs-img-pair">
-          <img src="../screenshots/01-home-dark.png" alt="Home page, dark mode">
-          <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
-        </div>
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
-      <div class="cs-col-content">
-        <ul class="cs-list">
-          <li><strong>Onboarding &amp; matchmaking:</strong> Designed the lobby and mode-selection flow to get players from landing page to first move in seconds, cutting the friction points (mode selection, lobby setup, ready-checks) that typically stall multiplayer games before they start.</li>
-          <li><strong>Screen real estate under pressure:</strong> Solved the core layout problem of live multiplayer — keeping the crossword grid legible while surfacing chat, opponent cursors, and score state without crowding the primary task.</li>
-          <li><strong>AI-assisted rapid prototyping:</strong> Used AI-assisted development to move past static comps and ship a fully working product concept — a design validation approach that let the interaction design (corruption meters, elimination countdowns, live multiplayer cursors) get pressure-tested by real players under real conditions, not just clicked through in a prototyping tool.</li>
-        </ul>
+      <div class="cs-col-label">
+        <div class="cs-process-num">003</div>
+        <div class="cs-section-label">Final Design</div>
       </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Problem</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">Crossword solving is built as a solitary experience, so there was no existing product pattern to design against. The core problem was translating a single-player interaction model into a shared, real-time space without breaking the feel of actually solving a puzzle — deciding whose progress counts when two players land on the same word at once, how that's shown fairly, and how the board stays readable when several people are acting on it simultaneously.</p>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Game Modes</div></div>
-      <div class="cs-col-content">
-        <img src="../screenshots/07-create-lobby.png" alt="Create Lobby / game mode selection" class="cs-img">
-        <div class="cs-subitem" style="margin-top:1rem;">
-          <div class="cs-subitem-title">Play Together</div>
-          <p class="cs-text">Collaborative solving; all players share a live grid.</p>
-          <img src="../screenshots/19-multiplayer-cursors.png" alt="Multiple players' colored fills" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Versus</div>
-          <p class="cs-text">1v1 competitive scoring weighted by speed and accuracy.</p>
-          <img src="../screenshots/21-game-over-results.png" alt="End-of-game results/score screen" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Ranked Elimination</div>
-          <p class="cs-text">Players must solve a minimum number of clues each round or get eliminated. Survivors advance; the last player standing wins. A "carry-over" mechanic punishes consistent underperformance across rounds.</p>
-          <img src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Battle Royale</div>
-          <p class="cs-text">Solving words charges an attack meter. Attacks corrupt opponents' grids (cracking or shattering cells). Players manage a corruption meter and survive through a grace period mechanic. Supports team variants (Red vs. Blue).</p>
-          <img src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Race the Clock</div>
-          <p class="cs-text">Time-limited solo solve tracked against other players.</p>
-          <img src="../screenshots/18-game-grid-mid-solve.png" alt="Active crossword grid mid-solve" class="cs-img">
-        </div>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Design-to-Code Feasibility</div></div>
-      <div class="cs-col-content">
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Instant feedback, not staleness</div>
-          <p class="cs-text">Every player's fills, cursor, and score update on everyone else's screen the moment they happen. That immediacy was the whole design bet of this project — a shared board only feels "live" if nothing about it ever feels delayed or out of sync.</p>
-          <img src="../screenshots/19-multiplayer-cursors.png" alt="Grid with multiple players' colored fills" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Designing fairness, not just logic</div>
-          <p class="cs-text">Ranked mode's elimination countdown includes an "all-safe" state that holds off the timer once every remaining player has already met the threshold — a small interaction decision that exists purely so eliminations never feel arbitrary or unfair to the player on the receiving end.</p>
-          <img src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer" class="cs-img-md">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Making an abstract meter readable</div>
-          <p class="cs-text">Battle mode's corruption meter needed to communicate danger at a glance mid-game, so it's shown as cracking, shattering cells rather than a numeric readout — extending the same glanceable-hierarchy thinking from the UI into the gameplay itself.</p>
-          <img src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Accessibility as a core mode, not an add-on</div>
-          <p class="cs-text">Six accessible modes were designed in from the start rather than retrofitted: high contrast, colorblind mode, screen reader support, adjustable font scaling, dyslexia-friendly typefaces, and fully remappable controls.</p>
-          <div class="cs-img-triple">
-            <img src="../screenshots/04-accessibility-settings.png" alt="Accessibility settings panel">
-            <img src="../screenshots/02-home-light.png" alt="Home page, light mode">
-            <img src="../screenshots/03-home-dyslexic-font.png" alt="Home page with OpenDyslexic font active">
-          </div>
-        </div>
-        <p class="cs-text" style="margin-top:0.5rem;">All of it was validated the same way the rest of the product was: use AI-assisted development to get a real, working version in front of real players fast, then iterate on what the interaction data and player feedback actually showed.</p>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Engagement</div></div>
-      <div class="cs-col-content">
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">XP and leveling</div>
-          <p class="cs-text">Earned through puzzle completions, wins, and chat activity.</p>
-          <div class="cs-img-pair">
-            <img src="../screenshots/11-profile.png" alt="Player profile overlay">
-            <img src="../screenshots/10-leaderboard.png" alt="Leaderboard overlay">
-          </div>
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Achievements</div>
-          <p class="cs-text">13+ unlock conditions (win streaks, chat volume, Z-word guesses, ranked survival, etc.) with animated unlock popups.</p>
-          <img src="../screenshots/12-achievements-stats.png" alt="Achievements and Stats view" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Weekly Challenges</div>
-          <p class="cs-text">Three rotating challenges selected per calendar week via a deterministic seed, tracked against a baseline snapshot taken at week start.</p>
-          <img src="../screenshots/09-weekly-challenges.png" alt="Weekly Challenges overlay" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Friend system</div>
-          <p class="cs-text">Friend requests, a friends list, and in-game direct messaging, all backed by Firebase.</p>
-          <img src="../screenshots/13-friends.png" alt="Friends and Chat overlay" class="cs-img">
-        </div>
-        <div class="cs-subitem">
-          <div class="cs-subitem-title">Pixel-art avatar creator</div>
-          <p class="cs-text">A client-side canvas drawing tool for personalizing player icons.</p>
-          <img src="../screenshots/14-avatar-editor.png" alt="Pixel-art avatar editor" class="cs-img">
-        </div>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Outcome</div></div>
-      <div class="cs-col-content">
-        <p class="cs-text">Designed, shipped, and launched a live multiplayer game platform that reached thousands of pageviews and converted early visitors into 20+ registered active players. The final product delivers five distinct competitive modes, a full progression and social layer, and accessibility support across six dimensions — validated with real players, not just usability tests in a vacuum.</p>
       </div>
     </div>
 
@@ -835,10 +754,91 @@
 <!-- ── ARTWORK GRID ── -->
 <div class="page-wrapper">
   <div class="artworks-section">
+    <div class="cs-chapter"><span class="cs-chapter-title">Project Gallery</span></div>
     <div class="artworks-grid" id="artwork-grid">
 
       <div class="artwork-card">
         <img class="artwork-card-img" src="../crossword_index.gif" alt="CrosswordLeague gameplay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/01-home-dark.png" alt="Home page, dark mode">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/02-home-light.png" alt="Home page, light mode">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/07-create-lobby.png" alt="Create Lobby / game mode selection">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/19-multiplayer-cursors.png" alt="Multiple players' colored fills">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/21-game-over-results.png" alt="End-of-game results/score screen">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/24-ranked-elimination-countdown.png" alt="Ranked mode: elimination countdown timer">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/23-battle-corruption.png" alt="Battle mode: corruption meter and cracked cells">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/18-game-grid-mid-solve.png" alt="Active crossword grid mid-solve">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/04-accessibility-settings.png" alt="Accessibility settings panel">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/03-home-dyslexic-font.png" alt="Home page with OpenDyslexic font active">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/11-profile.png" alt="Player profile overlay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/10-leaderboard.png" alt="Leaderboard overlay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/12-achievements-stats.png" alt="Achievements and Stats view">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/09-weekly-challenges.png" alt="Weekly Challenges overlay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/13-friends.png" alt="Friends and Chat overlay">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
+      </div>
+
+      <div class="artwork-card">
+        <img class="artwork-card-img" src="../screenshots/14-avatar-editor.png" alt="Pixel-art avatar editor">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
 

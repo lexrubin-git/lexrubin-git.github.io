@@ -976,6 +976,42 @@
       opacity: 1;
       transition: opacity 0.6s ease;
     }
+  
+    /* ── CASE-STUDY LAYOUT (matches the Arctic Zoo page) ── */
+    .artwork-title-row {
+      padding: 3rem 2.5rem;
+      align-items: flex-start;
+      gap: 1.5rem;
+      border-bottom: none;
+    }
+    .hero-tags-col { display: flex; flex-direction: column; align-items: flex-end; }
+    .hero-tags { margin-top: 0; flex-shrink: 0; justify-content: flex-end; }
+    .hero-tools { margin-top: 0.9rem; color: #777; font-size: 0.75rem; }
+    .hero-tools strong { color: #999; font-weight: 500; }
+    .hero-type {
+      margin-top: 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+    }
+    .cs-process-num {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: #3a3a3a;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .cs-chapter { padding: 1.3rem 2rem; border-bottom: 1px solid var(--border); }
+    .cs-chapter-title { font-size: 1rem; font-weight: 600; color: #aaa; letter-spacing: 0.02em; }
+    @media (max-width: 768px) {
+      .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+      .hero-tags { justify-content: flex-start; }
+      .hero-tags-col { align-items: flex-start; }
+      .cs-chapter { padding: 1rem 1.25rem; }
+    }
   </style>
 </head>
 <body>
@@ -1018,14 +1054,17 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">Apple Watch face<span class="title-sub">Glanceable UI design</span></h1>
-    </div>
-    <div class="hero-summary">
-      <p class="hero-subtitle">A wearable interface system built for information that has to register in under a second</p>
-      <div class="hero-tags">
-        <span class="hero-tag">UI/UX</span>
-        <span class="hero-tag">Motion</span>
-        <span class="hero-tag">Typography</span>
+      <div class="hero-title-col">
+        <h1 class="artwork-main-title">Apple Watch face<span class="title-sub">Glanceable UI design</span></h1>
+      </div>
+      <div class="hero-tags-col">
+        <div class="hero-tags">
+          <span class="hero-tag">UI/UX</span>
+          <span class="hero-tag">Motion</span>
+          <span class="hero-tag">Typography</span>
+        </div>
+        <div class="hero-tools"><strong>Tools used:</strong> After Effects, Illustrator</div>
+        <div class="hero-type">Personal Project</div>
       </div>
     </div>
   </div>
@@ -1040,54 +1079,33 @@
 </div>
 </div>
 
-<!-- ── CASE STUDY ── -->
 <div class="page-wrapper">
   <div class="case-study-section">
 
-    <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">UI/UX Designer — Constrained Interaction &amp; Micro-UI</div>
+    <div class="cs-body">
+      <div class="cs-col-label">
+        <div class="cs-process-num">001</div>
+        <div class="cs-section-label">Ideation</div>
       </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Tools</div>
-        <div class="cs-meta-val">After Effects, Illustrator</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">Personal Project</div>
+      <div class="cs-col-content">
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">002</div>
+        <div class="cs-section-label">Refine Concepts</div>
+      </div>
       <div class="cs-col-content">
-        <p class="cs-text">A wearable interface system designed under one of the tightest constraints in UI design: a screen glanced at for under a second. The project is built entirely around <strong>typographic hierarchy and micro-interactions</strong> that let critical information register instantly, with no complications competing for attention.</p>
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
-      <div class="cs-col-content">
-        <ul class="cs-list">
-          <li><strong>Glanceable hierarchy:</strong> Designed a strict typographic hierarchy so the most important information reads first, solving for glanceability rather than density — the defining constraint of wearable UI.</li>
-          <li><strong>Type at watch-face scale:</strong> Iterated through multiple type pairings to find a system that stayed legible and cohesive at a few square inches, where small shifts in weight or tracking change the whole read.</li>
-          <li><strong>Motion in service of state:</strong> Added micro-interactions only after the static hierarchy was solid, using animation specifically to soften state changes rather than to decorate the interface.</li>
-        </ul>
+      <div class="cs-col-label">
+        <div class="cs-process-num">003</div>
+        <div class="cs-section-label">Final Design</div>
       </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Challenge</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">A watch face gets a glance, not a read — the interface has to communicate its full hierarchy in well under a second, on a screen a fraction the size of a phone's, with no room for a second pass. The challenge was building a spatial and typographic hierarchy that resolves instantly without feeling cluttered or under-designed.</p>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Approach</div></div>
-      <div class="cs-col-content">
-        <p class="cs-text">Iterated through type pairings and spatial arrangements to find a hierarchy that reads in a single glance, prioritizing weight and placement over ornamentation. <strong>Layered in micro-interactions only after that hierarchy held up on its own</strong>, using motion to soften state changes rather than to carry information the static layout should already communicate.</p>
       </div>
     </div>
 
@@ -1097,6 +1115,7 @@
 <!-- ── ARTWORK GRID ── -->
 <div class="page-wrapper">
   <div class="artworks-section">
+    <div class="cs-chapter"><span class="cs-chapter-title">Project Gallery</span></div>
     <div class="artworks-grid" id="artwork-grid">
 
       <!-- Card 1 -->

@@ -1038,6 +1038,42 @@
       opacity: 1;
       transition: opacity 0.6s ease;
     }
+  
+    /* ── CASE-STUDY LAYOUT (matches the Arctic Zoo page) ── */
+    .artwork-title-row {
+      padding: 3rem 2.5rem;
+      align-items: flex-start;
+      gap: 1.5rem;
+      border-bottom: none;
+    }
+    .hero-tags-col { display: flex; flex-direction: column; align-items: flex-end; }
+    .hero-tags { margin-top: 0; flex-shrink: 0; justify-content: flex-end; }
+    .hero-tools { margin-top: 0.9rem; color: #777; font-size: 0.75rem; }
+    .hero-tools strong { color: #999; font-weight: 500; }
+    .hero-type {
+      margin-top: 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+    }
+    .cs-process-num {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: #3a3a3a;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .cs-chapter { padding: 1.3rem 2rem; border-bottom: 1px solid var(--border); }
+    .cs-chapter-title { font-size: 1rem; font-weight: 600; color: #aaa; letter-spacing: 0.02em; }
+    @media (max-width: 768px) {
+      .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+      .hero-tags { justify-content: flex-start; }
+      .hero-tags-col { align-items: flex-start; }
+      .cs-chapter { padding: 1rem 1.25rem; }
+    }
   </style>
 </head>
 <body>
@@ -1080,14 +1116,17 @@
 <div class="page-wrapper">
   <div class="artwork-hero">
     <div class="artwork-title-row">
-      <h1 class="artwork-main-title">U.C. Berkeley dam research<span class="title-sub">Information design</span></h1>
-    </div>
-    <div class="hero-summary">
-      <p class="hero-subtitle">Dense technical datasets turned into figures built for academic publication and a lay audience</p>
-      <div class="hero-tags">
-        <span class="hero-tag">Data Viz</span>
-        <span class="hero-tag">Diagrams</span>
-        <span class="hero-tag">Visual</span>
+      <div class="hero-title-col">
+        <h1 class="artwork-main-title">U.C. Berkeley dam research<span class="title-sub">Information design</span></h1>
+      </div>
+      <div class="hero-tags-col">
+        <div class="hero-tags">
+          <span class="hero-tag">Data Viz</span>
+          <span class="hero-tag">Diagrams</span>
+          <span class="hero-tag">Visual</span>
+        </div>
+        <div class="hero-tools"><strong>Tools used:</strong> Illustrator, InDesign, ArcGIS, Photoshop</div>
+        <div class="hero-type">PhD Research</div>
       </div>
     </div>
   </div>
@@ -1102,54 +1141,33 @@
 </div>
 </div>
 
-<!-- ── CASE STUDY ── -->
 <div class="page-wrapper">
   <div class="case-study-section">
 
-    <div class="cs-meta-row">
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Role</div>
-        <div class="cs-meta-val">Information Designer — Data Visualization</div>
+    <div class="cs-body">
+      <div class="cs-col-label">
+        <div class="cs-process-num">001</div>
+        <div class="cs-section-label">Ideation</div>
       </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Tools</div>
-        <div class="cs-meta-val">Illustrator, InDesign, ArcGIS, Photoshop</div>
-      </div>
-      <div class="cs-meta-cell">
-        <div class="cs-meta-label">Type</div>
-        <div class="cs-meta-val">PhD Research</div>
+      <div class="cs-col-content">
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Overview</div></div>
+      <div class="cs-col-label">
+        <div class="cs-process-num">002</div>
+        <div class="cs-section-label">Refine Concepts</div>
+      </div>
       <div class="cs-col-content">
-        <p class="cs-text">Data visualization and information design for PhD-level dam research across Ecuador, translating dense technical datasets into diagrams built for academic publication and presentation. Every figure was designed to hold up under expert scrutiny while staying legible to a non-specialist audience encountering the material for the first time.</p>
       </div>
     </div>
 
     <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Key Highlights</div></div>
-      <div class="cs-col-content">
-        <ul class="cs-list">
-          <li><strong>One visual system, many figures:</strong> Designed a consistent diagram and figure system so complex, multi-source dam data reads as one coherent visual language across the full research output, not a set of disconnected charts.</li>
-          <li><strong>Dual-audience clarity:</strong> Translated dense technical datasets into visual hierarchies a non-specialist could grasp at a glance, while preserving the precision engineers needed to trust the data.</li>
-          <li><strong>Content before decoration:</strong> Partnered directly with the research team to define what each figure needed to communicate before designing it, prioritizing clarity of information over decorative illustration.</li>
-        </ul>
+      <div class="cs-col-label">
+        <div class="cs-process-num">003</div>
+        <div class="cs-section-label">Final Design</div>
       </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Challenge</div></div>
       <div class="cs-col-content">
-        <p class="cs-text">The research spanned dense, technical dam datasets meant for two very different audiences at once — engineers who would scrutinize every value, and non-specialist readers who needed the finding, not the dataset. The challenge was designing an information system precise enough to satisfy the first group without losing the second.</p>
-      </div>
-    </div>
-
-    <div class="cs-body">
-      <div class="cs-col-label"><div class="cs-section-label">Approach</div></div>
-      <div class="cs-col-content">
-        <p class="cs-text">Worked directly with the research team to identify what each figure actually needed to communicate before designing it, then built a consistent diagram language — shared iconography, color logic, and layout conventions — across every output. <strong>Chose clear illustration over decoration</strong> so dense data resolved into a hierarchy a reader could parse at a glance, with technical precision preserved underneath.</p>
       </div>
     </div>
 
@@ -1159,6 +1177,7 @@
 <!-- ── ARTWORK GRID ── -->
 <div class="page-wrapper">
   <div class="artworks-section">
+    <div class="cs-chapter"><span class="cs-chapter-title">Project Gallery</span></div>
     <div class="artworks-grid" id="artwork-grid">
 
       <!-- Card 1 -->
