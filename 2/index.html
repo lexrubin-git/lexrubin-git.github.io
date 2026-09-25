@@ -760,6 +760,8 @@
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
     .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
     .cs-process-img.is-narrow { max-width: 360px; margin-left: auto; margin-right: auto; }
+    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
+    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
     .cs-process-img-link { display: block; margin: 1.25rem auto 0; transition: opacity 0.3s ease, transform 0.3s ease; }
     .cs-process-img-link.is-narrow { max-width: 360px; }
     .cs-process-img-link .cs-process-img { margin-top: 0; }
@@ -1175,7 +1177,7 @@
             <div class="cs-client-title">Meet Your Client</div>
             <p class="cs-text">Arctic Zoo &amp; Aquarium is a specialized type of zoo that exclusively holds animals from the arctic region of the world run by passionate scientists and zoo-tenders.</p>
           </div>
-          <img class="cs-process-img is-medium" src="process-ideation-board.svg" alt="Ideation board for the arctic zoo and aquarium project">
+          <img class="cs-process-img is-medium is-zoomable" src="process-ideation-board.svg" alt="Ideation board for the arctic zoo and aquarium project">
         </div>
       </div>
     </div>
@@ -1188,11 +1190,11 @@
       <div class="cs-col-content">
         <div class="cs-process-group">
           <p class="cs-text">I used Illustrator for the logo starting with a rudimentary idea of an idea, and then refining and simplifying for the final version of the product.</p>
-          <img class="cs-process-img is-medium" src="process-refine-logos.png" alt="Logo evolution from a hand-lettered penguin mark to a snowflake lockup to the final owl-and-snowflake Arctic Zoo &amp; Aquarium logo">
+          <img class="cs-process-img is-medium is-zoomable" src="process-refine-logos.png" alt="Logo evolution from a hand-lettered penguin mark to a snowflake lockup to the final owl-and-snowflake Arctic Zoo &amp; Aquarium logo">
         </div>
         <div class="cs-process-group">
           <p class="cs-text">I fully designed and annotated a functional mobile app for a zoo. I worked in Illustrator to build out the wireframe from a concept to a deliverable product.</p>
-          <img class="cs-process-img is-medium" src="process-refine-wireframes.png" alt="Annotated wireframes for the home, exhibit, and navigation screens, carried through to finished exhibit, information, map, gift shop, and guided tour mockups">
+          <img class="cs-process-img is-medium is-zoomable" src="process-refine-wireframes.png" alt="Annotated wireframes for the home, exhibit, and navigation screens, carried through to finished exhibit, information, map, gift shop, and guided tour mockups">
         </div>
       </div>
     </div>
@@ -1360,7 +1362,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1397,6 +1399,18 @@
           + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
           + '</div>';
       }
+      lightbox.classList.add('open');
+    });
+  });
+
+  // Process images
+  document.querySelectorAll('.cs-process-img.is-zoomable').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightbox-img-wrap').innerHTML =
+        '<div style="display:inline-block;line-height:0;">'
+        + '<img class="lightbox-img" src="' + img.src + '" alt="" style="display:block;">'
+        + '</div>';
+      lightbox.querySelector('.lightbox-img').alt = img.alt;
       lightbox.classList.add('open');
     });
   });
