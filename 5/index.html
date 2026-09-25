@@ -642,6 +642,25 @@
     }
     .cs-chapter { padding: 1.3rem 2rem; border-bottom: 1px solid var(--border); }
     .cs-body { grid-template-columns: 130px 1fr; }
+    .title-link {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+      transition: text-decoration-color 0.3s ease;
+    }
+    .title-link-arrow {
+      display: inline-block;
+      margin-left: 0.3em;
+      font-size: 0.8em;
+      font-weight: 400;
+      vertical-align: 0.25em;
+      color: #999;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .title-link:hover { text-decoration-color: currentColor; }
+    .title-link:hover .title-link-arrow { color: #ccc; transform: translate(3px, -3px); }
     .cs-chapter-title { font-size: 1rem; font-weight: 600; color: #aaa; letter-spacing: 0.02em; }
     @media (max-width: 768px) {
       .artwork-title-row { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
@@ -694,7 +713,7 @@
   <div class="artwork-hero">
     <div class="artwork-title-row">
       <div class="hero-title-col">
-        <h1 class="artwork-main-title">CrosswordLeague.com<span class="title-sub">End-to-end product design</span></h1>
+        <h1 class="artwork-main-title"><a class="title-link" href="https://crosswordleague.com" target="_blank" rel="noopener">CrosswordLeague.com<span class="title-link-arrow" aria-hidden="true">&#8599;</span></a><span class="title-sub">End-to-end product design</span></h1>
       </div>
       <div class="hero-tags-col">
         <div class="hero-tags">
@@ -896,7 +915,7 @@
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
-  document.querySelectorAll('footer a').forEach(el => {
+  document.querySelectorAll('footer a, .title-link').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
