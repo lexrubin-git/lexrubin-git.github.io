@@ -770,6 +770,10 @@
       font-weight: 600;
     }
     .cs-col-content { padding: 2rem; }
+    .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
+    .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
+    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
     .cs-text {
       font-size: 0.875rem;
       line-height: 1.9;
@@ -777,6 +781,38 @@
       font-weight: 400;
     }
     .cs-text strong { color: #999; font-weight: 500; }
+    .cs-brief {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 2.5rem;
+      max-width: 34rem;
+    }
+    .cs-brief-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+    .cs-brief-value {
+      font-size: 1.05rem;
+      line-height: 1.35;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+    }
+    .cs-swatch-row { display: flex; align-items: center; gap: 0.6rem; }
+    .cs-swatch-row + .cs-swatch-row { margin-top: 0.45rem; }
+    .cs-swatch { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+    .cs-client { max-width: 34rem; margin-top: 2.75rem; }
+    .cs-client-title {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
     .cs-list {
       list-style: none;
       display: flex;
@@ -1038,6 +1074,35 @@
         <div class="cs-section-label">Ideation</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-brief">
+            <div>
+              <div class="cs-brief-label">Business Name</div>
+              <div class="cs-brief-value">Pyxd, Inc.</div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Keywords</div>
+              <div class="cs-brief-value">Simple, Illustrative, Hi-Tech, Professional</div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Typeface</div>
+              <div class="cs-brief-value">Poppins</div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Color Palette</div>
+              <div class="cs-brief-value">
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#3FEE7F"></div>#3FEE7F</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#333333"></div>#333333</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#6A20E9"></div>#6A20E9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cs-client">
+            <div class="cs-client-title">Meet Your Client</div>
+            <p class="cs-text">We help furniture retailers and manufacturers create, visualize and configure products more easily and at scale. PyxMagic Pro transforms ordinary iPhone product capture into complete ecommerce-ready imagery, including professional silhouettes, lifestyle scenes, dimensioned images and high-resolution assets. PyxMagic Draping presents furniture dynamically in different fabrics, leathers and finishes, while our Sectional Configurator lets shoppers and sales associates build photoreal sectional arrangements with accurate views, dimensions and tear sheets.</p>
+          </div>
+          <img class="cs-process-img is-medium is-zoomable" src="process-ideation-color.png" alt="Pyxd highlight color, #3FEE7F (RGB 63/238/127, CMYK 74/0/47/7), shown as a swatch and set against a dark background and against the Pyxd purple background">
+        </div>
       </div>
     </div>
 
@@ -1047,6 +1112,9 @@
         <div class="cs-section-label">Refine Concepts</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <img class="cs-process-img is-zoomable" src="process-refine-concepts.png" alt="Refining the Pyxd concept: a showroom chair photo sketched into phone-capture illustrations, then built up step by step into the final &quot;Shoot for something better.&quot; graphic with the Masking, Shadow, Background and Post steps">
+        </div>
       </div>
     </div>
 
@@ -1249,7 +1317,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1286,6 +1354,18 @@
           + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
           + '</div>';
       }
+      lightbox.classList.add('open');
+    });
+  });
+
+  // Process images
+  document.querySelectorAll('.cs-process-img.is-zoomable').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightbox-img-wrap').innerHTML =
+        '<div style="display:inline-block;line-height:0;">'
+        + '<img class="lightbox-img" src="' + img.src + '" alt="" style="display:block;">'
+        + '</div>';
+      lightbox.querySelector('.lightbox-img').alt = img.alt;
       lightbox.classList.add('open');
     });
   });
