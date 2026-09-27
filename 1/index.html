@@ -772,8 +772,8 @@
     .cs-col-content { padding: 2rem; }
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
     .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
-    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
-    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
+    .cs-process-img.is-zoomable, .cs-process-video.is-zoomable { transition: opacity 0.3s ease; }
+    .cs-process-img.is-zoomable:hover, .cs-process-video.is-zoomable:hover { opacity: 0.85; }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
     .cs-media-pair {
@@ -1154,7 +1154,7 @@
       <div class="cs-col-content">
         <div class="cs-process-group">
           <div class="cs-media-pair">
-            <video class="cs-process-video" src="process-final-video.mp4" autoplay loop muted playsinline aria-label="Pyxd t-shirt design animation"></video>
+            <video class="cs-process-video is-zoomable" src="process-final-video.mp4" autoplay loop muted playsinline aria-label="Pyxd t-shirt design animation"></video>
             <img class="cs-process-img is-zoomable" src="process-final-shirt.png" alt="Final Pyxd t-shirt graphic: &quot;Shoot for something better.&quot; over a halftone showroom chair, a hand holding the PyxMagic app, and the Masking, Shadow, Background and Post steps on a sunray background">
           </div>
         </div>
@@ -1351,7 +1351,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable, .cs-process-video.is-zoomable').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1393,13 +1393,16 @@
   });
 
   // Process images
-  document.querySelectorAll('.cs-process-img.is-zoomable').forEach(img => {
-    img.addEventListener('click', () => {
+  document.querySelectorAll('.cs-process-img.is-zoomable, .cs-process-video.is-zoomable').forEach(media => {
+    media.addEventListener('click', () => {
+      const isVideo = media.tagName === 'VIDEO';
       document.getElementById('lightbox-img-wrap').innerHTML =
         '<div style="display:inline-block;line-height:0;">'
-        + '<img class="lightbox-img" src="' + img.src + '" alt="" style="display:block;">'
+        + (isVideo
+          ? '<video class="lightbox-img" src="' + media.src + '" autoplay loop muted playsinline style="display:block;"></video>'
+          : '<img class="lightbox-img" src="' + media.src + '" alt="" style="display:block;">')
         + '</div>';
-      lightbox.querySelector('.lightbox-img').alt = img.alt;
+      if (!isVideo) lightbox.querySelector('.lightbox-img').alt = media.alt;
       lightbox.classList.add('open');
     });
   });
@@ -1407,6 +1410,7 @@
   lightbox.addEventListener('click', e => {
     if (e.target.closest('.lightbox-img, .lightbox-nav')) return;
     lightbox.classList.remove('open');
+    lightbox.querySelectorAll('video').forEach(v => v.pause());
   });
 
 
