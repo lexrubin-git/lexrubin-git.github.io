@@ -776,6 +776,15 @@
     .cs-process-img.is-zoomable:hover { opacity: 0.85; }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
+    .cs-media-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      margin-top: 1.25rem;
+    }
+    .cs-media-pair .cs-process-img { margin-top: 0; }
+    .cs-process-video { display: block; width: 100%; height: auto; }
     .cs-board-note {
       position: absolute;
       left: 0;
@@ -914,6 +923,7 @@
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
       .cs-board { display: flex; flex-direction: column; }
+      .cs-media-pair { grid-template-columns: 1fr; }
       .cs-board-note { position: static; width: auto !important; height: auto !important; order: -1; margin-top: 1.25rem; }
       nav { padding: 0 1.25rem; height: 70px; }
       #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
@@ -1142,6 +1152,12 @@
         <div class="cs-section-label">Final Design</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-media-pair">
+            <video class="cs-process-video" src="process-final-video.mp4" autoplay loop muted playsinline aria-label="Pyxd t-shirt design animation"></video>
+            <img class="cs-process-img is-zoomable" src="process-final-shirt.png" alt="Final Pyxd t-shirt graphic: &quot;Shoot for something better.&quot; over a halftone showroom chair, a hand holding the PyxMagic app, and the Masking, Shadow, Background and Post steps on a sunray background">
+          </div>
+        </div>
       </div>
     </div>
 
