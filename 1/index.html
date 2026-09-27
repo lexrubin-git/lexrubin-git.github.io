@@ -774,6 +774,18 @@
     .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
     .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
     .cs-process-img.is-zoomable:hover { opacity: 0.85; }
+    /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
+    .cs-board { position: relative; }
+    .cs-board-note {
+      position: absolute;
+      left: 0;
+      width: 33%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+      line-height: 1.75;
+    }
     .cs-text {
       font-size: 0.875rem;
       line-height: 1.9;
@@ -901,6 +913,8 @@
 
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
+      .cs-board { display: flex; flex-direction: column; }
+      .cs-board-note { position: static; width: auto; height: auto !important; order: -1; margin-top: 1.25rem; }
       nav { padding: 0 1.25rem; height: 70px; }
       #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
       .logo { width: 70px !important; height: 70px !important; }
@@ -1113,7 +1127,10 @@
       </div>
       <div class="cs-col-content">
         <div class="cs-process-group">
-          <img class="cs-process-img is-zoomable" src="process-refine-concepts.png" alt="Refining the Pyxd concept: a showroom chair photo sketched into phone-capture illustrations, then built up step by step into the final &quot;Shoot for something better.&quot; graphic with the Masking, Shadow, Background and Post steps">
+          <div class="cs-board">
+            <img class="cs-process-img is-zoomable" src="process-refine-concepts.png" alt="Refining the Pyxd concept: a showroom chair photo sketched into phone-capture illustrations, then built up step by step into the final &quot;Shoot for something better.&quot; graphic with the Masking, Shadow, Background and Post steps">
+            <p class="cs-text cs-board-note" style="top: 16.5%; height: 19.5%;">I worked in Illustrator to showcase the functionality of the app in an easy to understand way. I started with an image of a piece of furniture and then worked around it to illustrate a realistic scene that shows how the app actually isolates furniture.</p>
+          </div>
         </div>
       </div>
     </div>
