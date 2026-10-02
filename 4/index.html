@@ -1065,6 +1065,23 @@
     .cs-swatch-row + .cs-swatch-row { margin-top: 0.45rem; }
     .cs-swatch { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
     .cs-client { max-width: 34rem; margin-top: 2.75rem; }
+    .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
+    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
+    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
+    /* Process steps: graphic on the left, its note on the right */
+    .cs-step-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: center;
+      margin-bottom: 2.25rem;
+    }
+    .cs-step-row .cs-process-img { margin-top: 0; }
+    .cs-step-note { font-size: 0.8rem; line-height: 1.75; margin: 0; }
+    .cs-step-final { margin-top: 1.25rem; max-width: 40rem; }
+    @media (max-width: 768px) {
+      .cs-step-row { grid-template-columns: 1fr; gap: 1rem; }
+    }
     .cs-client-title {
       font-size: 1.05rem;
       text-transform: uppercase;
@@ -1215,6 +1232,22 @@
         <div class="cs-section-label">Refine Concepts</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-step-row">
+            <img class="cs-process-img is-zoomable" src="process-refine-1.png" alt="Version 1: a simple side profile of the Chanlud dam with its name, capacity and year built on top, and sediment rate predictions inside and beside the dam">
+            <p class="cs-text cs-step-note">I started with a very simplistic design of the side profile of a dam. At the top is the dam’s name, water capacity, and year it was built. Inside the dam and to the left of the dam is information pertaining to the rate that sediment gets trapped inside the dam with predictions spanning up to the next 100 years.</p>
+          </div>
+          <div class="cs-step-row">
+            <img class="cs-process-img is-zoomable" src="process-refine-2.png" alt="Version 2: title information in progressively lighter color cards, connected sediment rate columns, and grey rock buildup at the bottom of the reservoir">
+            <p class="cs-text cs-step-note">I added a better sense of hierarchy to the title information by making it go big &rarr; small and including the text elements inside colored cards that progressively get lighter. I also attached the two sediment rate information columns to show that they are connected while still maintaining distance between them to show that they are still two separate pieces of information. I also made the water/rock graphic at the bottom grey instead of blue because it’s more accurate to what’s happening in real life &ndash; rocks are slowly building up at the bottom of the reservoir.</p>
+          </div>
+          <div class="cs-step-row">
+            <img class="cs-process-img is-zoomable" src="process-refine-3.png" alt="Version 3: reworked title, detailed rock graphic, outflow pipes and a pool of water, a locator map of Ecuador’s dams, and a water line">
+            <p class="cs-text cs-step-note">I wanted to play around with the title hierarchy more so I adjusted it a little bit (I later reverted it back to version 2). I prettified the rock graphic at the bottom, and added two shoots to the dam graphic to show that water flows from inside the dam to outside the dam, which is why there is now a pool of water in the bottom right. I also added a map to show where the Chanlud dam is geographically and in context to the other existing dams. I also added a scientific water line at the top to make it clear to the specialized viewers looking at the data what’s happening.</p>
+          </div>
+          <img class="cs-process-img is-zoomable" src="process-refine-4.png" alt="Final Chanlud dam graphic with a pink title, darker water, and a redesigned map highlighting the three study regions">
+          <p class="cs-text cs-step-note cs-step-final">For the final graphic, I made micro-adjustments to the graphic (darkened the water, reverted the title cards/elements). For the main adjustments, I redesigned the map to highlight the main three regions that we were working on, and made the title pink to show that the Chanlud dam corresponds to the pink region on the map.</p>
+        </div>
       </div>
     </div>
 
@@ -1428,7 +1461,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1518,6 +1551,17 @@
       showSlide(slideIndex + 1);
       openLightboxImage(slideImgs[slideIndex].src);
     }
+  });
+
+  // Process images
+  document.querySelectorAll('.cs-process-img.is-zoomable').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxIsSlideshow = false;
+      lightboxPrev.classList.remove('visible');
+      lightboxNext.classList.remove('visible');
+      openLightboxImage(img.src);
+      lightbox.querySelector('.lightbox-img').alt = img.alt;
+    });
   });
 
   lightbox.addEventListener('click', e => {
