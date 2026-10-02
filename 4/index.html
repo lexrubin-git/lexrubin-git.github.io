@@ -1040,6 +1040,38 @@
     }
   
     /* ── CASE-STUDY LAYOUT (matches the Arctic Zoo page) ── */
+    .cs-brief {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 2.5rem;
+      max-width: 34rem;
+    }
+    .cs-brief-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+    .cs-brief-value {
+      font-size: 1.05rem;
+      line-height: 1.35;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+    }
+    .cs-swatch-row { display: flex; align-items: center; gap: 0.6rem; }
+    .cs-swatch-row + .cs-swatch-row { margin-top: 0.45rem; }
+    .cs-swatch { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+    .cs-client { max-width: 34rem; margin-top: 2.75rem; }
+    .cs-client-title {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
     .artwork-title-row {
       padding: 3rem 2.5rem;
       align-items: flex-start;
@@ -1150,6 +1182,30 @@
         <div class="cs-section-label">Ideation</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-brief">
+            <div>
+              <div class="cs-brief-label">Typeface</div>
+              <div class="cs-brief-value">Poppins</div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Color Palette</div>
+              <div class="cs-brief-value">
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#3D5D99"></div>#3D5D99</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#C1CFEA"></div>#C1CFEA</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#DEE7F5"></div>#DEE7F5</div>
+              </div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Keywords</div>
+              <div class="cs-brief-value">Illustrative<br>Data Visualization<br>Easy to Understand<br>Data Hierarchy</div>
+            </div>
+          </div>
+          <div class="cs-client">
+            <div class="cs-client-title">Project Overview</div>
+            <p class="cs-text">This was the most ambitious and time consuming project I’ve worked on. So, I’m going to focus on just one part of the project that I worked on, visualizing data of sediment erosion for Ecuadorian dams. I worked in a close-knit team with the designer (me), the numbers guy, and the lead PhD Researcher. The numbers guy would give me all the data that I needed to convert into a visualization and I had to work in a constrained artboard to put a plethora of information while making sure the design remained coherent and visually interesting, which was really difficult!</p>
+          </div>
+        </div>
       </div>
     </div>
 
