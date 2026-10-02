@@ -978,6 +978,38 @@
     }
   
     /* ── CASE-STUDY LAYOUT (matches the Arctic Zoo page) ── */
+    .cs-brief {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 2.5rem;
+      max-width: 34rem;
+    }
+    .cs-brief-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+    .cs-brief-value {
+      font-size: 1.05rem;
+      line-height: 1.35;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+    }
+    .cs-swatch-row { display: flex; align-items: center; gap: 0.6rem; }
+    .cs-swatch { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+    .cs-swatch-grid { display: grid; grid-template-columns: repeat(2, max-content); gap: 0.45rem 1.5rem; text-transform: lowercase; }
+    .cs-client { max-width: 34rem; margin-top: 2.75rem; }
+    .cs-client-title {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
     .artwork-title-row {
       padding: 3rem 2.5rem;
       align-items: flex-start;
@@ -1088,6 +1120,33 @@
         <div class="cs-section-label">Ideation</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-brief">
+            <div>
+              <div class="cs-brief-label">Typeface</div>
+              <div class="cs-brief-value">Original Typeface</div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Color Palette</div>
+              <div class="cs-brief-value cs-swatch-grid">
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#a5ff00"></div>#a5ff00</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#ff00d4"></div>#ff00d4</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#4e00ff"></div>#4e00ff</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#ffed00"></div>#ffed00</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#890995"></div>#890995</div>
+                <div class="cs-swatch-row"><div class="cs-swatch" style="background:#ff9600"></div>#ff9600</div>
+              </div>
+            </div>
+            <div>
+              <div class="cs-brief-label">Keywords</div>
+              <div class="cs-brief-value">Psychedelic<br>Pattern<br>Repetitive<br>Movement<br>Cubist</div>
+            </div>
+          </div>
+          <div class="cs-client">
+            <div class="cs-client-title">Project Brief</div>
+            <p class="cs-text">I was tasked with creating a watchface for the Apple Watch. I created every single element from scratch in Illustrator, including the typeface, and then created a realistic mockup animation in After Effects.</p>
+          </div>
+        </div>
       </div>
     </div>
 
