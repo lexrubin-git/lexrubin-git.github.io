@@ -985,6 +985,8 @@
       z-index: 1001;
     }
     .lightbox-arrow:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.35); opacity: 1; }
+    /* SVGs have no built-in pixel size, so give them one in the lightbox */
+    .lightbox-img[src$=".svg"] { width: min(90vw, 1100px, calc((90vh - 60px) * 1.68)); }
     /* same spot as the home page: 24px inside a centered 1000px stage */
     .lightbox-arrow.lightbox-prev { left: calc(50% - min(500px, 50%) + 24px); }
     .lightbox-arrow.lightbox-next { right: calc(50% - min(500px, 50%) + 24px); }
@@ -1592,6 +1594,15 @@
       openLightboxImage(img.src);
       lightbox.querySelector('.lightbox-img').alt = img.alt;
     });
+  });
+
+  // Keyboard: arrows cycle the slideshow, Escape closes
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') { lightbox.classList.remove('open'); return; }
+    if (!lightboxIsSlideshow) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); lightboxNext.click(); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); lightboxPrev.click(); }
   });
 
   lightbox.addEventListener('click', e => {
