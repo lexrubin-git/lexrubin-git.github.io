@@ -1079,8 +1079,18 @@
     .cs-step-row .cs-process-img { margin-top: 0; }
     .cs-step-note { font-size: 0.8rem; line-height: 1.75; margin: 0; }
     .cs-step-final { margin-top: 1.25rem; max-width: 40rem; }
+    /* Final design: two graphics side by side, the third centered below */
+    .cs-final-trio {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.75rem 2rem;
+    }
+    .cs-final-trio .cs-process-img { margin-top: 0; }
+    .cs-final-trio .cs-process-img:nth-child(3) { grid-column: 1 / -1; justify-self: center; width: 58%; }
     @media (max-width: 768px) {
       .cs-step-row { grid-template-columns: 1fr; gap: 1rem; }
+      .cs-final-trio { grid-template-columns: 1fr; }
+      .cs-final-trio .cs-process-img:nth-child(3) { width: 100%; }
     }
     .cs-client-title {
       font-size: 1.05rem;
@@ -1257,6 +1267,13 @@
         <div class="cs-section-label">Final Design</div>
       </div>
       <div class="cs-col-content">
+        <div class="cs-process-group">
+          <div class="cs-final-trio">
+            <img class="cs-process-img is-zoomable" src="process-final-2.svg" alt="Final sediment graphic for the Illuchi No. 1 dam, in red, with its capacity, year built and locator map">
+            <img class="cs-process-img is-zoomable" src="process-final-1.svg" alt="Final sediment graphic for the Loreto dam, in green, with its capacity, year built and locator map">
+            <img class="cs-process-img is-zoomable" src="process-final-3.svg" alt="Final sediment graphic for the Chanlud dam, in pink, with its capacity, year built and locator map">
+          </div>
+        </div>
       </div>
     </div>
 
