@@ -1709,7 +1709,8 @@
           for (let y = SPACING / 2; y < H; y += SPACING) dots.push({ x, y, r: BASE_R });
         spirals = [];
         const now = performance.now();
-        slots = [now + 600, now + 600 + 5000 + Math.random() * 6000];   // left half, right half (staggered)
+        slots = [now, now];   // both halves start immediately (already partway in, see spawn)
+        firstRun = true;
       }
 
       // Two spirals always running, one in each half of the screen. From a random point, a
@@ -1717,16 +1718,17 @@
       // dots behind it shrink back gradually to draw the tail, which drains into the end.
       // When a spiral finishes, the next one in that half starts
       // straight away while the old tail is still draining.
-      let spirals = [], slots = [];
-      const TAIL = 420, REACH = 13, SAMPLES = 90, RAMP = 0.25;
+      let spirals = [], slots = [], firstRun = true;
+      const TAIL = 420, REACH = 13, SAMPLES = 90, RAMP_IN = 0.06, RAMP_OUT = 0.25;
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
 
-      // Glide: gentle sine ramp up, long even cruise, gentle ramp down. Its top speed is
-      // only 1/(1-RAMP) of the average, so the head never rushes on the wide outer rings.
+      // Glide: a quick sine ramp up (so it gets going right away), a long even cruise, then a
+      // gentle ramp down. Top speed stays close to the average, so the head never rushes on
+      // the wide outer rings.
       function glide(t) {
-        const r = RAMP, A = 1 - r;
-        const ramp = u => u / 2 - r / (2 * Math.PI) * Math.sin(Math.PI * u / r);
-        const s = t < r ? ramp(t) : t > 1 - r ? A - ramp(1 - t) : r / 2 + (t - r);
+        const a = RAMP_IN, b = RAMP_OUT, A = 1 - a / 2 - b / 2;
+        const ramp = (u, r) => u / 2 - r / (2 * Math.PI) * Math.sin(Math.PI * u / r);
+        const s = t < a ? ramp(t, a) : t > 1 - b ? A - ramp(1 - t, b) : a / 2 + (t - a);
         return s / A;
       }
 
@@ -1745,6 +1747,8 @@
                      len: b * thMax * thMax / 2, start: now, dur: 32000 + Math.random() * 16000, done: false,
                      x0: cx - rMax - REACH, x1: cx + rMax + REACH, y0: cy - rMax - REACH, y1: cy + rMax + REACH,
                      trail: null };
+        // on page load, start each spiral already partway through so there is motion at once
+        if (firstRun) sp.start = now - sp.dur * (side ? 0.35 + Math.random() * 0.15 : 0.12 + Math.random() * 0.12);
         spirals.push(sp);
       }
       // point at arc length s along the spiral (arc length of r = b*th is ~ b*th^2/2)
@@ -1766,6 +1770,7 @@
 
       function frame(now) {
         raf = null;
+        if (firstRun && spirals.length >= 2) firstRun = false;
         if (!calm) for (let side = 0; side < 2; side++)
           if (now >= slots[side] && !spirals.some(sp => sp.side === side && !sp.done)) { spawn(now, side); slots[side] = Infinity; }
 
@@ -1788,20 +1793,18 @@
         }
 
         ctx.clearRect(0, 0, W, H);
-        const calmPath = new Path2D(), lit = new Path2D();
+        const path = new Path2D();
         for (let i = 0; i < dots.length; i++) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
           d.r += (BASE_R + (MAX_R - BASE_R) * k - d.r) * 0.08;
-          const p = d.r > BASE_R + 0.2 ? lit : calmPath;
-          p.moveTo(d.x + d.r, d.y);
-          p.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          path.moveTo(d.x + d.r, d.y);
+          path.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
         spirals = spirals.filter(sp => !sp.done);
-        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(calmPath);
-        ctx.fillStyle = 'rgba(255,255,255,0.32)'; ctx.fill(lit);
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
 
         if (document.visibilityState !== 'hidden' && !calm) raf = requestAnimationFrame(frame);
       }
