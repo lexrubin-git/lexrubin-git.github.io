@@ -107,7 +107,8 @@
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      background: var(--black);
+      /* see-through so the ambient dot grid (and its cursor push-away) shows inside the card */
+      background: transparent;
     }
     .hero-name, .hero-lead, .hero-sub { text-wrap: balance; }
     /* Hover a letter of the name: it drops to a random thinner weight inside a
