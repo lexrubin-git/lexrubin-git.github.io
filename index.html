@@ -1913,6 +1913,72 @@
         });
       });
 
+      // Hover spin ("dreidel"), ported from CrosswordLeague's achievement icons:
+      // sideways cursor movement over a letter spins it in 3D in that direction, a fast
+      // swipe off it throws a decelerating two-turn spin-down, otherwise it eases back.
+      // Transforms don't affect layout, so nothing around the letter moves.
+      (function () {
+        var PX_TO_DEG = 1.4, PERSPECTIVE_PX = 400, HOVER_SCALE = 1.06, RETURN_MS = 400,
+            SPIN_MS = 1400, SPIN_TURNS = 2, FLICK_PX_PER_MS = 2.0, VEL_TAU_MS = 30, IDLE_MS = 120;
+        var angle = new WeakMap(), spin = new WeakMap();
+        var hoverEl = null, lastX = 0, velX = 0, prevX = 0, prevT = 0;
+        function paint(el, a, sc) { el.style.transform = "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + a + "deg) scale(" + sc + ")"; }
+        function shortest(raw) { return ((raw % 360) + 540) % 360 - 180; }
+        function returnToRest(el) {
+          var norm = shortest(angle.get(el) || 0);
+          el.style.transition = "none";
+          paint(el, norm, HOVER_SCALE);
+          requestAnimationFrame(function () { requestAnimationFrame(function () {
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            paint(el, 0, 1);
+          }); });
+          angle.set(el, 0);
+          setTimeout(function () { el.style.transition = ""; el.style.willChange = ""; }, RETURN_MS + 50);
+        }
+        function spinOut(el, dir) {
+          if (!el.animate) { returnToRest(el); return; }
+          var norm = shortest(angle.get(el) || 0);
+          angle.set(el, 0);
+          el.style.transition = "";
+          el.style.transform = "";
+          var anim = el.animate([
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + norm + "deg) scale(" + HOVER_SCALE + ")" },
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + (dir * 360 * SPIN_TURNS) + "deg) scale(1)" }
+          ], { duration: SPIN_MS, easing: "cubic-bezier(0.05, 0.95, 0.1, 1)" });
+          spin.set(el, anim);
+          anim.addEventListener("finish", function () {
+            if (spin.get(el) !== anim) return;
+            spin.delete(el);
+            el.style.willChange = "";
+          });
+        }
+        document.addEventListener("mousemove", function (e) {
+          var t = e.timeStamp || performance.now();
+          var gap = t - prevT, dt = Math.min(Math.max(gap, 0.5), VEL_TAU_MS), gdx = e.clientX - prevX;
+          prevX = e.clientX; prevT = t;
+          if (gap > IDLE_MS) velX = 0;
+          else velX += (gdx / dt - velX) * (1 - Math.exp(-dt / VEL_TAU_MS));
+          var el = e.target.closest ? e.target.closest(".hero-name-char") : null;
+          if (el !== hoverEl) {
+            if (hoverEl) {
+              if (Math.abs(velX) >= FLICK_PX_PER_MS) spinOut(hoverEl, Math.sign(velX));
+              else returnToRest(hoverEl);
+            }
+            hoverEl = el;
+            if (el) {
+              var running = spin.get(el); if (running) running.cancel(); spin.delete(el);
+              el.style.transition = ""; el.style.willChange = "transform"; lastX = e.clientX;
+            }
+          }
+          if (!el) return;
+          var dx = e.clientX - lastX;
+          lastX = e.clientX;
+          var next = (angle.get(el) || 0) + dx * PX_TO_DEG;
+          angle.set(el, next);
+          paint(el, next, HOVER_SCALE);
+        }, { passive: true });
+      })();
+
       // Automatic pulse: a random free letter eases thin, holds, then eases back
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       var visible = true;
