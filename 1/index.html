@@ -776,8 +776,8 @@
     .cs-col-content { padding: 2rem; }
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
     .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
-    .cs-process-img.is-zoomable, .cs-process-video.is-zoomable { transition: opacity 0.3s ease; }
-    .cs-process-img.is-zoomable:hover, .cs-process-video.is-zoomable:hover { opacity: 0.85; }
+    .cs-process-img.is-zoomable, .cs-process-video.is-zoomable { outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease, background-color 0.2s ease; }
+    .cs-process-img.is-zoomable:hover, .cs-process-video.is-zoomable:hover { outline-color: rgba(255,255,255,0.22); background-color: rgba(255,255,255,0.03); }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
     /* Click targets over each graphic on the board, so the lightbox opens one piece at a time */

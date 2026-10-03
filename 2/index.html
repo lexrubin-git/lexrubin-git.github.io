@@ -760,12 +760,12 @@
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
     .cs-process-img.is-medium { max-width: 600px; margin-left: auto; margin-right: auto; }
     .cs-process-img.is-narrow { max-width: 360px; margin-left: auto; margin-right: auto; }
-    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
-    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
-    .cs-process-img-link { display: block; margin: 1.25rem auto 0; transition: opacity 0.3s ease, transform 0.3s ease; }
+    .cs-process-img.is-zoomable { outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease, background-color 0.2s ease; }
+    .cs-process-img.is-zoomable:hover { outline-color: rgba(255,255,255,0.22); background-color: rgba(255,255,255,0.03); }
+    .cs-process-img-link { display: block; margin: 1.25rem auto 0; outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease, transform 0.3s ease; }
     .cs-process-img-link.is-narrow { max-width: 360px; }
     .cs-process-img-link .cs-process-img { margin-top: 0; }
-    .cs-process-img-link:hover { opacity: 0.85; transform: translateY(-4px); }
+    .cs-process-img-link:hover { outline-color: rgba(255,255,255,0.22); transform: translateY(-4px); }
     .cs-mockup-link {
       display: inline-block;
       margin-top: 1.75rem;

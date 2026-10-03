@@ -1006,8 +1006,8 @@
     .cs-swatch-grid { display: grid; grid-template-columns: repeat(2, max-content); gap: 0.45rem 1.5rem; text-transform: lowercase; }
     .cs-client { max-width: 34rem; margin-top: 2.75rem; }
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
-    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
-    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
+    .cs-process-img.is-zoomable { outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease, background-color 0.2s ease; }
+    .cs-process-img.is-zoomable:hover { outline-color: rgba(255,255,255,0.22); background-color: rgba(255,255,255,0.03); }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
     .cs-board-note {

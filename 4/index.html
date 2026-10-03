@@ -1078,8 +1078,8 @@
     .cs-swatch { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
     .cs-client { max-width: 34rem; margin-top: 2.75rem; }
     .cs-process-img { display: block; width: 100%; height: auto; margin-top: 1.25rem; }
-    .cs-process-img.is-zoomable { transition: opacity 0.3s ease; }
-    .cs-process-img.is-zoomable:hover { opacity: 0.85; }
+    .cs-process-img.is-zoomable { outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease, background-color 0.2s ease; }
+    .cs-process-img.is-zoomable:hover { outline-color: rgba(255,255,255,0.22); background-color: rgba(255,255,255,0.03); }
     /* Process steps: graphic on the left, its note on the right */
     .cs-step-row {
       display: grid;
