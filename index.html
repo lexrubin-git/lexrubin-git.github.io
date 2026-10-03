@@ -1543,11 +1543,31 @@
         nextBtn.disabled = index >= maxIndex;
       }
 
-      prevBtn.addEventListener('click', () => goTo(index - 1));
-      nextBtn.addEventListener('click', () => goTo(index + 1));
+      prevBtn.addEventListener('click', () => { goTo(index - 1); restartAuto(); });
+      nextBtn.addEventListener('click', () => { goTo(index + 1); restartAuto(); });
       window.addEventListener('resize', layout);
 
       layout();
+
+      // Auto-advance one image every 5s, same as pressing the right arrow; wraps back
+      // to the start at the end. Waits while hovered, while the lightbox is open, or
+      // while the tab is hidden; a manual arrow click restarts the wait.
+      const AUTO_MS = 5000;
+      let autoTimer = null, hovering = false;
+      function restartAuto() {
+        clearTimeout(autoTimer);
+        if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        autoTimer = setTimeout(tick, AUTO_MS);
+      }
+      function tick() {
+        const lb = document.getElementById('lightbox');
+        if (!hovering && !document.hidden && !(lb && lb.classList.contains('open')))
+          goTo(index >= maxIndex ? 0 : index + 1);
+        restartAuto();
+      }
+      strip.addEventListener('mouseenter', () => { hovering = true; });
+      strip.addEventListener('mouseleave', () => { hovering = false; restartAuto(); });
+      restartAuto();
     }
 
     document.querySelectorAll('.gallery-strip').forEach(strip => initCarousel(strip, 3));
