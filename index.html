@@ -1785,8 +1785,8 @@
         }
       });
 
-      // Fade out while hovering a project card, ease back in after
-      document.querySelectorAll('.portfolio-item').forEach(item => {
+      // Fade out while hovering the hero or a project card, ease back in after
+      document.querySelectorAll('.hero, .portfolio-item').forEach(item => {
         item.addEventListener('mouseenter', () => { bgCanvas.style.opacity = '0'; });
         item.addEventListener('mouseleave', () => { bgCanvas.style.opacity = '1'; });
       });
