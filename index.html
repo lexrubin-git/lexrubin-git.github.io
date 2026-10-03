@@ -121,9 +121,46 @@
       max-width: 640px;
       margin: 1.4rem auto 0;
       font-size: clamp(1.05rem, 2.2vw, 1.3rem);
-      font-weight: 500;
+      font-weight: 400;
       line-height: 1.45;
-      color: var(--white);
+      color: #b5b5b5;
+    }
+    .hero-lead strong { font-weight: 600; color: var(--white); }
+
+    /* Project thumbnail strip across the top of the hero card */
+    .hero-strip {
+      margin: -5.5rem -2rem 4.25rem;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+    .hero-strip-track {
+      display: flex;
+      width: max-content;
+      animation: ticker 32s linear infinite;
+    }
+    .hero-strip-dup { display: flex; }
+    .hero-strip:hover .hero-strip-track { animation-play-state: paused; }
+    .hero-strip-item {
+      display: block;
+      width: 112px;
+      height: 64px;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .hero-strip-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.7);
+      transition: filter 0.3s ease, transform 0.4s ease;
+    }
+    .hero-strip-item:hover img { filter: brightness(1); transform: scale(1.06); }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-strip-track { animation: none; }
     }
     .hero-sub {
       max-width: 560px;
@@ -569,6 +606,8 @@
       .grid-wrapper { padding: 0 0.75rem; }
 
       .hero { padding: 3.25rem 1.25rem 2.75rem; }
+      .hero-strip { margin: -3.25rem -1.25rem 2.75rem; }
+      .hero-strip-item { width: 88px; height: 50px; }
       .hero-ctas { flex-direction: column; align-items: stretch; gap: 0.75rem; max-width: 320px; margin-left: auto; margin-right: auto; }
       #work { scroll-margin-top: 70px; }
 
@@ -995,8 +1034,37 @@
   <!-- GRID -->
   <div class="grid-wrapper">
   <section class="hero" aria-labelledby="hero-name">
+    <div class="hero-strip">
+      <!-- Two identical halves (10 thumbnails each) so the -50% loop is seamless -->
+      <div class="hero-strip-track">
+        <a class="hero-strip-item" href="5/"><img src="crossword_index.gif" alt="CrosswordLeague.com"></a>
+        <a class="hero-strip-item" href="1/"><img src="index1.png" alt="Pyxd, Inc."></a>
+        <a class="hero-strip-item" href="2/"><img src="index2.png" alt="Arctic Zoo &amp; Aquarium"></a>
+        <a class="hero-strip-item" href="3/"><img src="index3.png" alt="Apple Watch Face"></a>
+        <a class="hero-strip-item" href="4/"><img src="index4.png" alt="U.C. Berkeley Dam Research"></a>
+        <div class="hero-strip-dup" aria-hidden="true">
+          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
+          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
+          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
+          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
+          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
+        </div>
+        <div class="hero-strip-dup" aria-hidden="true">
+          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
+          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
+          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
+          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
+          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
+          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
+          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
+          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
+          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
+          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
+        </div>
+      </div>
+    </div>
     <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
-    <h2 class="hero-lead">Product &amp; Systems Designer specializing in high-density UI/UX, data visualization, and interactive software.</h2>
+    <h2 class="hero-lead"><strong>Product &amp; Systems Designer</strong> specializing in high-density UI/UX, data visualization, and interactive software.</h2>
     <p class="hero-sub">Designing intuitive web platforms, glanceable interfaces, and complex data systems.</p>
     <div class="hero-ctas">
       <a href="#work" class="hero-btn hero-btn-primary">View Work<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></a>
