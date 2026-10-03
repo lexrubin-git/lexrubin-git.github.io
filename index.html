@@ -216,9 +216,12 @@
     /* same gap above the Artwork card (which now has its own top border) */
     #artwork { margin-top: 1.75rem; }
     #artwork .artwork-hero { border-top: 1px solid var(--border); }
+    /* and the same gap between the artwork gallery and the footer */
+    #artwork + .page-wrapper { margin-bottom: 1.75rem; }
     @media (max-width: 768px) {
       .portfolio-grid { row-gap: 1.25rem; margin-top: 1.25rem; }
       #artwork { margin-top: 1.25rem; }
+      #artwork + .page-wrapper { margin-bottom: 1.25rem; }
     }
 
     .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags, .item-subtitle, .item-chips, .item-chip {
