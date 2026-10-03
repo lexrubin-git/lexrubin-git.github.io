@@ -141,57 +141,6 @@
     }
     .hero-lead strong { font-weight: 600; color: var(--white); }
 
-    /* Project thumbnail strip across the top of the hero card */
-    .hero-strip {
-      margin: -5.5rem -2rem 4.25rem;
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .hero-strip-track {
-      display: flex;
-      width: max-content;
-      animation: ticker 32s linear infinite;
-    }
-    .hero-strip-dup { display: flex; }
-    .hero-strip:hover .hero-strip-track { animation-play-state: paused; }
-    .hero-strip-item {
-      display: block;
-      width: 112px;
-      height: 64px;
-      border-right: 1px solid var(--border);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .hero-strip-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.7);
-      transition: filter 0.3s ease, transform 0.4s ease;
-    }
-    .hero-strip-item:hover img { filter: brightness(1); transform: scale(1.06); }
-    .hero-strip-tip {
-      position: fixed;
-      z-index: 9990;
-      pointer-events: none;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #ccc;
-      background: rgba(0,0,0,0.85);
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 0.4rem 0.75rem;
-      white-space: nowrap;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 0.15s ease, transform 0.15s ease;
-    }
-    .hero-strip-tip.show { opacity: 1; transform: translateY(0); }
-    @media (hover: none) { .hero-strip-tip { display: none; } }
-    @media (prefers-reduced-motion: reduce) {
-      .hero-strip-track { animation: none; }
-    }
     .hero-sub {
       max-width: 560px;
       margin: 0.9rem auto 0;
@@ -627,8 +576,6 @@
       .grid-wrapper { padding: 0 0.75rem; }
 
       .hero { padding: 3.25rem 1.25rem 2.75rem; }
-      .hero-strip { margin: -3.25rem -1.25rem 2.75rem; }
-      .hero-strip-item { width: 88px; height: 50px; }
       .hero-ctas { flex-direction: column; align-items: stretch; gap: 0.75rem; max-width: 320px; margin-left: auto; margin-right: auto; }
       #work, #artwork { scroll-margin-top: 70px; }
 
@@ -1132,35 +1079,6 @@
   <!-- GRID -->
   <div class="grid-wrapper">
   <section class="hero" aria-labelledby="hero-name">
-    <div class="hero-strip">
-      <!-- Two identical halves (10 thumbnails each) so the -50% loop is seamless -->
-      <div class="hero-strip-track">
-        <a class="hero-strip-item" href="5/"><img src="crossword_index.gif" alt="CrosswordLeague.com"></a>
-        <a class="hero-strip-item" href="1/"><img src="index1.png" alt="Pyxd, Inc."></a>
-        <a class="hero-strip-item" href="2/"><img src="index2.png" alt="Arctic Zoo &amp; Aquarium"></a>
-        <a class="hero-strip-item" href="3/"><img src="index3.png" alt="Apple Watch Face"></a>
-        <a class="hero-strip-item" href="4/"><img src="index4.png" alt="U.C. Berkeley Dam Research"></a>
-        <div class="hero-strip-dup" aria-hidden="true">
-          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
-          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
-          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
-          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
-          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
-        </div>
-        <div class="hero-strip-dup" aria-hidden="true">
-          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
-          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
-          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
-          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
-          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
-          <a class="hero-strip-item" href="5/" tabindex="-1"><img src="crossword_index.gif" alt=""></a>
-          <a class="hero-strip-item" href="1/" tabindex="-1"><img src="index1.png" alt=""></a>
-          <a class="hero-strip-item" href="2/" tabindex="-1"><img src="index2.png" alt=""></a>
-          <a class="hero-strip-item" href="3/" tabindex="-1"><img src="index3.png" alt=""></a>
-          <a class="hero-strip-item" href="4/" tabindex="-1"><img src="index4.png" alt=""></a>
-        </div>
-      </div>
-    </div>
     <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
     <h2 class="hero-lead"><strong>Product &amp; Web Designer</strong> specializing in UI/UX</h2>
     <p class="hero-sub">Designing intuitive web platforms, glanceable interfaces, and complex data systems.</p>
@@ -1813,86 +1731,6 @@
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') { if (raf !== null) cancelAnimationFrame(raf); raf = null; }
         else wake();
-      });
-    })();
-  </script>
-  <script>
-    // ── HERO STRIP: shuffle project + gallery thumbnails on every load ──
-    (function () {
-      var track = document.querySelector(".hero-strip-track");
-      if (!track) return;
-      var items = [
-      ["strip/arctic-1.jpg", "2/"],
-      ["strip/arctic-2.jpg", "2/"],
-      ["strip/arctic-3.jpg", "2/"],
-      ["strip/crossword-01-home.jpg", "5/"],
-      ["strip/crossword-02-lobby-play-together.jpg", "5/"],
-      ["strip/crossword-03-lobby-versus.jpg", "5/"],
-      ["strip/crossword-04-in-game.jpg", "5/"],
-      ["strip/crossword-05-leaderboards.jpg", "5/"],
-      ["strip/crossword-06-achievements-stats.jpg", "5/"],
-      ["strip/crossword-07-player-profile.jpg", "5/"],
-      ["strip/crossword-08-profile-menu.jpg", "5/"],
-      ["strip/crossword-09-friends-chat.jpg", "5/"],
-      ["strip/crossword-10-accessibility-settings.jpg", "5/"],
-      ["strip/dam-1.jpg", "4/"],
-      ["strip/dam-2.jpg", "4/"],
-      ["strip/dam-3.jpg", "4/"],
-      ["strip/dam-4.jpg", "4/"],
-      ["strip/dam-5.jpg", "4/"],
-      ["strip/dam-6.jpg", "4/"],
-      ["strip/dam-7.jpg", "4/"],
-      ["strip/home-arctic.jpg", "2/"],
-      ["strip/home-dam.jpg", "4/"],
-      ["strip/home-pyxd.jpg", "1/"],
-      ["strip/home-watch.jpg", "3/"],
-      ["strip/pyxd-1.jpg", "1/"],
-      ["strip/pyxd-10.jpg", "1/"],
-      ["strip/pyxd-11.jpg", "1/"],
-      ["strip/pyxd-2.jpg", "1/"],
-      ["strip/pyxd-3.jpg", "1/"],
-      ["strip/pyxd-4.jpg", "1/"],
-      ["strip/pyxd-5.jpg", "1/"],
-      ["strip/pyxd-6.jpg", "1/"],
-      ["strip/pyxd-7.jpg", "1/"],
-      ["strip/pyxd-8.jpg", "1/"],
-      ["strip/pyxd-9.jpg", "1/"],
-      ["strip/watch-1.jpg", "3/"],
-      ["strip/watch-2.jpg", "3/"],
-      ["strip/watch-3.jpg", "3/"],
-      ["crossword_index.gif", "5/"]
-      ];
-      for (var i = items.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var t = items[i]; items[i] = items[j]; items[j] = t;
-      }
-      // Two identical halves so the -50% loop is seamless
-      var NAMES = { "1/": "Pyxd", "2/": "Arctic Zoo", "3/": "Apple Watch", "4/": "Dam Research", "5/": "CrosswordLeague" };
-      var half = items.map(function (it) {
-        return '<a class="hero-strip-item" href="' + it[1] + '" data-label="' + NAMES[it[1]] + '" tabindex="-1"><img src="' + it[0] + '" alt="" decoding="async"></a>';
-      }).join("");
-      track.innerHTML = half + half;
-      track.parentElement.setAttribute("aria-hidden", "true");
-
-      // Hover label: one floating tag that follows the cursor (the strip clips
-      // anything attached to the thumbnails themselves)
-      var tip = document.createElement("div");
-      tip.className = "hero-strip-tip";
-      document.body.appendChild(tip);
-      var strip0 = track.parentElement;
-      strip0.addEventListener("mousemove", function (e) {
-        var item = e.target.closest(".hero-strip-item");
-        if (!item) { tip.classList.remove("show"); return; }
-        tip.textContent = item.dataset.label;
-        tip.style.left = (e.clientX + 16) + "px";
-        tip.style.top = (e.clientY - 36) + "px";
-        tip.classList.add("show");
-      });
-      strip0.addEventListener("mouseleave", function () { tip.classList.remove("show"); });
-      // Constant speed no matter how many thumbnails there are
-      requestAnimationFrame(function () {
-        var px = track.scrollWidth / 2;
-        track.style.animationDuration = Math.round(px / 40) + "s";
       });
     })();
   </script>
