@@ -164,7 +164,9 @@
       position: absolute;
       bottom: 10px;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(6px);
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
       background: rgba(0,0,0,0.72);
       color: var(--white);
       font-size: 0.7rem;
@@ -203,6 +205,13 @@
       transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
     }
     .about-photo-link:hover .about-li-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    /* "View LinkedIn" only appears on hover */
+    .about-photo-link:hover .about-photo-linkedin-label { opacity: 1; transform: translateX(-50%); }
+    /* touch screens can't hover, so they keep the label (with its arrow) showing */
+    @media (hover: none) {
+      .about-photo-linkedin-label { opacity: 1; transform: translateX(-50%); }
+      .about-li-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    }
 
     .about-text-col {
       padding: 2.5rem 3rem;
