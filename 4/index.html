@@ -1908,24 +1908,30 @@
       bar.className = 'page-scroll'; thumb.className = 'page-scroll-thumb';
       bar.setAttribute('aria-hidden', 'true');
       bar.appendChild(thumb); document.body.appendChild(bar);
-      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0, PAD = 15;   // room for the triangles (4px gap + up to 9px tall)
+      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0, PAD = 15, fullH = 0, navH = 0, footer = document.querySelector('footer');   // room for the triangles (4px gap + up to 9px tall)
       function maxScroll() { return document.documentElement.scrollHeight - innerHeight; }
       function layout() {
         var col = document.querySelector('.hero, .artwork-hero, .content-col');
         var right = col ? col.getBoundingClientRect().right : innerWidth - 64;
-        var top = nav ? nav.getBoundingClientRect().height : 0;
-        bar.style.left = right + 'px'; bar.style.top = top + 'px';
-        trackH = innerHeight - top; bar.style.height = trackH + 'px';
+        navH = nav ? nav.getBoundingClientRect().height : 0;
+        bar.style.left = right + 'px'; bar.style.top = navH + 'px';
+        fullH = innerHeight - navH;
         update();
       }
       function update() {
         var max = maxScroll();
         if (max <= 0) { bar.style.display = 'none'; return; }
         bar.style.display = '';
+        // The track ends where the content column ends: where the footer's top edge sits once
+        // the page is scrolled to the bottom. The track is invisible, so the thumb simply moves
+        // steadily down and comes to rest just above the footer, never behind it.
+        var footerTopAtEnd = footer ? footer.getBoundingClientRect().top + scrollY - max : innerHeight;
+        trackH = Math.max(0, Math.min(innerHeight, footerTopAtEnd) - navH);
+        bar.style.height = trackH + 'px';
         // sized as if the page were at least as long as the home page, so shorter pages (About) get the same thumb
-        thumbH = Math.max(40, (trackH - 2 * PAD) * innerHeight / Math.max(document.documentElement.scrollHeight, 3060));
+        thumbH = Math.max(40, (fullH - 2 * PAD) * innerHeight / Math.max(document.documentElement.scrollHeight, 3060));
         thumb.style.height = thumbH + 'px';
-        thumb.style.transform = 'translateY(' + (PAD + (trackH - thumbH - 2 * PAD) * Math.min(1, scrollY / max)) + 'px)';
+        thumb.style.transform = 'translateY(' + (PAD + Math.max(0, trackH - thumbH - 2 * PAD) * Math.min(1, scrollY / max)) + 'px)';
       }
       function go(y, smooth) { window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' }); }
       // drag the thumb
