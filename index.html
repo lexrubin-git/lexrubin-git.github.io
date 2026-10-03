@@ -331,6 +331,9 @@
       display: block;
       transition: transform 0.6s ease;
     }
+    /* video thumbnails get the same fit and hover zoom as image ones */
+    .item-image video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+    .portfolio-item:hover .item-image video { transform: scale(1.06); }
     .portfolio-item:hover .item-image img {
       transform: scale(1.06);
     }
@@ -1132,7 +1135,7 @@
     <!-- Apple Watch -->
     <div class="portfolio-item full-width" onclick="window.location='3/'">
       <div class="item-image">
-        <img src="index3.png" alt="Apple Watch Face" />
+        <video class="item-video" muted loop playsinline preload="none" poster="index3.png" data-src="watch-cover.mp4" aria-label="Apple Watch face animation"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1895,6 +1898,23 @@
       addEventListener('resize', layout);
       if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
       layout();
+    })();
+  </script>
+  <script>
+    // ── VIDEO THUMBNAILS: load only when near the screen, then play muted on a loop ──
+    (function () {
+      var vids = document.querySelectorAll("video.item-video[data-src]");
+      if (!vids.length) return;
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // keep the still poster
+      function start(v) { if (!v.src) { v.src = v.dataset.src; v.load(); } var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      if (!("IntersectionObserver" in window)) { vids.forEach(start); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) start(e.target);
+          else if (e.target.src) e.target.pause();
+        });
+      }, { rootMargin: "300px 0px" });
+      vids.forEach(function (v) { io.observe(v); });
     })();
   </script>
 </body>
