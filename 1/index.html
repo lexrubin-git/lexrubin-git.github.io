@@ -1514,7 +1514,8 @@
       const ctx = cv.getContext('2d');
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let dots = [], W = 0, H = 0, raf = null;
+      let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
+      const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
         const dpr = window.devicePixelRatio || 1;
@@ -1522,20 +1523,27 @@
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dots = [];
-        for (let x = SPACING / 2; x < W; x += SPACING)
-          for (let y = SPACING / 2; y < H; y += SPACING) dots.push({ x, y, r: BASE_R });
+        dots = []; hot = new Set();
+        cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
+        for (let ix = 0; ix < cols; ix++)
+          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
+        base.width = cv.width; base.height = cv.height;
+        bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const bp = new Path2D();
+        for (const d of dots) { bp.moveTo(d.x + BASE_R, d.y); bp.arc(d.x, d.y, BASE_R, 0, Math.PI * 2); }
+        bctx.fillStyle = 'rgba(255,255,255,0.15)'; bctx.fill(bp);
         spirals = [];
         const now = performance.now();
-        slots = [now, now];   // both halves start immediately (already partway in, see spawn)
+        slots = [now, now, now];   // all three start immediately (already partway in, see spawn)
         firstRun = true;
       }
 
-      // Two spirals always running, one in each half of the screen. From a random point, a
+      // Three spirals always running: one fixed in each half, plus a third that picks a
+      // random half each time it starts (so the split is always 2 and 1). From a random point, a
       // head travels outward along a tight Archimedean coil, swelling the dots it passes;
       // dots behind it shrink back gradually to draw the tail, which drains into the end.
       // When a spiral finishes, the next one in that half starts
-      // straight away while the old tail is still draining.
+      // straight away (in the same slot) while the old tail is still draining.
       let spirals = [], slots = [], firstRun = true;
       const TAIL = 420, REACH = 13, SAMPLES = 90, RAMP_IN = 0.06, RAMP_OUT = 0.25;
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
@@ -1550,23 +1558,29 @@
         return s / A;
       }
 
-      function spawn(now, side) {
+      function spawn(now, slot) {
+        const side = slot < 2 ? slot : (Math.random() < 0.5 ? 0 : 1);
         const turns = 6 + Math.random() * 2, rMax = Math.min(W, H) * (0.17 + Math.random() * 0.07);
         const thMax = turns * Math.PI * 2, b = rMax / thMax;
         // random spot in this half, preferring the visible margins (cards cover the middle)
-        let cx = 0, cy = 0;
-        for (let tries = 0; tries < 24; tries++) {
-          cx = W * (side ? 0.5 + Math.random() * 0.46 : 0.04 + Math.random() * 0.46);
-          cy = H * (0.12 + Math.random() * 0.76);
-          const el = document.elementFromPoint(cx, cy);
-          if (!el || !el.closest(CARDS)) break;
+        // and keeping clear of the other spirals so the coils do not overlap
+        let cx = 0, cy = 0, best = -Infinity;
+        for (let tries = 0; tries < 40; tries++) {
+          const x = W * (side ? 0.5 + Math.random() * 0.46 : 0.04 + Math.random() * 0.46);
+          const y = H * (0.1 + Math.random() * 0.8);
+          const el = document.elementFromPoint(x, y);
+          let gap = Infinity;
+          for (const o of spirals) if (!o.done) gap = Math.min(gap, Math.hypot(x - o.cx, y - o.cy) - (rMax + o.rMax));
+          const score = (el && el.closest(CARDS) ? -400 : 0) + Math.min(gap, 200);
+          if (score > best) { best = score; cx = x; cy = y; }
+          if (score >= 200) break;
         }
-        const sp = { side, cx, cy, b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
+        const sp = { slot, side, rMax, cx, cy, b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
                      len: b * thMax * thMax / 2, start: now, dur: 32000 + Math.random() * 16000, done: false,
                      x0: cx - rMax - REACH, x1: cx + rMax + REACH, y0: cy - rMax - REACH, y1: cy + rMax + REACH,
                      trail: null };
         // on page load, start each spiral already partway through so there is motion at once
-        if (firstRun) sp.start = now - sp.dur * (side ? 0.35 + Math.random() * 0.15 : 0.12 + Math.random() * 0.12);
+        if (firstRun) sp.start = now - sp.dur * [0.12, 0.38, 0.62][slot] * (0.8 + Math.random() * 0.4);
         spirals.push(sp);
       }
       // point at arc length s along the spiral (arc length of r = b*th is ~ b*th^2/2)
@@ -1588,15 +1602,15 @@
 
       function frame(now) {
         raf = null;
-        if (firstRun && spirals.length >= 2) firstRun = false;
-        if (!calm) for (let side = 0; side < 2; side++)
-          if (now >= slots[side] && !spirals.some(sp => sp.side === side && !sp.done)) { spawn(now, side); slots[side] = Infinity; }
+        if (firstRun && spirals.length >= 3) firstRun = false;
+        if (!calm) for (let slot = 0; slot < 3; slot++)
+          if (now >= slots[slot] && !spirals.some(sp => sp.slot === slot && !sp.done)) { spawn(now, slot); slots[slot] = Infinity; }
 
         for (const sp of spirals) {
           sp.trail = null;
           if (sp.done) continue;
           const t = (now - sp.start) / sp.dur;
-          if (t >= 1) { sp.done = true; slots[sp.side] = now; continue; }   // next one in this half starts right away
+          if (t >= 1) { sp.done = true; slots[sp.slot] = now; continue; }   // next one in this slot starts right away
           // head runs past the end by one tail length, so the tail drains into the finish
           const head = (sp.len + TAIL) * glide(t);
           const trail = [];
@@ -1610,19 +1624,36 @@
           sp.trail = trail;
         }
 
-        ctx.clearRect(0, 0, W, H);
-        const path = new Path2D();
-        for (let i = 0; i < dots.length; i++) {
+        // Only dots inside an active spiral, or still shrinking back, are redrawn: the
+        // resting grid is copied in, then each changed dot's cell is cleared and redrawn.
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(base, 0, 0);
+        const dpr = cv.width / W;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const touch = new Set(hot);
+        for (const sp of spirals) {
+          if (!sp.trail) continue;
+          const ix0 = Math.max(0, Math.floor((sp.x0 - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((sp.x1 - SPACING / 2) / SPACING));
+          const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
+          for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
+        }
+        const path = new Path2D(), next = new Set(), half = SPACING / 2;
+        for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
           d.r += (BASE_R + (MAX_R - BASE_R) * k - d.r) * 0.08;
+          if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
+          next.add(i);
+          ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
           path.moveTo(d.x + d.r, d.y);
           path.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
-        spirals = spirals.filter(sp => !sp.done);
+        hot = next;
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
+        spirals = spirals.filter(sp => !sp.done);
 
         if (document.visibilityState !== 'hidden' && !calm) raf = requestAnimationFrame(frame);
       }
