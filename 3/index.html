@@ -1733,7 +1733,8 @@
         var max = maxScroll();
         if (max <= 0) { bar.style.display = 'none'; return; }
         bar.style.display = '';
-        thumbH = Math.max(40, (trackH - 2 * PAD) * innerHeight / document.documentElement.scrollHeight);
+        // sized as if the page were at least as long as the home page, so shorter pages (About) get the same thumb
+        thumbH = Math.max(40, (trackH - 2 * PAD) * innerHeight / Math.max(document.documentElement.scrollHeight, 3060));
         thumb.style.height = thumbH + 'px';
         thumb.style.transform = 'translateY(' + (PAD + (trackH - thumbH - 2 * PAD) * Math.min(1, scrollY / max)) + 'px)';
       }
