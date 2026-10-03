@@ -227,6 +227,9 @@
     .hero-btn-icon { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.25s ease; }
     .hero-btn-primary:hover .hero-btn-icon { transform: translateY(2px); }
     .hero-btn-secondary:hover .hero-btn-icon { transform: rotate(-10deg); }
+    /* Get in Touch: frown at rest, flips into a smile on hover */
+    .hero-btn-mouth { transform-box: fill-box; transform-origin: center; transform: scaleY(-1); transition: transform 0.3s ease; }
+    .hero-btn-secondary:hover .hero-btn-mouth, .hero-btn-secondary:focus-visible .hero-btn-mouth { transform: scaleY(1); }
     .hero-btn:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
     #work, #artwork { scroll-margin-top: 110px; }
 
@@ -1144,7 +1147,7 @@
     <p class="hero-sub">Designing intuitive web platforms, glanceable interfaces, and complex data systems.</p>
     <div class="hero-ctas">
       <a href="#work" class="hero-btn hero-btn-primary">View Work<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></a>
-      <a href="about/#contact" class="hero-btn hero-btn-secondary">Get in Touch<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></a>
+      <a href="about/#contact" class="hero-btn hero-btn-secondary">Get in Touch<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path class="hero-btn-mouth" d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></a>
     </div>
   </section>
   <div class="section-arrows" aria-hidden="true">
