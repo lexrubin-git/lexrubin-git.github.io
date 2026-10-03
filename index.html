@@ -209,6 +209,13 @@
     }
     .portfolio-item:hover { background: #111; }
 
+    /* Banner-only project cards: each its own bordered panel, with a gap between them.
+       The first card stays attached to the arrow row above it. */
+    .portfolio-grid { border: 0; background: transparent; row-gap: 1.75rem; }
+    .portfolio-item { border: 1px solid var(--border); }
+    .portfolio-item:first-child { border-top: 0; }
+    @media (max-width: 768px) { .portfolio-grid { row-gap: 1.25rem; } }
+
     .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags, .item-subtitle, .item-chips, .item-chip {
       pointer-events: none;
     }
@@ -1096,14 +1103,6 @@
 
     <!-- Arctic Zoo -->
     <div class="portfolio-item full-width" onclick="window.location='2/'">
-      <div class="item-header">
-        <div class="item-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Brand &amp; wayfinding design</span></div>
-        <div class="item-chips">
-          <span class="item-chip">UI/UX</span>
-          <span class="item-chip">Web Design</span>
-          <span class="item-chip">Wayfinding</span>
-        </div>
-      </div>
       <div class="item-image">
         <img src="arctic-cover.jpg" alt="Arctic Zoo & Aquarium" style="object-position: left center;" />
         <div class="overlay">
@@ -1114,14 +1113,6 @@
 
     <!-- CrosswordLeague -->
     <div class="portfolio-item full-width" onclick="window.location='5/'">
-      <div class="item-header">
-        <div class="item-title">CrosswordLeague.com<span class="title-sub">End-to-end product design</span></div>
-        <div class="item-chips">
-          <span class="item-chip">UI/UX</span>
-          <span class="item-chip">Game Design</span>
-          <span class="item-chip">Product</span>
-        </div>
-      </div>
       <div class="item-image">
         <img src="crossword-cover.jpg?v=3" alt="CrosswordLeague.com logo between a laptop and two phones showing the game" />
         <div class="overlay">
@@ -1132,14 +1123,6 @@
 
     <!-- Apple Watch -->
     <div class="portfolio-item full-width" onclick="window.location='3/'">
-      <div class="item-header">
-        <div class="item-title">Apple Watch face<span class="title-sub">Glanceable UI design</span></div>
-        <div class="item-chips">
-          <span class="item-chip">UI/UX</span>
-          <span class="item-chip">Motion</span>
-          <span class="item-chip">Typography</span>
-        </div>
-      </div>
       <div class="item-image">
         <img src="index3.png" alt="Apple Watch Face" />
         <div class="overlay">
@@ -1150,14 +1133,6 @@
 
     <!-- Pyxd -->
     <div class="portfolio-item full-width" onclick="window.location='1/'">
-      <div class="item-header">
-        <div class="item-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand identity</span></div>
-        <div class="item-chips">
-          <span class="item-chip">UI/UX</span>
-          <span class="item-chip">Systems</span>
-          <span class="item-chip">Branding</span>
-        </div>
-      </div>
       <div class="item-image">
         <img src="index1.png" alt="Pyxd, Inc." />
         <div class="overlay">
@@ -1168,14 +1143,6 @@
 
     <!-- Dam Research -->
     <div class="portfolio-item full-width" onclick="window.location='4/'">
-      <div class="item-header">
-        <div class="item-title">U.C. Berkeley dam research<span class="title-sub">Information design</span></div>
-        <div class="item-chips">
-          <span class="item-chip">Data Viz</span>
-          <span class="item-chip">Diagrams</span>
-          <span class="item-chip">Visual</span>
-        </div>
-      </div>
       <div class="item-image">
         <img src="index4.png" alt="U.C. Berkeley Dam Research" />
         <div class="overlay">
