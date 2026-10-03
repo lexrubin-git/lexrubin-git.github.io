@@ -590,17 +590,27 @@
       padding: 1rem 2.5rem;
     }
 
+    /* same look as the home page artwork arrows, sized to the old arrows' exact footprint */
     .t-btn {
-      background: none;
-      border: none;
-      color: #444;
+      box-sizing: border-box;
+      width: 2.3rem;
+      height: 2.175rem;
+      padding: 0;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.55);
+      color: var(--white);
       font-size: 1.1rem;
-      cursor: pointer;
-      padding: 0.4rem 0.6rem;
-      transition: color 0.2s;
       font-family: 'Inter', sans-serif;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: background 0.2s, opacity 0.2s, border-color 0.2s;
     }
-    .t-btn:hover { color: #aaa; }
+    .t-btn:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.35); opacity: 1; }
 
     .t-dots { display: flex; gap: 0.5rem; align-items: center; }
     .t-dot {
@@ -818,8 +828,8 @@
     }
     .page-scroll-thumb::before { bottom: calc(100% + 4px); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
     .page-scroll-thumb::after  { top: calc(100% + 4px);    clip-path: polygon(0 0, 100% 0, 50% 100%); }
-    .page-scroll:hover .page-scroll-thumb { background: rgba(255,255,255,0.3); }
-    .page-scroll.dragging .page-scroll-thumb { background: rgba(255,255,255,0.42); }
+    .page-scroll:hover .page-scroll-thumb { background: #fff; }   /* fully opaque on hover / hold */
+    .page-scroll.dragging .page-scroll-thumb { background: #fff; }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   </style>
@@ -919,13 +929,13 @@
       </div>
 
       <div class="testimonial-nav">
-        <button class="t-btn" id="t-prev">←</button>
+        <button class="t-btn" id="t-prev" aria-label="Previous testimonial">&lsaquo;</button>
         <div class="t-dots">
           <div class="t-dot active" data-i="0"></div>
           <div class="t-dot" data-i="1"></div>
           <div class="t-dot" data-i="2"></div>
         </div>
-        <button class="t-btn" id="t-next">→</button>
+        <button class="t-btn" id="t-next" aria-label="Next testimonial">&rsaquo;</button>
       </div>
     </div>
 

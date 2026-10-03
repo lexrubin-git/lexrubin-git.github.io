@@ -1092,8 +1092,8 @@
     }
     .page-scroll-thumb::before { bottom: calc(100% + 4px); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
     .page-scroll-thumb::after  { top: calc(100% + 4px);    clip-path: polygon(0 0, 100% 0, 50% 100%); }
-    .page-scroll:hover .page-scroll-thumb { background: rgba(255,255,255,0.3); }
-    .page-scroll.dragging .page-scroll-thumb { background: rgba(255,255,255,0.42); }
+    .page-scroll:hover .page-scroll-thumb { background: #fff; }   /* fully opaque on hover / hold */
+    .page-scroll.dragging .page-scroll-thumb { background: #fff; }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   </style>
