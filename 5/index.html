@@ -19,8 +19,6 @@
 
     html {
       scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: #2a2a2a #000;
     }
 
     /* ── CUSTOM SCROLLBAR ── */
@@ -702,6 +700,19 @@
     @media (max-width: 768px) {
       .lightbox .lightbox-close { width: 240px; height: 36px; }
     }
+  
+    /* ── PAGE SCROLLBAR: drawn on the content column's right edge (desktop only) ── */
+    @media (pointer: fine) {
+      html { scrollbar-width: none; }
+      html::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    }
+    .page-scroll { position: fixed; width: 9px; z-index: 90; cursor: pointer; }
+    .page-scroll-thumb {
+      position: absolute; left: 0; top: 0; width: 100%;
+      background: rgba(255,255,255,0.16);
+      transition: background 0.2s;
+    }
+    .page-scroll:hover .page-scroll-thumb, .page-scroll.dragging .page-scroll-thumb { background: rgba(200,184,154,0.55); }
   </style>
 </head>
 <body>
@@ -1168,6 +1179,55 @@
         btn.addEventListener('mouseenter', function () { setCursor('4px','4px','50%','44px','44px','50%','1px'); });
         btn.addEventListener('mouseleave', resetCursor);
       }
+    })();
+  </script>
+
+  <script>
+    // ── PAGE SCROLLBAR: a custom bar on the content column's right edge, under the header ──
+    (function () {
+      if (!window.matchMedia || !matchMedia('(pointer: fine)').matches) return;
+      var bar = document.createElement('div'), thumb = document.createElement('div');
+      bar.className = 'page-scroll'; thumb.className = 'page-scroll-thumb';
+      bar.setAttribute('aria-hidden', 'true');
+      bar.appendChild(thumb); document.body.appendChild(bar);
+      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0;
+      function maxScroll() { return document.documentElement.scrollHeight - innerHeight; }
+      function layout() {
+        var col = document.querySelector('.hero, .artwork-hero, .content-col');
+        var right = col ? col.getBoundingClientRect().right : innerWidth - 64;
+        var top = nav ? nav.getBoundingClientRect().height : 0;
+        bar.style.left = right + 'px'; bar.style.top = top + 'px';
+        trackH = innerHeight - top; bar.style.height = trackH + 'px';
+        update();
+      }
+      function update() {
+        var max = maxScroll();
+        if (max <= 0) { bar.style.display = 'none'; return; }
+        bar.style.display = '';
+        thumbH = Math.max(40, trackH * innerHeight / document.documentElement.scrollHeight);
+        thumb.style.height = thumbH + 'px';
+        thumb.style.transform = 'translateY(' + ((trackH - thumbH) * Math.min(1, scrollY / max)) + 'px)';
+      }
+      function go(y, smooth) { window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' }); }
+      // drag the thumb
+      thumb.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var startY = e.clientY, startScroll = scrollY, ratio = maxScroll() / Math.max(1, trackH - thumbH);
+        bar.classList.add('dragging'); thumb.setPointerCapture(e.pointerId);
+        function move(ev) { go(startScroll + (ev.clientY - startY) * ratio, false); }
+        function up() { bar.classList.remove('dragging'); thumb.removeEventListener('pointermove', move); thumb.removeEventListener('pointerup', up); thumb.removeEventListener('pointercancel', up); }
+        thumb.addEventListener('pointermove', move); thumb.addEventListener('pointerup', up); thumb.addEventListener('pointercancel', up);
+      });
+      // click the track: jump so the thumb centers on the click
+      bar.addEventListener('pointerdown', function (e) {
+        if (e.target !== bar) return;
+        var y = e.clientY - bar.getBoundingClientRect().top - thumbH / 2;
+        go(maxScroll() * Math.max(0, Math.min(1, y / Math.max(1, trackH - thumbH))), true);
+      });
+      addEventListener('scroll', update, { passive: true });
+      addEventListener('resize', layout);
+      if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
+      layout();
     })();
   </script>
 </body>
