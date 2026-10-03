@@ -308,6 +308,10 @@
     .artwork-card:nth-child(2n) { border-right: none; }
     .artwork-card:nth-last-child(-n+2) { border-bottom: none; }
     .artwork-card:last-child { border-bottom: none; }
+    /* An odd card out at the end spans both columns instead of leaving a gap */
+    .artwork-card:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: none; }
+    .artwork-card:last-child:nth-child(odd) .artwork-card-img { aspect-ratio: 16 / 10; }
+    .artwork-card:nth-last-child(2):nth-child(even) { border-bottom: 1px solid var(--border); }
 
     .artwork-card-img {
       width: 100%;
