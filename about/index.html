@@ -153,21 +153,6 @@
       position: relative;
     }
 
-    .about-photo-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      box-shadow: inset 0 0 28px 6px rgba(0,0,0,0.28);
-      pointer-events: none;
-      z-index: 5;
-      opacity: 1;
-      transition: opacity 0.35s ease;
-    }
-
-    .about-photo-link:hover .about-photo-wrap::after {
-      opacity: 0;
-    }
-
     .about-photo-link {
       display: block;
       text-decoration: none;
@@ -176,22 +161,11 @@
       max-width: 240px;
     }
 
-    #snakeCanvas {
-      position: absolute;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 10;
-      transition: opacity 0.35s ease;
-    }
-    .about-photo-link:hover #snakeCanvas {
-      opacity: 0;
-    }
-
     .about-photo-linkedin-label {
       position: absolute;
       bottom: 10px;
       left: 50%;
-      transform: translateX(-50%) translateY(6px);
+      transform: translateX(-50%);
       background: rgba(0,0,0,0.72);
       color: var(--white);
       font-size: 0.7rem;
@@ -200,15 +174,8 @@
       padding: 4px 10px;
       border: 1px solid rgba(255,255,255,0.18);
       white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
       z-index: 20;
       pointer-events: none;
-    }
-
-    .about-photo-link:hover .about-photo-linkedin-label {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
     }
 
     /* shared styles for both real images and placeholder divs */
@@ -223,23 +190,6 @@
     .about-photo-wrap img {
       object-fit: cover;
       object-position: center top;
-    }
-
-    #photo-truth {
-      z-index: 1;
-      filter: blur(7px);
-      transform: scale(1.06);
-      transition: filter 0.45s ease, transform 0.45s ease;
-    }
-
-    .about-photo-link:hover #photo-truth {
-      filter: blur(0);
-      transform: scale(1);
-    }
-
-    /* No hover (touch) — show the photo sharp, nothing to reveal it otherwise */
-    @media (hover: none) {
-      #photo-truth { filter: none; transform: none; }
     }
 
     .about-text-col {
@@ -909,7 +859,6 @@
 
       <div class="about-photo-col">
         <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
-        <canvas id="snakeCanvas"></canvas>
         <div class="about-photo-linkedin-label">View LinkedIn ↗</div>
         <div class="about-photo-wrap" id="photo-wrap">
           <img id="photo-truth" src="lex-portrait.jpg" alt="Lex Rubin" />
@@ -1225,124 +1174,6 @@
 
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
-
-  // ── SNAKE BORDER ──
-  (function() {
-    const canvas    = document.getElementById('snakeCanvas');
-    const ctx       = canvas.getContext('2d');
-    const photoWrap = document.getElementById('photo-wrap');
-    const photoLink = document.querySelector('.about-photo-link');
-
-    const SNAKE_LEN  = 0.38;
-    const TAPER_FRAC = 0.28;
-    const SPEED      = 0.00018;
-    const LINE_W     = 2.5;
-    const SEGMENTS   = 80;   // was 180 — halves the per-frame stroke() calls
-    const FRAME_MS   = 33;   // cap to ~30fps; plenty smooth for a slow-moving line, half the GPU work of 60fps
-
-    let progress = 0;
-    let lastTime = null;
-    let acc = 0;
-    let snakeRafId = null;
-    let pageVisible = true;
-    let photoVisible = true;
-
-    function easeInOut(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
-
-    function taper(frac) {
-      if (frac < TAPER_FRAC) return easeInOut(frac / TAPER_FRAC);
-      if (frac > 1 - TAPER_FRAC) return easeInOut((1 - frac) / TAPER_FRAC);
-      return 1;
-    }
-
-    function perimeterPoint(f, w, h) {
-      const perim = 2 * (w + h);
-      let d = ((f % 1) + 1) % 1 * perim;
-      if (d < w)               return { x: d,     y: 0 };
-      d -= w;
-      if (d < h)               return { x: w,     y: d };
-      d -= h;
-      if (d < w)               return { x: w - d, y: h };
-      d -= w;
-                               return { x: 0,     y: h - d };
-    }
-
-    function resize() {
-      const r = photoWrap.getBoundingClientRect();
-      const l = photoLink.getBoundingClientRect();
-      canvas.style.left = (r.left - l.left) + 'px';
-      canvas.style.top  = (r.top  - l.top)  + 'px';
-      canvas.width  = r.width;
-      canvas.height = r.height;
-    }
-
-    function shouldRun() { return pageVisible && photoVisible; }
-
-    function startSnake() {
-      if (snakeRafId === null && shouldRun()) {
-        lastTime = null;
-        snakeRafId = requestAnimationFrame(draw);
-      }
-    }
-
-    function draw(ts) {
-      if (!shouldRun()) { snakeRafId = null; return; }
-      if (!lastTime) lastTime = ts;
-      const dt = ts - lastTime;
-      lastTime = ts;
-      acc += dt;
-
-      // Only redraw ~30x/sec instead of every rAF tick (up to 60-144x/sec)
-      if (acc >= FRAME_MS) {
-        progress = (progress + SPEED * acc) % 1;
-        acc = 0;
-
-        const w = canvas.width;
-        const h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-        ctx.lineWidth = LINE_W;
-        ctx.lineCap   = 'round';
-        // No shadowBlur — a per-stroke canvas shadow is one of the most expensive
-        // things to composite and this ran on every one of ~180 strokes, forever.
-
-        for (let i = 0; i < SEGMENTS; i++) {
-          const frac = i / SEGMENTS;
-          const f0   = progress - SNAKE_LEN * (1 - frac);
-          const f1   = progress - SNAKE_LEN * (1 - (i + 1) / SEGMENTS);
-          const p0   = perimeterPoint(f0, w, h);
-          const p1   = perimeterPoint(f1, w, h);
-
-          const alpha = taper(frac) * 0.92;
-          ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p1.x, p1.y);
-          ctx.stroke();
-        }
-      }
-
-      snakeRafId = requestAnimationFrame(draw);
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Pause entirely when the tab is backgrounded or the photo scrolls off-screen
-    document.addEventListener('visibilitychange', () => {
-      pageVisible = document.visibilityState !== 'hidden';
-      if (shouldRun()) startSnake(); else if (snakeRafId !== null) { cancelAnimationFrame(snakeRafId); snakeRafId = null; }
-    });
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(entries => {
-        photoVisible = entries[0].isIntersecting;
-        if (shouldRun()) startSnake(); else if (snakeRafId !== null) { cancelAnimationFrame(snakeRafId); snakeRafId = null; }
-      }).observe(photoWrap);
-    }
-
-    startSnake();
-  })();
 
   const logoLink    = document.getElementById('logo-link');
   const logoDefault = document.getElementById('logo-default');
