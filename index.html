@@ -667,6 +667,9 @@
     }
 
     /* ── SECTION ARROWS ── */
+    /* Arrows between the hero and the project grid already sit inside the
+       grid wrapper's padding, so they just fill it */
+    .grid-wrapper .section-arrows { width: 100%; }
     .section-arrows {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -1070,6 +1073,11 @@
       <a href="about/#contact" class="hero-btn hero-btn-secondary">Get in Touch<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></a>
     </div>
   </section>
+  <div class="section-arrows" aria-hidden="true">
+    <div class="arrow-cell">&#8744;</div>
+    <div class="arrow-cell">&#8744;</div>
+    <div class="arrow-cell">&#8744;</div>
+  </div>
   <main class="portfolio-grid" id="work">
 
     <!-- CrosswordLeague -->
