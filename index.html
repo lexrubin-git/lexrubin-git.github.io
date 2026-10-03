@@ -543,7 +543,6 @@
     }
 
     /* ── CUSTOM CURSOR ── */
-    @media (pointer: fine) { body, * { cursor: none !important; } }
     @media (pointer: coarse) { .cursor, .cursor-ring { display: none !important; } }
 
     .cursor {
@@ -1377,14 +1376,16 @@
     const cur  = document.getElementById('cur');
     const ring = document.getElementById('ring0');
 
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    let mx = 0, my = 0, rx = 0, ry = 0, dx = 0, dy = 0, seen = false;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      if (!seen) { seen = true; dx = rx = mx; dy = ry = my; }
+    });
 
     function animCursor() {
-      cur.style.left = mx + 'px';
-      cur.style.top  = my + 'px';
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
+      dx += (mx - dx) * 0.16; dy += (my - dy) * 0.16;
+      cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
+      rx += (mx - rx) * 0.09; ry += (my - ry) * 0.09;
       ring.style.left = rx + 'px';
       ring.style.top  = ry + 'px';
       requestAnimationFrame(animCursor);
