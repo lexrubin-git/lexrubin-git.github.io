@@ -1085,6 +1085,13 @@
       background: rgba(255,255,255,0.16);
       transition: background 0.2s;
     }
+    /* little arrow triangles riding just above and below the thumb */
+    .page-scroll-thumb::before, .page-scroll-thumb::after {
+      content: ""; position: absolute; left: 0; width: 100%; height: 6px;
+      background: inherit;
+    }
+    .page-scroll-thumb::before { bottom: calc(100% + 4px); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+    .page-scroll-thumb::after  { top: calc(100% + 4px);    clip-path: polygon(0 0, 100% 0, 50% 100%); }
     .page-scroll:hover .page-scroll-thumb { background: rgba(255,255,255,0.3); }
     .page-scroll.dragging .page-scroll-thumb { background: rgba(255,255,255,0.42); }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
@@ -1715,7 +1722,7 @@
       bar.className = 'page-scroll'; thumb.className = 'page-scroll-thumb';
       bar.setAttribute('aria-hidden', 'true');
       bar.appendChild(thumb); document.body.appendChild(bar);
-      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0;
+      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0, PAD = 12;   // room for the triangles
       function maxScroll() { return document.documentElement.scrollHeight - innerHeight; }
       function layout() {
         var col = document.querySelector('.hero, .artwork-hero, .content-col');
@@ -1729,15 +1736,15 @@
         var max = maxScroll();
         if (max <= 0) { bar.style.display = 'none'; return; }
         bar.style.display = '';
-        thumbH = Math.max(40, trackH * innerHeight / document.documentElement.scrollHeight);
+        thumbH = Math.max(40, (trackH - 2 * PAD) * innerHeight / document.documentElement.scrollHeight);
         thumb.style.height = thumbH + 'px';
-        thumb.style.transform = 'translateY(' + ((trackH - thumbH) * Math.min(1, scrollY / max)) + 'px)';
+        thumb.style.transform = 'translateY(' + (PAD + (trackH - thumbH - 2 * PAD) * Math.min(1, scrollY / max)) + 'px)';
       }
       function go(y, smooth) { window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' }); }
       // drag the thumb
       thumb.addEventListener('pointerdown', function (e) {
         e.stopPropagation();
-        var startY = e.clientY, startScroll = scrollY, ratio = maxScroll() / Math.max(1, trackH - thumbH);
+        var startY = e.clientY, startScroll = scrollY, ratio = maxScroll() / Math.max(1, trackH - thumbH - 2 * PAD);
         bar.classList.add('dragging'); document.body.classList.add('scroll-dragging'); thumb.setPointerCapture(e.pointerId);
         function move(ev) { go(startScroll + (ev.clientY - startY) * ratio, false); }
         function up() { bar.classList.remove('dragging'); document.body.classList.remove('scroll-dragging'); thumb.removeEventListener('pointermove', move); thumb.removeEventListener('pointerup', up); thumb.removeEventListener('pointercancel', up); }
@@ -1746,8 +1753,8 @@
       // click the track: jump so the thumb centers on the click
       bar.addEventListener('pointerdown', function (e) {
         if (e.target !== bar) return;
-        var y = e.clientY - bar.getBoundingClientRect().top - thumbH / 2;
-        go(maxScroll() * Math.max(0, Math.min(1, y / Math.max(1, trackH - thumbH))), true);
+        var y = e.clientY - bar.getBoundingClientRect().top - PAD - thumbH / 2;
+        go(maxScroll() * Math.max(0, Math.min(1, y / Math.max(1, trackH - thumbH - 2 * PAD))), true);
       });
       addEventListener('scroll', update, { passive: true });
       addEventListener('resize', layout);
