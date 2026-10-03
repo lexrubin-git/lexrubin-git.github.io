@@ -754,6 +754,17 @@
       pointer-events: none;
     }
     .footer-bottom a:hover .footer-arrow { opacity: 1; transform: translate(0, 0); }
+  
+    /* cover image across the top of the title card: the home thumbnail, a little shorter */
+    .project-cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; } }
   </style>
 </head>
 <body>
@@ -797,6 +808,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
+    <img class="project-cover" src="../crossword-cover.jpg" alt="CrosswordLeague.com logo between a laptop and two phones showing the game">
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title"><a class="title-link" href="https://crosswordleague.com" target="_blank" rel="noopener">CrosswordLeague.com<span class="title-link-arrow" aria-hidden="true">&#8599;</span></a><span class="title-sub">End-to-end product design</span></h1>
