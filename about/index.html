@@ -826,7 +826,8 @@
       html { scrollbar-width: none; }
       html::-webkit-scrollbar { display: none; width: 0; height: 0; }
     }
-    .page-scroll { position: fixed; width: 9px; z-index: 90; cursor: pointer; }
+    .page-scroll { position: fixed; width: 9px; z-index: 90; cursor: pointer; transition: width 0.2s ease; }
+    .page-scroll:hover, .page-scroll.dragging { width: 13.5px; }   /* grows outward from the column edge */
     .page-scroll-thumb {
       position: absolute; left: 0; top: 0; width: 100%;
       background: rgba(255,255,255,0.16);
