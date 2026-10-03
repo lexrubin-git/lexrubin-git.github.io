@@ -1476,15 +1476,14 @@
       });
     })();
 
-    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals drawn by dot swell + cursor push-away ──
+    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals drawn by dot swell (no cursor interaction) ──
     (function () {
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
       const ctx = cv.getContext('2d');
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
-      const REPEL = 140, STRENGTH = 60, REPEL_SQ = REPEL * REPEL;   // cursor push-away
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set(), mx = -9999, my = -9999;
+      let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
       const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
@@ -1496,11 +1495,11 @@
         dots = []; hot = new Set();
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
-          for (let iy = 0; iy < rows; iy++) { const ox = SPACING / 2 + ix * SPACING, oy = SPACING / 2 + iy * SPACING; dots.push({ ox, oy, x: ox, y: oy, r: BASE_R }); }
+          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
         base.width = cv.width; base.height = cv.height;
         bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const bp = new Path2D();
-        for (const d of dots) { bp.moveTo(d.ox + BASE_R, d.oy); bp.arc(d.ox, d.oy, BASE_R, 0, Math.PI * 2); }
+        for (const d of dots) { bp.moveTo(d.x + BASE_R, d.y); bp.arc(d.x, d.y, BASE_R, 0, Math.PI * 2); }
         bctx.fillStyle = 'rgba(255,255,255,0.15)'; bctx.fill(bp);
         spirals = [];
         const now = performance.now();
@@ -1608,39 +1607,24 @@
           const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
           for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
         }
-        if (mx > -9999) {
-          const ix0 = Math.max(0, Math.floor((mx - REPEL - SPACING) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((mx + REPEL) / SPACING));
-          const iy0 = Math.max(0, Math.floor((my - REPEL - SPACING) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((my + REPEL) / SPACING));
-          for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
-        }
         const path = new Path2D(), next = new Set(), half = SPACING / 2;
         for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
-            if (sp.trail && d.ox >= sp.x0 && d.ox <= sp.x1 && d.oy >= sp.y0 && d.oy <= sp.y1) k = Math.max(k, swell(sp.trail, d.ox, d.oy));
+            if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
           d.r += (BASE_R + (MAX_R - BASE_R) * k - d.r) * 0.08;
-          // cursor push-away
-          let tx = d.ox, ty = d.oy;
-          const dx = d.x - mx, dy = d.y - my, dsq = dx * dx + dy * dy;
-          if (dsq < REPEL_SQ) {
-            const dist = Math.sqrt(dsq) || 0.001, f = (1 - dist / REPEL) * STRENGTH;
-            tx = d.ox + (dx / dist) * f; ty = d.oy + (dy / dist) * f;
-          }
-          d.x += (tx - d.x) * 0.18; d.y += (ty - d.y) * 0.18;
-          if (Math.abs(d.r - BASE_R) < 0.02 && Math.abs(d.x - d.ox) < 0.15 && Math.abs(d.y - d.oy) < 0.15) {
-            d.r = BASE_R; d.x = d.ox; d.y = d.oy; continue;   // back at rest: the copied grid already shows it
-          }
+          if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
           next.add(i);
+          ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
+          path.moveTo(d.x + d.r, d.y);
+          path.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
-        // clear every changed dot's home cell first, then draw them where they are now
-        for (const i of next) { const d = dots[i]; ctx.clearRect(d.ox - half, d.oy - half, SPACING, SPACING); }
-        for (const i of next) { const d = dots[i]; path.moveTo(d.x + d.r, d.y); path.arc(d.x, d.y, d.r, 0, Math.PI * 2); }
         hot = next;
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
         spirals = spirals.filter(sp => !sp.done);
 
-        if (document.visibilityState !== 'hidden' && (!calm || hot.size)) raf = requestAnimationFrame(frame);
+        if (document.visibilityState !== 'hidden' && !calm) raf = requestAnimationFrame(frame);
       }
 
       function wake() {
@@ -1649,8 +1633,6 @@
 
       build();
       wake();
-      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; wake(); }, { passive: true });
-      document.addEventListener('mouseleave', () => { mx = my = -9999; wake(); });
       window.addEventListener('resize', () => { build(); wake(); });
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') { if (raf !== null) cancelAnimationFrame(raf); raf = null; }
