@@ -120,7 +120,11 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
+    /* solid black at rest, dots fade in while the hero is hovered */
+    .hero:hover .hero-dots { opacity: 1; }
     .hero > *:not(.hero-dots) { position: relative; z-index: 1; }
     .hero-name, .hero-lead, .hero-sub { text-wrap: balance; }
     /* Hover a letter of the name: it drops to a random thinner weight inside a
