@@ -132,18 +132,6 @@
       margin: -5.5rem -2rem 4.25rem;
       border-bottom: 1px solid var(--border);
       overflow: hidden;
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-              mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-      position: relative;
-    }
-    /* With JS, the edges fade through black halftone dots instead of the gradient */
-    .hero-strip.has-dots { -webkit-mask-image: none; mask-image: none; }
-    .hero-strip-dots {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
     }
     .hero-strip-track {
       display: flex;
@@ -1776,38 +1764,6 @@
         var px = track.scrollWidth / 2;
         track.style.animationDuration = Math.round(px / 40) + "s";
       });
-
-      // Halftone edge fade: black dots laid over the thumbnails on an 8px grid
-      // (a third of the 24px background grid), offset every other row. They grow
-      // toward each edge until they merge into the card's black.
-      var strip = track.parentElement;
-      var dotsLayer = document.createElement("div");
-      dotsLayer.className = "hero-strip-dots";
-      strip.appendChild(dotsLayer);
-      strip.classList.add("has-dots");
-      var DOT = 8, FADE = 130;
-      function halftoneDots() {
-        var w = Math.round(strip.clientWidth), h = Math.round(strip.clientHeight);
-        if (!w || !h) return;
-        var fade = Math.min(FADE, w / 3), rMax = DOT * 0.75;
-        var dots = "";
-        for (var row = 0, y = 0; y < h + DOT; row++, y += DOT) {
-          var off = row % 2 ? DOT / 2 : 0;
-          for (var x = off; x <= fade; x += DOT) {
-            var t = x / fade;
-            var r = rMax * (1 - t * t * (3 - 2 * t));   // smoothstep: full at the edge, 0 inside
-            if (r < 0.35) continue;
-            r = r.toFixed(2);
-            dots += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/>'
-                  + '<circle cx="' + (w - x) + '" cy="' + y + '" r="' + r + '"/>';
-          }
-        }
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" fill="#000">' + dots + '</svg>';
-        dotsLayer.style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
-      }
-      halftoneDots();
-      if (window.ResizeObserver) new ResizeObserver(halftoneDots).observe(strip);
-      else window.addEventListener("resize", halftoneDots);
     })();
   </script>
 </body>
