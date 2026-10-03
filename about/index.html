@@ -593,21 +593,21 @@
 
     .testimonial-nav {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: space-between;
       border-top: 1px solid var(--border);
-      padding: 1rem 2.5rem;
+      height: 4.175rem;            /* same row height as before */
+      box-sizing: content-box;
     }
 
-    /* same look as the home page artwork arrows, sized to the old arrows' exact footprint */
+    /* each arrow gets its own full-height cell, split off by one vertical line; the whole
+       cell is the button. Cell width keeps the arrows where they sat before. */
     .t-btn {
-      box-sizing: border-box;
-      width: 2.3rem;
-      height: 2.175rem;
+      flex: 0 0 auto;
+      width: 7.3rem;
       padding: 0;
-      border-radius: 3px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.55);
+      border: 0;
+      background: transparent;
       color: var(--white);
       font-size: 1.1rem;
       font-family: 'Inter', sans-serif;
@@ -616,10 +616,13 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      opacity: 0.85;
-      transition: background 0.2s, opacity 0.2s, border-color 0.2s;
+      opacity: 0.6;
+      transition: background 0.2s, opacity 0.2s;
     }
-    .t-btn:hover { background: rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.35); opacity: 1; }
+    #t-prev { border-right: 1px solid var(--border); }
+    #t-next { border-left: 1px solid var(--border); }
+    .t-btn:hover { background: rgba(255,255,255,0.03); opacity: 1; }
+    .t-btn:focus-visible { outline: 1px solid var(--white); outline-offset: -4px; }
 
     .t-dots { display: flex; gap: 0.5rem; align-items: center; }
     .t-dot {
@@ -801,7 +804,8 @@
       /* testimonials */
       .testimonials-header { font-size: 1.1rem; padding: 1.5rem 0; }
       .testimonial-slider { padding: 1.5rem; }
-      .testimonial-nav { padding: 0.8rem 1.5rem; }
+      .testimonial-nav { height: 3.775rem; }
+      .t-btn { width: 5.3rem; }
       .testimonial-quote { font-size: 0.83rem; }
 
       /* footer */
