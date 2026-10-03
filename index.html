@@ -1766,6 +1766,39 @@
         var px = track.scrollWidth / 2;
         track.style.animationDuration = Math.round(px / 40) + "s";
       });
+
+      // Halftone edge fade: dots on an 8px grid (a third of the 24px background
+      // grid), offset every other row, shrinking from solid to nothing at each edge.
+      var strip = track.parentElement;
+      var DOT = 8, FADE = 130;
+      function halftoneMask() {
+        var w = Math.round(strip.clientWidth), h = Math.round(strip.clientHeight);
+        if (!w || !h) return;
+        var fade = Math.min(FADE, w / 3), rMax = DOT * 0.75;
+        var dots = "";
+        for (var row = 0, y = DOT / 2; y < h + DOT; row++, y += DOT) {
+          var off = row % 2 ? DOT / 2 : 0;
+          for (var x = off; x <= fade + DOT; x += DOT) {
+            var t = Math.min(1, x / fade);
+            var r = rMax * t * t * (3 - 2 * t);   // smoothstep: soft start and finish
+            if (r < 0.35) continue;
+            r = r.toFixed(2);
+            dots += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/>'
+                  + '<circle cx="' + (w - x) + '" cy="' + y + '" r="' + r + '"/>';
+          }
+        }
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">'
+                + '<rect x="' + fade + '" y="0" width="' + (w - 2 * fade) + '" height="' + h + '"/>'
+                + dots + '</svg>';
+        var url = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+        strip.style.webkitMaskImage = url;
+        strip.style.maskImage = url;
+        strip.style.webkitMaskSize = strip.style.maskSize = "100% 100%";
+        strip.style.webkitMaskRepeat = strip.style.maskRepeat = "no-repeat";
+      }
+      halftoneMask();
+      if (window.ResizeObserver) new ResizeObserver(halftoneMask).observe(strip);
+      else window.addEventListener("resize", halftoneMask);
     })();
   </script>
 </body>
