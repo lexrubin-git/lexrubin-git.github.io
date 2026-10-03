@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lex Rubin Portfolio</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -110,10 +110,18 @@
       background: var(--black);
     }
     .hero-name, .hero-lead, .hero-sub { text-wrap: balance; }
+    /* Hover a letter of the name: it drops to a random thinner weight inside a
+       box locked to its heavy width, so nothing around it moves */
+    .hero-name-char {
+      display: inline-block;
+      text-align: center;
+      font-weight: 900;
+      transition: font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     .hero-name {
-      font-family: 'Archivo Black', 'Inter', sans-serif;
+      font-family: 'Archivo', 'Inter', sans-serif;
       font-size: clamp(2.6rem, 6vw, 4rem);
-      font-weight: 400;
+      font-weight: 900;
       line-height: 1.05;
       letter-spacing: 0.01em;
       text-transform: uppercase;
@@ -1859,6 +1867,39 @@
         btn.addEventListener('mouseenter', function () { setCursor('4px','4px','50%','44px','44px','50%','1px'); });
         btn.addEventListener('mouseleave', resetCursor);
       }
+    })();
+  </script>
+  <script>
+    // ── HERO NAME: per-letter random weight on hover ──
+    (function () {
+      var h = document.getElementById("hero-name");
+      if (!h) return;
+      var text = h.textContent;
+      h.setAttribute("aria-label", text);
+      h.innerHTML = text.split("").map(function (c) {
+        return c === " " ? " " : '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
+      }).join("");
+      var chars = h.querySelectorAll(".hero-name-char");
+      function lock() {
+        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
+        var fs = parseFloat(getComputedStyle(h).fontSize);
+        chars.forEach(function (el) { el.style.width = ""; });
+        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+      }
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+      var WEIGHTS = [100, 200, 300, 400, 500, 600];
+      chars.forEach(function (el) {
+        el.addEventListener("mouseenter", function () {
+          var w, prev = el.dataset.w;
+          do { w = WEIGHTS[Math.floor(Math.random() * WEIGHTS.length)]; } while (String(w) === prev);
+          el.dataset.w = w;
+          el.style.fontWeight = w;
+        });
+        el.addEventListener("mouseleave", function () {
+          el.style.fontWeight = "";
+          delete el.dataset.w;
+        });
+      });
     })();
   </script>
 </body>
