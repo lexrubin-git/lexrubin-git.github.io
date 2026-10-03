@@ -1186,7 +1186,10 @@
       background: rgba(255,255,255,0.16);
       transition: background 0.2s;
     }
-    .page-scroll:hover .page-scroll-thumb, .page-scroll.dragging .page-scroll-thumb { background: rgba(200,184,154,0.55); }
+    .page-scroll:hover .page-scroll-thumb { background: rgba(255,255,255,0.3); }
+    .page-scroll.dragging .page-scroll-thumb { background: rgba(255,255,255,0.42); }
+    footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
+    body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   </style>
 </head>
 <body>
@@ -1914,11 +1917,11 @@
       function go(y, smooth) { window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' }); }
       // drag the thumb
       thumb.addEventListener('pointerdown', function (e) {
-        e.preventDefault(); e.stopPropagation();
+        e.stopPropagation();
         var startY = e.clientY, startScroll = scrollY, ratio = maxScroll() / Math.max(1, trackH - thumbH);
-        bar.classList.add('dragging'); thumb.setPointerCapture(e.pointerId);
+        bar.classList.add('dragging'); document.body.classList.add('scroll-dragging'); thumb.setPointerCapture(e.pointerId);
         function move(ev) { go(startScroll + (ev.clientY - startY) * ratio, false); }
-        function up() { bar.classList.remove('dragging'); thumb.removeEventListener('pointermove', move); thumb.removeEventListener('pointerup', up); thumb.removeEventListener('pointercancel', up); }
+        function up() { bar.classList.remove('dragging'); document.body.classList.remove('scroll-dragging'); thumb.removeEventListener('pointermove', move); thumb.removeEventListener('pointerup', up); thumb.removeEventListener('pointercancel', up); }
         thumb.addEventListener('pointermove', move); thumb.addEventListener('pointerup', up); thumb.addEventListener('pointercancel', up);
       });
       // click the track: jump so the thumb centers on the click
