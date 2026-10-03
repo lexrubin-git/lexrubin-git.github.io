@@ -1202,6 +1202,18 @@
     .page-scroll.dragging .page-scroll-thumb { background: #444; }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
+  
+    /* one-line project description under the tags, sized like "Tools used" */
+    .hero-desc {
+      margin-top: 0.9rem;
+      max-width: 19rem;
+      color: #777;
+      font-size: 0.75rem;
+      line-height: 1.55;
+      text-align: right;
+      text-wrap: balance;
+    }
+    @media (max-width: 768px) { .hero-desc { text-align: left; max-width: none; } }
   </style>
 </head>
 <body>
@@ -1254,6 +1266,7 @@
           <span class="hero-tag">Diagrams</span>
           <span class="hero-tag">Visual</span>
         </div>
+        <p class="hero-desc">Dense technical datasets turned into figures built for academic publication and a lay audience</p>
         <div class="hero-tools"><strong>Tools used:</strong> Illustrator, InDesign, ArcGIS, Photoshop</div>
         <div class="hero-type">PhD Research</div>
       </div>
