@@ -838,11 +838,15 @@
     .page-scroll-thumb::before, .page-scroll-thumb::after {
       content: ""; position: absolute; left: 0; width: 100%; height: 6px;
       background: inherit;
+      transition: height 0.2s ease;
     }
+    /* when the bar widens 1.5x the triangles grow 1.5x taller too, tips moving outward */
+    .page-scroll:hover .page-scroll-thumb::before, .page-scroll:hover .page-scroll-thumb::after,
+    .page-scroll.dragging .page-scroll-thumb::before, .page-scroll.dragging .page-scroll-thumb::after { height: 9px; }
     .page-scroll-thumb::before { bottom: calc(100% + 4px); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
     .page-scroll-thumb::after  { top: calc(100% + 4px);    clip-path: polygon(0 0, 100% 0, 50% 100%); }
-    .page-scroll:hover .page-scroll-thumb { background: #fff; }   /* fully opaque on hover / hold */
-    .page-scroll.dragging .page-scroll-thumb { background: #fff; }
+    .page-scroll:hover .page-scroll-thumb { background: #3a3a3a; }   /* the resting grey, made opaque and a little brighter */
+    .page-scroll.dragging .page-scroll-thumb { background: #444; }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   </style>
@@ -1457,7 +1461,7 @@
       bar.className = 'page-scroll'; thumb.className = 'page-scroll-thumb';
       bar.setAttribute('aria-hidden', 'true');
       bar.appendChild(thumb); document.body.appendChild(bar);
-      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0, PAD = 12;   // room for the triangles
+      var nav = document.querySelector('nav'), trackH = 0, thumbH = 0, PAD = 15;   // room for the triangles (4px gap + up to 9px tall)
       function maxScroll() { return document.documentElement.scrollHeight - innerHeight; }
       function layout() {
         var col = document.querySelector('.hero, .artwork-hero, .content-col');
