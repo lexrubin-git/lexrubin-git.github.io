@@ -230,6 +230,8 @@
     /* Get in Touch: frown at rest, flips into a smile on hover */
     .hero-btn-mouth { transform-box: fill-box; transform-origin: center; transform: scaleY(-1); transition: transform 0.3s ease; }
     .hero-btn-secondary:hover .hero-btn-mouth, .hero-btn-secondary:focus-visible .hero-btn-mouth { transform: scaleY(1); }
+    /* phones / touch screens can't hover, so they always get the smile */
+    @media (max-width: 768px), (hover: none) { .hero-btn-mouth { transform: scaleY(1); } }
     .hero-btn:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
     #work, #artwork { scroll-margin-top: 110px; }
 
