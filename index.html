@@ -157,6 +157,24 @@
       transition: filter 0.3s ease, transform 0.4s ease;
     }
     .hero-strip-item:hover img { filter: brightness(1); transform: scale(1.06); }
+    .hero-strip-tip {
+      position: fixed;
+      z-index: 9990;
+      pointer-events: none;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ccc;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 0.4rem 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .hero-strip-tip.show { opacity: 1; transform: translateY(0); }
+    @media (hover: none) { .hero-strip-tip { display: none; } }
     @media (prefers-reduced-motion: reduce) {
       .hero-strip-track { animation: none; }
     }
@@ -1763,11 +1781,28 @@
         var t = items[i]; items[i] = items[j]; items[j] = t;
       }
       // Two identical halves so the -50% loop is seamless
+      var NAMES = { "1/": "Pyxd", "2/": "Arctic Zoo", "3/": "Apple Watch", "4/": "Dam Research", "5/": "CrosswordLeague" };
       var half = items.map(function (it) {
-        return '<a class="hero-strip-item" href="' + it[1] + '" tabindex="-1"><img src="' + it[0] + '" alt="" decoding="async"></a>';
+        return '<a class="hero-strip-item" href="' + it[1] + '" data-label="' + NAMES[it[1]] + '" tabindex="-1"><img src="' + it[0] + '" alt="" decoding="async"></a>';
       }).join("");
       track.innerHTML = half + half;
       track.parentElement.setAttribute("aria-hidden", "true");
+
+      // Hover label: one floating tag that follows the cursor (the strip clips
+      // anything attached to the thumbnails themselves)
+      var tip = document.createElement("div");
+      tip.className = "hero-strip-tip";
+      document.body.appendChild(tip);
+      var strip0 = track.parentElement;
+      strip0.addEventListener("mousemove", function (e) {
+        var item = e.target.closest(".hero-strip-item");
+        if (!item) { tip.classList.remove("show"); return; }
+        tip.textContent = item.dataset.label;
+        tip.style.left = (e.clientX + 16) + "px";
+        tip.style.top = (e.clientY - 36) + "px";
+        tip.classList.add("show");
+      });
+      strip0.addEventListener("mouseleave", function () { tip.classList.remove("show"); });
       // Constant speed no matter how many thumbnails there are
       requestAnimationFrame(function () {
         var px = track.scrollWidth / 2;
