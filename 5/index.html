@@ -765,6 +765,9 @@
       border-bottom: 1px solid var(--border);
     }
     @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; } }
+    .project-cover-link { display: block; }
+    .project-cover-link .project-cover { transition: filter 0.3s ease; }
+    .project-cover-link:hover .project-cover { filter: brightness(1.08); }
   </style>
 </head>
 <body>
@@ -808,7 +811,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <img class="project-cover" src="../crossword-cover.jpg?v=3" alt="CrosswordLeague.com logo between a laptop and two phones showing the game">
+    <a class="project-cover-link" href="https://crosswordleague.com" target="_blank" rel="noopener" aria-label="Visit CrosswordLeague.com"><img class="project-cover" src="../crossword-cover.jpg?v=3" alt="CrosswordLeague.com logo between a laptop and two phones showing the game"></a>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title"><a class="title-link" href="https://crosswordleague.com" target="_blank" rel="noopener">CrosswordLeague.com<span class="title-link-arrow" aria-hidden="true">&#8599;</span></a><span class="title-sub">End-to-end product design</span></h1>
@@ -989,7 +992,7 @@
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
-  document.querySelectorAll('footer a, .title-link').forEach(el => {
+  document.querySelectorAll('footer a, .title-link, .project-cover-link').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
