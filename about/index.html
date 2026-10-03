@@ -1377,15 +1377,14 @@
       });
     })();
 
-    // ── AMBIENT BACKGROUND HALFTONE: cursor push-away + random "hivemind" sweeps ──
+    // ── AMBIENT BACKGROUND HALFTONE: slow random "hivemind" sweeps (no cursor interaction) ──
     (function () {
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
       const ctx = cv.getContext('2d');
-      const SPACING = 24, BASE_R = 1, MAX_R = 3.6;
-      const REPEL = 140, STRENGTH = 60, REPEL_SQ = REPEL * REPEL;
+      const SPACING = 24, BASE_R = 1, MAX_R = 1.9;
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let dots = [], W = 0, H = 0, mx = -9999, my = -9999, raf = null, sleepTimer = null;
+      let dots = [], W = 0, H = 0, raf = null, sleepTimer = null;
 
       function build() {
         const dpr = window.devicePixelRatio || 1;
@@ -1395,20 +1394,20 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         dots = [];
         for (let x = SPACING / 2; x < W; x += SPACING)
-          for (let y = SPACING / 2; y < H; y += SPACING) dots.push({ ox: x, oy: y, x, y, r: BASE_R });
+          for (let y = SPACING / 2; y < H; y += SPACING) dots.push({ x, y, r: BASE_R });
       }
 
       // One wave at a time: a wide band sweeps across the screen in a random direction.
-      // Its travel uses a hard ease-in-out, and its edges a steep falloff, so dots swell
-      // sharply as the front arrives and collapse just as fast behind it.
-      let wave = null, nextAt = performance.now() + 700;
-      const easeInOutQuint = t => t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+      // It glides across with a soft ease-in-out and a wide, gentle falloff, so dots swell
+      // slowly as it arrives and settle back behind it.
+      let wave = null, nextAt = performance.now() + 1200;
+      const easeInOutSine = t => -(Math.cos(Math.PI * t) - 1) / 2;
       function spawn(now) {
         const a = Math.random() * Math.PI * 2, ux = Math.cos(a), uy = Math.sin(a);
         const proj = [0, W * ux, H * uy, W * ux + H * uy];
-        const band = 160 + Math.random() * 240;
+        const band = 280 + Math.random() * 220;
         wave = { ux, uy, band, from: Math.min(...proj) - band, to: Math.max(...proj) + band,
-                 start: now, dur: 2600 + Math.random() * 2400 };
+                 start: now, dur: 9000 + Math.random() * 5000 };
       }
 
       function frame(now) {
@@ -1417,8 +1416,8 @@
         let front = null;
         if (wave) {
           const t = (now - wave.start) / wave.dur;
-          if (t >= 1) { wave = null; nextAt = now + 300 + Math.random() * 1600; }
-          else front = wave.from + (wave.to - wave.from) * easeInOutQuint(t);
+          if (t >= 1) { wave = null; nextAt = now + 2500 + Math.random() * 4000; }
+          else front = wave.from + (wave.to - wave.from) * easeInOutSine(t);
         }
 
         ctx.clearRect(0, 0, W, H);
@@ -1426,32 +1425,24 @@
         const calmPath = new Path2D(), lit = new Path2D();
         for (let i = 0; i < dots.length; i++) {
           const d = dots[i];
-          // cursor push-away
-          const dx = d.x - mx, dy = d.y - my, dsq = dx * dx + dy * dy;
-          let tx = d.ox, ty = d.oy;
-          if (dsq < REPEL_SQ) {
-            const dist = Math.sqrt(dsq) || 0.001, f = (1 - dist / REPEL) * STRENGTH;
-            tx = d.ox + (dx / dist) * f; ty = d.oy + (dy / dist) * f;
-          }
-          d.x += (tx - d.x) * 0.18; d.y += (ty - d.y) * 0.18;
           // sweep swell
           let tr = BASE_R;
           if (front !== null) {
-            const u = 1 - Math.abs(d.ox * wave.ux + d.oy * wave.uy - front) / wave.band;
+            const u = 1 - Math.abs(d.x * wave.ux + d.y * wave.uy - front) / wave.band;
             if (u > 0) { const k = u * u * u * (u * (u * 6 - 15) + 10); tr = BASE_R + (MAX_R - BASE_R) * k * k; }
           }
-          d.r += (tr - d.r) * 0.35;
-          if (Math.abs(d.x - d.ox) > 0.15 || Math.abs(d.y - d.oy) > 0.15 || Math.abs(d.r - BASE_R) > 0.02) moving = true;
-          const p = d.r > BASE_R + 0.15 ? lit : calmPath;
+          d.r += (tr - d.r) * 0.12;
+          if (Math.abs(d.r - BASE_R) > 0.02) moving = true;
+          const p = d.r > BASE_R + 0.2 ? lit : calmPath;
           p.moveTo(d.x + d.r, d.y);
           p.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(calmPath);
-        ctx.fillStyle = 'rgba(255,255,255,0.24)'; ctx.fill(lit);
+        ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fill(lit);
 
         if (document.visibilityState === 'hidden') return;
         if (wave || moving) { raf = requestAnimationFrame(frame); return; }
-        // idle: sleep until the next wave is due (or the cursor wakes us)
+        // idle: sleep until the next wave is due
         if (!calm) sleepTimer = setTimeout(wake, Math.max(0, nextAt - performance.now()));
       }
 
@@ -1462,8 +1453,6 @@
 
       build();
       wake();
-      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; wake(); }, { passive: true });
-      document.addEventListener('mouseleave', () => { mx = my = -9999; wake(); });
       window.addEventListener('resize', () => { build(); wake(); });
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') { if (raf !== null) cancelAnimationFrame(raf); raf = null; clearTimeout(sleepTimer); }
