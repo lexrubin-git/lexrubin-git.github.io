@@ -482,7 +482,7 @@
     }
     .cursor-ring {
       position: fixed;
-      width: 36px; height: 36px;
+      width: 90px; height: 90px;
       border-radius: 50%;
       border: 1.5px solid #fff;
       pointer-events: none;
@@ -897,18 +897,22 @@
   });
 
   function animCursor() {
-    dx += (mx - dx) * 0.16; dy += (my - dy) * 0.16;
+    dx += (mx - dx) * 0.08; dy += (my - dy) * 0.08;
     cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
-    rx += (mx - rx) * 0.09; ry += (my - ry) * 0.09;
+    rx += (mx - rx) * 0.045; ry += (my - ry) * 0.045;
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
     requestAnimationFrame(animCursor);
   }
   animCursor();
 
+  // Outer ring is drawn at 2.5x every size it is given
+
+  const RING = v => (parseFloat(v) * 2.5) + 'px';
+
   function setCursor(dotW, dotH, dotRadius, ringW, ringH, ringRadius, ringBorder) {
     cur.style.width = dotW; cur.style.height = dotH; cur.style.borderRadius = dotRadius;
     cur.style.background = '#fff';
-    ring.style.width = ringW; ring.style.height = ringH; ring.style.borderRadius = ringRadius;
+    ring.style.width = RING(ringW); ring.style.height = RING(ringH); ring.style.borderRadius = ringRadius;
     ring.style.borderWidth = ringBorder || '1.5px'; ring.style.opacity = '0.8';
   }
   function resetCursor() { setCursor('10px','10px','50%','36px','36px','50%','1.5px'); }
