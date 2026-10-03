@@ -1219,7 +1219,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <img class="project-cover" src="../arctic-cover.jpg" alt="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens">
+    <video class="project-cover" src="../arctic-cover.mp4" poster="../arctic-cover.jpg" autoplay muted loop playsinline aria-label="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens"></video>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Brand &amp; wayfinding design</span></h1>
@@ -1779,6 +1779,13 @@
       addEventListener('resize', layout);
       if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
       layout();
+    })();
+  </script>
+  <script>
+    // reduced motion: hold the cover video on a still frame
+    (function () {
+      var v = document.querySelector("video.project-cover");
+      if (v && window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
     })();
   </script>
 </body>
