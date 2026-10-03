@@ -780,6 +780,20 @@
     .cs-process-img.is-zoomable:hover, .cs-process-video.is-zoomable:hover { opacity: 0.85; }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
+    /* Click targets over each graphic on the board, so the lightbox opens one piece at a time */
+    .cs-board-art { position: relative; }
+    .cs-board-art .cs-process-img { margin-top: 0; }
+    .cs-board-hit {
+      position: absolute;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      outline: 1px solid transparent;
+      outline-offset: 2px;
+      transition: outline-color 0.2s ease, background 0.2s ease;
+    }
+    .cs-board-hit:hover { outline-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.03); }
+    .cs-board-hit:focus-visible { outline-color: var(--white); }
     .cs-media-pair {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1145,7 +1159,17 @@
       <div class="cs-col-content">
         <div class="cs-process-group">
           <div class="cs-board">
-            <img class="cs-process-img is-zoomable" src="process-refine-concepts.png" alt="Refining the Pyxd concept: a showroom chair photo sketched into phone-capture illustrations, then built up step by step into the final &quot;Shoot for something better.&quot; graphic with the Masking, Shadow, Background and Post steps">
+            <div class="cs-board-art">
+              <img class="cs-process-img" src="process-refine-concepts.png" alt="Refining the Pyxd concept: a showroom chair photo sketched into phone-capture illustrations, then built up step by step into the final &quot;Shoot for something better.&quot; graphic with the Masking, Shadow, Background and Post steps">
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-1.png" aria-label="Enlarge: Showroom chair photo" style="left:0.00%;top:0.92%;width:25.28%;height:11.60%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-2.png" aria-label="Enlarge: Phone-capture sketch, outlined" style="left:28.82%;top:0.59%;width:36.07%;height:13.11%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-3.png" aria-label="Enlarge: Phone-capture sketch, filled" style="left:66.37%;top:0.00%;width:33.63%;height:11.85%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-4.png" aria-label="Enlarge: Illustrated scene of the app isolating the chair" style="left:35.62%;top:16.39%;width:54.99%;height:20.00%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-5.png" aria-label="Enlarge: T-shirt design, step 1: blocks" style="left:1.33%;top:48.99%;width:27.79%;height:19.50%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-6.png" aria-label="Enlarge: T-shirt design, step 2: phone and hand" style="left:35.62%;top:48.82%;width:28.38%;height:19.83%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-7.png" aria-label="Enlarge: T-shirt design, step 3: headline and scene" style="left:69.03%;top:48.49%;width:29.56%;height:20.67%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-8.png" aria-label="Enlarge: Final t-shirt graphic: Shoot for something better." style="left:52.48%;top:71.01%;width:41.69%;height:28.99%"></button>
+            </div>
             <p class="cs-text cs-board-note" style="top: 16.5%; height: 19.5%;">I worked in Illustrator to showcase the functionality of the app in an easy to understand way. I started with an image of a piece of furniture and then worked around it to illustrate a realistic scene that shows how the app actually isolates furniture.</p>
             <p class="cs-text cs-board-note" style="top: 72%; height: 28%; width: 46%;">I was tasked with creating a t-shirt design for an upcoming conference for PyxD to showcase their product. My idea was to use the two main colors of the palette to create a high contrast, eye-catching design that showcases the functionality of the product. I started with simple blocks and then slowly added relevant elements pertaining to the product. I then added half-tone, sunray and typographical flourishes to enhance the design.</p>
           </div>
@@ -1358,7 +1382,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable, .cs-process-video.is-zoomable').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable, .cs-process-video.is-zoomable, .cs-board-hit').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1410,6 +1434,18 @@
           : '<img class="lightbox-img" src="' + media.src + '" alt="" style="display:block;">')
         + '</div>';
       if (!isVideo) lightbox.querySelector('.lightbox-img').alt = media.alt;
+      lightbox.classList.add('open');
+    });
+  });
+
+  // Board pieces open individually
+  document.querySelectorAll('.cs-board-hit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('lightbox-img-wrap').innerHTML =
+        '<div style="display:inline-block;line-height:0;">'
+        + '<img class="lightbox-img" src="' + btn.dataset.src + '" alt="" style="display:block;">'
+        + '</div>';
+      lightbox.querySelector('.lightbox-img').alt = btn.getAttribute('aria-label').replace(/^Enlarge: /, '');
       lightbox.classList.add('open');
     });
   });
