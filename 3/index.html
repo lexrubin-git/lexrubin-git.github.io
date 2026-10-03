@@ -1162,6 +1162,17 @@
       pointer-events: none;
     }
     .footer-bottom a:hover .footer-arrow { opacity: 1; transform: translate(0, 0); }
+  
+    /* cover across the top of the title card: the home thumbnail, a little shorter */
+    .project-cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; object-position: left center; } }
   </style>
 </head>
 <body>
@@ -1204,6 +1215,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
+    <video class="project-cover" src="../watch-cover.mp4" poster="../index3.png" autoplay muted loop playsinline aria-label="Three Apple Watch faces animating"></video>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Apple Watch face<span class="title-sub">Glanceable UI design</span></h1>
@@ -1795,6 +1807,13 @@
       addEventListener('resize', layout);
       if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
       layout();
+    })();
+  </script>
+  <script>
+    // reduced motion: hold the cover video on a still frame
+    (function () {
+      var v = document.querySelector("video.project-cover");
+      if (v && window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
     })();
   </script>
 </body>
