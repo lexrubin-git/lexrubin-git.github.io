@@ -341,6 +341,127 @@
       line-height: 2.2;
     }
 
+    /* ── CONTACT (moved here from the old /contact/ page) ── */
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    .contact-section {
+      max-width: 900px;
+      width: calc(100% - 8rem);
+      margin: 0 auto 4rem;
+      border: 1px solid var(--border);
+      background: var(--black);
+      padding: 4.5rem 2rem 5rem;
+      display: flex;
+      justify-content: center;
+      scroll-margin-top: 130px;
+    }
+    .contact-container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .contact-heading {
+      font-family: 'Inter', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+    .contact-heading .nowrap { white-space: nowrap; }
+    .contact-heading-icon { width: 0.8em; height: 0.8em; margin-left: 0.3em; vertical-align: -0.06em; }
+
+    .contact-sub {
+      font-size: 0.85rem;
+      color: #888;
+      text-align: center;
+      letter-spacing: 0.16em;
+      line-height: 1.7;
+      margin-bottom: 2.8rem;
+    }
+
+    .contact-sub a {
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-sub a:hover { color: #bbb; }
+
+    /* ── FORM ── */
+    .contact-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #333;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      padding: 0.9rem 1.1rem;
+      outline: none;
+      transition: border-color 0.25s;
+      letter-spacing: 0.03em;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: #555;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: #666;
+    }
+
+    .contact-form input.invalid,
+    .contact-form textarea.invalid {
+      border-color: #a05050;
+    }
+
+    .contact-form input.valid,
+    .contact-form textarea.valid {
+      border-color: #7aaa88;
+    }
+
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 160px;
+    }
+
+    .contact-form button {
+      align-self: flex-start;
+      background: #333;
+      color: #bbb;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      cursor: none;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .contact-form button:hover {
+      background: #444;
+      color: #ddd;
+    }
+
     /* ── SKILL TICKER BARS ── */
     .skill-tickers {
       max-width: 900px;
@@ -667,6 +788,8 @@
         margin-right: auto;
       }
       .skill-tickers { margin-bottom: 2rem; }
+      .contact-section { width: calc(100% - 1.5rem); padding: 3rem 1.25rem 3.5rem; margin-bottom: 2rem; scroll-margin-top: 80px; }
+      .contact-heading { font-size: 2rem; }
 
       /* skills grid */
       .skills-grid { grid-template-columns: 1fr; }
@@ -729,7 +852,7 @@
   <div class="nav-links" id="nav-links">
     <a href="/">Portfolio</a>
     <a href="/about/" class="active">About</a>
-    <a href="/contact/">Contact</a>
+    <a href="/about/#contact">Contact</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume<svg class="nav-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -861,6 +984,25 @@
       </div>
     </div>
 
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+      <div class="contact-container">
+      <h2 class="contact-heading">Let's work <span class="nowrap">together<svg class="contact-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></span></h2>
+      <p class="contact-sub">
+        send me a message below, or<br>
+        just email me at <a href="mailto:lexrubin@gmail.com">lexrubin@gmail.com</a>
+      </p>
+
+      <div class="contact-form" id="contact-form">
+        <input type="text" id="field-name" placeholder="Name" />
+        <input type="email" id="field-email" placeholder="*Email Address" required />
+        <textarea id="field-message" placeholder="*Leave your message here :)" required></textarea>
+        <button type="button" id="submit-btn" onclick="submitForm()">Submit</button>
+        <p id="form-status" style="font-size:0.82rem;letter-spacing:0.14em;margin-top:0.25rem;display:none;"></p>
+      </div>
+      </div>
+    </section>
+
 <footer>
     <div style="border-top: 1px solid rgba(255,255,255,0.1);"></div>
     <div class="footer-bottom">
@@ -937,6 +1079,93 @@
 
   document.querySelectorAll('footer span, .footer-reached').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  // ── CONTACT FORM ──
+  function isValidEmail(val) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+  }
+
+  function attachValidation(id) {
+    const el = document.getElementById(id);
+    function check() {
+      const isEmail = id === 'field-email';
+      const isName  = id === 'field-name';
+      const ok = isEmail ? isValidEmail(el.value) : el.value.trim().length > 0;
+      el.classList.toggle('valid', ok);
+      el.classList.toggle('invalid', !ok && el.value.length > 0 && !isName);
+      if (el.value.length === 0) el.classList.remove('invalid');
+    }
+    el.addEventListener('blur', () => {
+      const isEmail = id === 'field-email';
+      const isName  = id === 'field-name';
+      const ok = isEmail ? isValidEmail(el.value) : el.value.trim().length > 0;
+      el.classList.toggle('valid', ok);
+      el.classList.toggle('invalid', !ok && !(isName && el.value.length === 0));
+    });
+    el.addEventListener('input', check);
+  }
+
+  attachValidation('field-name');
+  attachValidation('field-email');
+  attachValidation('field-message');
+
+  async function submitForm() {
+    const btn    = document.getElementById('submit-btn');
+    const status = document.getElementById('form-status');
+    const email  = document.getElementById('field-email').value.trim();
+    const message = document.getElementById('field-message').value.trim();
+
+    if (!email || !message) {
+      status.style.display = 'block';
+      status.style.color = '#a05050';
+      status.textContent = 'Please fill in your email and message.';
+      return;
+    }
+
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    status.style.display = 'none';
+
+    try {
+      const res = await fetch('https://formspree.io/f/xjgagypd', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    document.getElementById('field-name').value.trim(),
+          email:   email,
+          message: message
+        })
+      });
+
+      if (res.ok) {
+        btn.textContent = 'Sent';
+        document.getElementById('field-name').value = '';
+        document.getElementById('field-email').value = '';
+        document.getElementById('field-message').value = '';
+        status.style.display = 'block';
+        status.style.color = '#7aaa88';
+        status.textContent = "Message sent — I'll be in touch soon!";
+      } else {
+        throw new Error('Failed');
+      }
+    } catch (e) {
+      btn.textContent = 'Submit';
+      btn.disabled = false;
+      status.style.display = 'block';
+      status.style.color = '#a05050';
+      status.textContent = 'Something went wrong. Please try again.';
+    }
+  }
+
+  document.querySelectorAll('.contact-form input, .contact-form textarea, .contact-sub').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+    el.addEventListener('mouseleave', resetCursor);
+  });
+
+  document.querySelectorAll('#submit-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => setCursor('6px','6px','50%','48px','48px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
 
