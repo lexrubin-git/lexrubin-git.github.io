@@ -1152,6 +1152,17 @@
       text-wrap: balance;
     }
     @media (max-width: 768px) { .hero-desc { text-align: left; max-width: none; } }
+  
+    /* cover image across the top of the title card: the home thumbnail, a little shorter */
+    .project-cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; object-position: left center; } }
   </style>
 </head>
 <body>
@@ -1194,6 +1205,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
+    <img class="project-cover" src="../arctic-cover.jpg" alt="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens">
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Brand &amp; wayfinding design</span></h1>
