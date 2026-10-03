@@ -1512,9 +1512,10 @@
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
       const ctx = cv.getContext('2d');
-      const SPACING = 24, BASE_R = 1, MAX_R = 3.1;
+      const SPACING = 24, BASE_R = 1, MAX_R = 3.1;      // the visible background grid
+      const FINE = 8, FINE_MAX_R = 2.1;                  // extra grid that only appears along a spiral
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let dots = [], W = 0, H = 0, raf = null, sleepTimer = null;
+      let dots = [], fine = [], W = 0, H = 0, raf = null, sleepTimer = null;
 
       function build() {
         const dpr = window.devicePixelRatio || 1;
@@ -1525,18 +1526,21 @@
         dots = [];
         for (let x = SPACING / 2; x < W; x += SPACING)
           for (let y = SPACING / 2; y < H; y += SPACING) dots.push({ x, y, r: BASE_R });
+        fine = []; spiral = null;
       }
 
-      // One spiral at a time: from a random point, a head travels outward along an
-      // Archimedean spiral with a clean ease-in-out, swelling the dots it passes. Dots
-      // behind it shrink back gradually, which draws the tail; at the end the head
-      // stops and the tail drains into it.
+      // One spiral at a time: from a random point, a head travels outward along a tight
+      // Archimedean coil with a clean ease-in-out, swelling the dots it passes. Dots behind
+      // it shrink back gradually, which draws the tail; at the end the head stops and the
+      // tail drains into it. A temporary fine grid around the spiral lets the coil be much
+      // tighter than the 24px background grid could show on its own.
       let spiral = null, nextAt = performance.now() + 1200;
       const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      const TAIL = 340, REACH = 30, SAMPLES = 56;
+      const TAIL = 420, REACH = 13, SAMPLES = 90;
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
+
       function spawn(now) {
-        const turns = 3.6 + Math.random() * 1.2, rMax = Math.min(W, H) * (0.2 + Math.random() * 0.08);
+        const turns = 6 + Math.random() * 2, rMax = Math.min(W, H) * (0.17 + Math.random() * 0.07);
         const thMax = turns * Math.PI * 2, b = rMax / thMax;
         // random spot, preferring the visible margins (the cards cover the middle of the screen)
         let cx = 0, cy = 0;
@@ -1545,23 +1549,43 @@
           const el = document.elementFromPoint(cx, cy);
           if (!el || !el.closest(CARDS)) break;
         }
-        spiral = { cx, cy,
-                   b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
-                   len: b * thMax * thMax / 2, start: now, dur: 16000 + Math.random() * 8000 };
+        spiral = { cx, cy, b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
+                   len: b * thMax * thMax / 2, start: now, dur: 16000 + Math.random() * 8000,
+                   x0: cx - rMax - REACH, x1: cx + rMax + REACH, y0: cy - rMax - REACH, y1: cy + rMax + REACH };
+        // fine dots covering just this spiral, skipping spots the background grid already has
+        fine = [];
+        const sx = Math.floor(spiral.x0 / FINE) * FINE + FINE / 2, sy = Math.floor(spiral.y0 / FINE) * FINE + FINE / 2;
+        for (let x = sx; x <= spiral.x1; x += FINE)
+          for (let y = sy; y <= spiral.y1; y += FINE) {
+            if (x < 0 || y < 0 || x > W || y > H) continue;
+            if ((x - SPACING / 2) % SPACING === 0 && (y - SPACING / 2) % SPACING === 0) continue;
+            fine.push({ x, y, r: 0 });
+          }
       }
       // point at arc length s along the spiral (arc length of r = b*th is ~ b*th^2/2)
       function at(sp, s) {
         const th = Math.sqrt(2 * Math.max(s, 0) / sp.b), r = sp.b * th, a = sp.rot + sp.dir * th;
         return [sp.cx + r * Math.cos(a), sp.cy + r * Math.sin(a)];
       }
+      // 0..1 swell at a point from the trail samples [x, y, weight, ...]
+      function swell(trail, x, y) {
+        let k = 0;
+        for (let j = 0; j < trail.length; j += 3) {
+          const ex = x - trail[j], ey = y - trail[j + 1];
+          if (ex > REACH || ex < -REACH || ey > REACH || ey < -REACH) continue;
+          const u = 1 - Math.sqrt(ex * ex + ey * ey) / REACH;
+          if (u > 0) { const v = trail[j + 2] * u * u * (3 - 2 * u); if (v > k) k = v; }
+        }
+        return k;
+      }
 
       function frame(now) {
         raf = null;
-        if (!calm && !spiral && now >= nextAt) spawn(now);
-        let trail = null;
+        if (!calm && !spiral && !fine.length && now >= nextAt) spawn(now);
+        let trail = null, box = null;
         if (spiral) {
           const t = (now - spiral.start) / spiral.dur;
-          if (t >= 1) { spiral = null; nextAt = now + 2500 + Math.random() * 3500; }
+          if (t >= 1) { box = spiral; spiral = null; nextAt = now + 2500 + Math.random() * 3500; }
           else {
             // head runs past the end by one tail length, so the tail drains into the finish
             const head = (spiral.len + TAIL) * easeInOutCubic(t);
@@ -1569,40 +1593,44 @@
             for (let i = 0; i <= SAMPLES; i++) {
               const s = head - TAIL * (i / SAMPLES);
               if (s < 0 || s > spiral.len) continue;
-              const w = Math.pow(1 - i / SAMPLES, 1.6);           // full at the head, fading down the tail
+              const w = Math.pow(1 - i / SAMPLES, 1.6);       // full at the head, fading down the tail
               const [px, py] = at(spiral, s);
               trail.push(px, py, w);
             }
+            box = spiral;
           }
         }
+
         ctx.clearRect(0, 0, W, H);
         let moving = false;
         const calmPath = new Path2D(), lit = new Path2D();
         for (let i = 0; i < dots.length; i++) {
           const d = dots[i];
-          // spiral swell
           let tr = BASE_R;
-          if (trail) {
-            let k = 0;
-            for (let j = 0; j < trail.length; j += 3) {
-              const ex = d.x - trail[j], ey = d.y - trail[j + 1];
-              if (ex > REACH || ex < -REACH || ey > REACH || ey < -REACH) continue;
-              const u = 1 - Math.sqrt(ex * ex + ey * ey) / REACH;
-              if (u > 0) { const v = trail[j + 2] * u * u * (3 - 2 * u); if (v > k) k = v; }
-            }
-            tr = BASE_R + (MAX_R - BASE_R) * k;
-          }
+          if (trail && d.x >= box.x0 && d.x <= box.x1 && d.y >= box.y0 && d.y <= box.y1)
+            tr = BASE_R + (MAX_R - BASE_R) * swell(trail, d.x, d.y);
           d.r += (tr - d.r) * 0.08;
           if (Math.abs(d.r - BASE_R) > 0.02) moving = true;
           const p = d.r > BASE_R + 0.2 ? lit : calmPath;
           p.moveTo(d.x + d.r, d.y);
           p.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
+        let fineAlive = false;
+        for (let i = 0; i < fine.length; i++) {
+          const d = fine[i];
+          const tr = trail ? FINE_MAX_R * swell(trail, d.x, d.y) : 0;
+          d.r += (tr - d.r) * 0.08;
+          if (d.r > 0.02) fineAlive = true;
+          if (d.r < 0.2) continue;
+          lit.moveTo(d.x + d.r, d.y);
+          lit.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        }
+        if (!spiral && !fineAlive) fine = [];
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(calmPath);
         ctx.fillStyle = 'rgba(255,255,255,0.32)'; ctx.fill(lit);
 
         if (document.visibilityState === 'hidden') return;
-        if (spiral || moving) { raf = requestAnimationFrame(frame); return; }
+        if (spiral || moving || fine.length) { raf = requestAnimationFrame(frame); return; }
         // idle: sleep until the next spiral is due
         if (!calm) sleepTimer = setTimeout(wake, Math.max(0, nextAt - performance.now()));
       }
