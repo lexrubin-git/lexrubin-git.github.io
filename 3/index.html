@@ -1010,6 +1010,20 @@
     .cs-process-img.is-zoomable:hover { outline-color: rgba(255,255,255,0.22); background-color: rgba(255,255,255,0.03); }
     /* Board image with captions placed in its empty areas (top/height set inline, in % of the image) */
     .cs-board { position: relative; }
+    /* Click targets over each graphic on the board, so the lightbox opens one piece at a time */
+    .cs-board-art { position: relative; }
+    .cs-board-art .cs-process-img { margin-top: 0; }
+    .cs-board-hit {
+      position: absolute;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      outline: 1px solid transparent;
+      outline-offset: 2px;
+      transition: outline-color 0.2s ease, background 0.2s ease;
+    }
+    .cs-board-hit:hover { outline-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.03); }
+    .cs-board-hit:focus-visible { outline-color: var(--white); }
     .cs-board-note {
       position: absolute;
       left: 0;
@@ -1208,7 +1222,21 @@
       <div class="cs-col-content">
         <div class="cs-process-group">
           <div class="cs-board">
-            <img class="cs-process-img is-zoomable" src="process-refine-concepts.png" alt="Refining the watch face: block-letter 10:09 type studies built up into 3D, three pattern backgrounds, the type set on each pattern, and the three finished watch faces on black">
+            <div class="cs-board-art">
+              <img class="cs-process-img" src="process-refine-concepts.png" alt="Refining the watch face: block-letter 10:09 type studies built up into 3D, three pattern backgrounds, the type set on each pattern, and the three finished watch faces on black">
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-1.png" aria-label="Enlarge: Type study 1: flat block lettering" style="left:0.07%;top:3.69%;width:23.79%;height:3.36%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-2.png" aria-label="Enlarge: Type study 2: block lettering with depth" style="left:29.21%;top:3.32%;width:24.57%;height:3.73%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-3.png" aria-label="Enlarge: Type study 3: final 3D lettering" style="left:14.07%;top:8.99%;width:28.00%;height:4.90%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-4.png" aria-label="Enlarge: Pattern 1: checkerboard" style="left:65.50%;top:0.33%;width:12.43%;height:7.31%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-5.png" aria-label="Enlarge: Pattern 2: purple swirl" style="left:79.29%;top:0.00%;width:16.00%;height:8.07%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-6.png" aria-label="Enlarge: Pattern 3: black and white swirl" style="left:67.93%;top:8.48%;width:25.71%;height:7.23%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-7.png" aria-label="Enlarge: Type on pattern 1: green and pink" style="left:2.21%;top:26.96%;width:31.57%;height:18.49%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-8.png" aria-label="Enlarge: Type on pattern 2: purple and yellow" style="left:33.93%;top:26.96%;width:31.43%;height:18.49%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-9.png" aria-label="Enlarge: Type on pattern 3: black and white" style="left:65.50%;top:26.96%;width:31.43%;height:18.49%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-10.png" aria-label="Enlarge: Watch face 1: green and pink" style="left:0.00%;top:60.07%;width:31.36%;height:18.63%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-11.png" aria-label="Enlarge: Watch face 2: purple and yellow" style="left:34.64%;top:60.07%;width:31.57%;height:18.63%"></button>
+              <button type="button" class="cs-board-hit" data-src="process-refine-piece-12.png" aria-label="Enlarge: Watch face 3: orange and purple" style="left:68.64%;top:60.07%;width:31.36%;height:18.63%"></button>
+            </div>
             <p class="cs-text cs-board-note" style="top: 16%; height: 10.5%;">For the typeface, I started with simple block lettering and then added 3D elements to create depth and dimension. For the background of the typeface I played around with different 3D tools in Illustrator until I created 3 cohesive, but visually distinct designs.</p>
             <p class="cs-text cs-board-note" style="top: 46.5%; height: 13%;">Once I finished both elements I put the type on the patterned background and varied the color of the type to appropriately match with the background.</p>
             <p class="cs-text cs-board-note" style="top: 79.5%; height: 20%;">To finalize the design, I used a clipping mask of the patterned designs over the clock-face element of the watch, and then decided to go with just black/white for the background and readable elements to contrast the fun and colorful design of the actual moving watch face.</p>
@@ -1379,7 +1407,7 @@
     el.addEventListener('mouseleave', resetCursor);
   });
 
-  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable').forEach(el => {
+  document.querySelectorAll('.artwork-card, .cs-process-img.is-zoomable, .cs-board-hit').forEach(el => {
     el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
     el.addEventListener('mouseleave', resetCursor);
   });
@@ -1434,6 +1462,18 @@
         + '<img class="lightbox-img" src="' + img.src + '" alt="" style="display:block;">'
         + '</div>';
       lightbox.querySelector('.lightbox-img').alt = img.alt;
+      lightbox.classList.add('open');
+    });
+  });
+
+  // Board pieces open individually
+  document.querySelectorAll('.cs-board-hit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('lightbox-img-wrap').innerHTML =
+        '<div style="display:inline-block;line-height:0;">'
+        + '<img class="lightbox-img" src="' + btn.dataset.src + '" alt="" style="display:block;">'
+        + '</div>';
+      lightbox.querySelector('.lightbox-img').alt = btn.getAttribute('aria-label').replace(/^Enlarge: /, '');
       lightbox.classList.add('open');
     });
   });
