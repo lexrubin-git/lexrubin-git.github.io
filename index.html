@@ -1705,5 +1705,68 @@
       });
     })();
   </script>
+  <script>
+    // ── HERO STRIP: shuffle project + gallery thumbnails on every load ──
+    (function () {
+      var track = document.querySelector(".hero-strip-track");
+      if (!track) return;
+      var items = [
+      ["strip/arctic-1.jpg", "2/"],
+      ["strip/arctic-2.jpg", "2/"],
+      ["strip/arctic-3.jpg", "2/"],
+      ["strip/crossword-01-home.jpg", "5/"],
+      ["strip/crossword-02-lobby-play-together.jpg", "5/"],
+      ["strip/crossword-03-lobby-versus.jpg", "5/"],
+      ["strip/crossword-04-in-game.jpg", "5/"],
+      ["strip/crossword-05-leaderboards.jpg", "5/"],
+      ["strip/crossword-06-achievements-stats.jpg", "5/"],
+      ["strip/crossword-07-player-profile.jpg", "5/"],
+      ["strip/crossword-08-profile-menu.jpg", "5/"],
+      ["strip/crossword-09-friends-chat.jpg", "5/"],
+      ["strip/crossword-10-accessibility-settings.jpg", "5/"],
+      ["strip/dam-1.jpg", "4/"],
+      ["strip/dam-2.jpg", "4/"],
+      ["strip/dam-3.jpg", "4/"],
+      ["strip/dam-4.jpg", "4/"],
+      ["strip/dam-5.jpg", "4/"],
+      ["strip/dam-6.jpg", "4/"],
+      ["strip/dam-7.jpg", "4/"],
+      ["strip/home-arctic.jpg", "2/"],
+      ["strip/home-dam.jpg", "4/"],
+      ["strip/home-pyxd.jpg", "1/"],
+      ["strip/home-watch.jpg", "3/"],
+      ["strip/pyxd-1.jpg", "1/"],
+      ["strip/pyxd-10.jpg", "1/"],
+      ["strip/pyxd-11.jpg", "1/"],
+      ["strip/pyxd-2.jpg", "1/"],
+      ["strip/pyxd-3.jpg", "1/"],
+      ["strip/pyxd-4.jpg", "1/"],
+      ["strip/pyxd-5.jpg", "1/"],
+      ["strip/pyxd-6.jpg", "1/"],
+      ["strip/pyxd-7.jpg", "1/"],
+      ["strip/pyxd-8.jpg", "1/"],
+      ["strip/pyxd-9.jpg", "1/"],
+      ["strip/watch-1.jpg", "3/"],
+      ["strip/watch-2.jpg", "3/"],
+      ["strip/watch-3.jpg", "3/"],
+      ["crossword_index.gif", "5/"]
+      ];
+      for (var i = items.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = items[i]; items[i] = items[j]; items[j] = t;
+      }
+      // Two identical halves so the -50% loop is seamless
+      var half = items.map(function (it) {
+        return '<a class="hero-strip-item" href="' + it[1] + '" tabindex="-1"><img src="' + it[0] + '" alt="" decoding="async"></a>';
+      }).join("");
+      track.innerHTML = half + half;
+      track.parentElement.setAttribute("aria-hidden", "true");
+      // Constant speed no matter how many thumbnails there are
+      requestAnimationFrame(function () {
+        var px = track.scrollWidth / 2;
+        track.style.animationDuration = Math.round(px / 40) + "s";
+      });
+    })();
+  </script>
 </body>
 </html>
