@@ -1596,7 +1596,7 @@
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
       const ctx = cv.getContext('2d');
-      const SPACING = 24, BASE_R = 1, MAX_R = 2.1;
+      const SPACING = 24, BASE_R = 1, MAX_R = 3.1;
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, sleepTimer = null;
 
@@ -1617,10 +1617,10 @@
       // stops and the tail drains into it.
       let spiral = null, nextAt = performance.now() + 1200;
       const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      const TAIL = 300, REACH = 46, SAMPLES = 40;
+      const TAIL = 340, REACH = 30, SAMPLES = 56;
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
       function spawn(now) {
-        const turns = 2.2 + Math.random() * 1.2, rMax = Math.min(W, H) * (0.28 + Math.random() * 0.14);
+        const turns = 3.6 + Math.random() * 1.2, rMax = Math.min(W, H) * (0.2 + Math.random() * 0.08);
         const thMax = turns * Math.PI * 2, b = rMax / thMax;
         // random spot, preferring the visible margins (the cards cover the middle of the screen)
         let cx = 0, cy = 0;
@@ -1683,7 +1683,7 @@
           p.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         }
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(calmPath);
-        ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fill(lit);
+        ctx.fillStyle = 'rgba(255,255,255,0.32)'; ctx.fill(lit);
 
         if (document.visibilityState === 'hidden') return;
         if (spiral || moving) { raf = requestAnimationFrame(frame); return; }
