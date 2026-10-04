@@ -126,17 +126,6 @@
       from { opacity: 0; transform: translateY(20px); }
     }
 
-    .about-label {
-      grid-column: 1 / -1;
-      border-bottom: 1px solid var(--border);
-      padding: 1.8rem 2.5rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: #444;
-      font-weight: 400;
-    }
-
     .about-photo-col {
       border-right: 1px solid var(--border);
       padding: 2.5rem;
@@ -549,15 +538,28 @@
       background: var(--black);
     }
 
+    /* label runs vertically in its own column on the left, like the home page Artwork/Designs rows */
+    .testimonials-section { display: flex; }
     .testimonials-header {
-      border-bottom: 1px solid var(--border);
-      padding: 2rem 0;
-      font-size: 1.4rem;
-      font-weight: 500;
-      color: var(--white);
-      letter-spacing: 0.06em;
-      text-align: center;
+      flex-shrink: 0;
+      width: 44px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    .testimonials-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 500;
+      user-select: none;
+    }
+    .testimonials-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .testimonials-body .testimonial-slider { flex: 1; align-content: center; }
 
     .testimonial-slider {
       padding: 2.5rem 3rem;
@@ -772,7 +774,6 @@
       .page-wrapper { padding: 0 0.75rem; }
       .content-col { max-width: 100%; }
       .about-hero { grid-template-columns: 1fr; }
-      .about-label { grid-column: 1; padding: 1.2rem 1.5rem; }
       .about-photo-col { border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
       .about-photo-link { max-width: 160px; }
       .about-text-col { padding: 1.5rem; }
@@ -802,7 +803,8 @@
       .ticker-label { width: 125px; padding: 0 0.75rem; font-size: 0.62rem; letter-spacing: 0.18em; }
 
       /* testimonials */
-      .testimonials-header { font-size: 1.1rem; padding: 1.5rem 0; }
+      .testimonials-header { width: 32px; }
+      .testimonials-label { font-size: 0.6rem; letter-spacing: 0.2em; }
       .testimonial-slider { padding: 1.5rem; }
       .testimonial-nav { height: 3.775rem; }
       .t-btn { width: 5.3rem; }
@@ -908,7 +910,6 @@
 
     <!-- ABOUT ME HERO -->
     <div class="about-hero">
-      <div class="about-label">About Me</div>
 
       <div class="about-photo-col">
         <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
@@ -939,7 +940,8 @@
 
     <!-- TESTIMONIALS -->
     <div class="testimonials-section">
-      <div class="testimonials-header">Testimonials</div>
+      <div class="testimonials-header"><span class="testimonials-label">Testimonials</span></div>
+      <div class="testimonials-body">
 
       <div class="testimonial-slider">
         <div class="testimonial-slide active">
@@ -967,6 +969,7 @@
           <div class="t-dot" data-i="2"></div>
         </div>
         <button class="t-btn" id="t-next" aria-label="Next testimonial">&rsaquo;</button>
+      </div>
       </div>
     </div>
 
