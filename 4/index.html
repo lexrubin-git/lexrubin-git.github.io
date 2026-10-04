@@ -1281,6 +1281,8 @@
     @media (prefers-reduced-motion: reduce) {
       .marquee-track { animation: none; }
     }
+      /* up-right "opens elsewhere" arrow: drawn, so phones don't swap in the emoji */
+    .ur-arrow { display: inline-block; width: 0.78em; height: 0.78em; vertical-align: -0.04em; }
   </style>
 </head>
 <body>
@@ -1315,7 +1317,7 @@
       <a href="/#artwork">Artwork</a>
       <a href="/about/">About</a>
       <a href="/about/#contact">Contact</a>
-      <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume<span class="nav-link-icon" aria-hidden="true">&#8599;</span></a>
+      <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume<span class="nav-link-icon" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -1523,7 +1525,7 @@
     <div class="footer-reached">You've reached the bottom</div>
     <div class="footer-links">
       <span>© 2026 Lex Rubin</span>
-      <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn<span class="footer-arrow" aria-hidden="true">&#8599;</span></a>
+      <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn<span class="footer-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
       <a href="/">Home Page</a>
       <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
     </div>
