@@ -1204,6 +1204,9 @@
       .lightbox .lb-g-prev { left: 10px; }
       .lightbox .lb-g-next { right: 10px; }
     }
+  
+    /* a closed lightbox never catches clicks (the global a, button rule would otherwise leave its buttons live) */
+    .lightbox:not(.open), .lightbox:not(.open) * { pointer-events: none !important; }
   </style>
 </head>
 <body>

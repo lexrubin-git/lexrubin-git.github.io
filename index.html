@@ -1023,6 +1023,9 @@
     .footer-bottom a:hover .footer-arrow { opacity: 1; transform: translate(0, 0); }
       /* up-right "opens elsewhere" arrow: drawn, so phones don't swap in the emoji */
     .ur-arrow { display: inline-block; width: 0.78em; height: 0.78em; vertical-align: -0.04em; }
+  
+    /* a closed lightbox never catches clicks (the global a, button rule would otherwise leave its buttons live) */
+    .lightbox:not(.open), .lightbox:not(.open) * { pointer-events: none !important; }
   </style>
 </head>
 <body>
