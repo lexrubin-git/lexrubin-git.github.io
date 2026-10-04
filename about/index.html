@@ -896,9 +896,9 @@
   </a>
   <div class="nav-links" id="nav-links">
     <a href="/">Portfolio</a>
+    <a href="/#artwork">Artwork</a>
     <a href="/about/" class="active">About</a>
     <a href="/about/#contact">Contact</a>
-    <a href="/#artwork">Artwork</a>
     <a href="https://lexrubin-git.github.io/Resume.pdf" target="_blank">Resume<span class="nav-link-icon" aria-hidden="true">&#8599;</span></a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -1643,6 +1643,27 @@
         setTimeout(pulse, 450 + Math.random() * 750);
       }
       setTimeout(pulse, 900);
+    })();
+  </script>
+  <script>
+    // ── NAV: highlight the section you have scrolled to ──
+    (function () {
+      var links = document.querySelectorAll("#nav-links a");
+      var home = links[0], spot = null, target = null;
+      links.forEach(function (a) { if (a.getAttribute("href").indexOf('#contact') > -1) spot = a; });
+      target = document.querySelector('#contact');
+      if (!home || !spot || !target) return;
+      var base = document.querySelector("#nav-links a.active") || home;
+      function update() {
+        var top = target.getBoundingClientRect().top;
+        var atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+        var inSection = top < innerHeight * 0.45 || atBottom;
+        links.forEach(function (a) { a.classList.remove("active"); });
+        (inSection ? spot : base).classList.add("active");
+      }
+      addEventListener("scroll", update, { passive: true });
+      addEventListener("resize", update);
+      update();
     })();
   </script>
 </body>
