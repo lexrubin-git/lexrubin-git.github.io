@@ -345,15 +345,15 @@
     }
 
     .contact-heading {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Archivo', 'Inter', sans-serif;   /* the hero name's face, so letters can morph weight */
       font-size: 2.6rem;
-      font-weight: 700;
+      font-weight: 900;
       color: var(--white);
       text-align: center;
       margin-bottom: 1rem;
       letter-spacing: -0.01em;
     }
-    .contact-heading .nowrap { white-space: nowrap; }
+    .contact-heading .nowrap, .contact-heading .word { white-space: nowrap; }
     .contact-heading-icon { width: 0.8em; height: 0.8em; margin-left: 0.3em; vertical-align: -0.06em; }
 
     .contact-sub {
@@ -1577,6 +1577,140 @@
       h.innerHTML = text.split("").map(function (c) {
         return c === " " ? " " : '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
       }).join("");
+      var chars = h.querySelectorAll(".hero-name-char");
+      function lock() {
+        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
+        var fs = parseFloat(getComputedStyle(h).fontSize);
+        chars.forEach(function (el) { el.style.width = ""; });
+        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+      }
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+      var WEIGHTS = [100, 200, 300, 400, 500, 600];
+      function pick(el) {
+        var w, prev = el.dataset.w;
+        do { w = WEIGHTS[Math.floor(Math.random() * WEIGHTS.length)]; } while (String(w) === prev);
+        el.dataset.w = w;
+        return w;
+      }
+
+      // Hover spin ("dreidel"), ported from CrosswordLeague's achievement icons:
+      // sideways cursor movement over a letter spins it in 3D in that direction, a fast
+      // swipe off it throws a decelerating two-turn spin-down, otherwise it eases back.
+      // Transforms don't affect layout, so nothing around the letter moves.
+      (function () {
+        var PX_TO_DEG = 1.4, PERSPECTIVE_PX = 400, HOVER_SCALE = 1.06, RETURN_MS = 400,
+            SPIN_MS = 1400, SPIN_TURNS = 2, FLICK_PX_PER_MS = 2.0, VEL_TAU_MS = 30, IDLE_MS = 120;
+        var angle = new WeakMap(), spin = new WeakMap();
+        var hoverEl = null, lastX = 0, velX = 0, prevX = 0, prevT = 0;
+        function paint(el, a, sc) { el.style.transform = "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + a + "deg) scale(" + sc + ")"; }
+        function shortest(raw) { return ((raw % 360) + 540) % 360 - 180; }
+        function returnToRest(el) {
+          var norm = shortest(angle.get(el) || 0);
+          el.style.transition = "none";
+          paint(el, norm, HOVER_SCALE);
+          requestAnimationFrame(function () { requestAnimationFrame(function () {
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            paint(el, 0, 1);
+          }); });
+          angle.set(el, 0);
+          setTimeout(function () { el.style.transition = ""; el.style.willChange = ""; }, RETURN_MS + 50);
+        }
+        function spinOut(el, dir) {
+          if (!el.animate) { returnToRest(el); return; }
+          var norm = shortest(angle.get(el) || 0);
+          angle.set(el, 0);
+          el.style.transition = "";
+          el.style.transform = "";
+          var anim = el.animate([
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + norm + "deg) scale(" + HOVER_SCALE + ")" },
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + (dir * 360 * SPIN_TURNS) + "deg) scale(1)" }
+          ], { duration: SPIN_MS, easing: "cubic-bezier(0.05, 0.95, 0.1, 1)" });
+          spin.set(el, anim);
+          anim.addEventListener("finish", function () {
+            if (spin.get(el) !== anim) return;
+            spin.delete(el);
+            el.style.willChange = "";
+          });
+        }
+        document.addEventListener("mousemove", function (e) {
+          var t = e.timeStamp || performance.now();
+          var gap = t - prevT, dt = Math.min(Math.max(gap, 0.5), VEL_TAU_MS), gdx = e.clientX - prevX;
+          prevX = e.clientX; prevT = t;
+          if (gap > IDLE_MS) velX = 0;
+          else velX += (gdx / dt - velX) * (1 - Math.exp(-dt / VEL_TAU_MS));
+          var el = e.target.closest ? e.target.closest(".hero-name-char") : null;
+          if (el && !h.contains(el)) el = null;   // only this heading's letters
+          if (el !== hoverEl) {
+            if (hoverEl) {
+              if (Math.abs(velX) >= FLICK_PX_PER_MS) spinOut(hoverEl, Math.sign(velX));
+              else returnToRest(hoverEl);
+            }
+            hoverEl = el;
+            if (el) {
+              var running = spin.get(el); if (running) running.cancel(); spin.delete(el);
+              el.style.transition = ""; el.style.willChange = "transform"; lastX = e.clientX;
+            }
+          }
+          if (!el) return;
+          var dx = e.clientX - lastX;
+          lastX = e.clientX;
+          var next = (angle.get(el) || 0) + dx * PX_TO_DEG;
+          angle.set(el, next);
+          paint(el, next, HOVER_SCALE);
+        }, { passive: true });
+      })();
+
+      // Automatic pulse: a random free letter eases thin, holds, then eases back
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var visible = true;
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(h);
+      }
+      function pulse() {
+        if (visible && !document.hidden) {
+          var free = Array.prototype.filter.call(chars, function (el) { return !el._busy; });
+          if (free.length) {
+            var el = free[Math.floor(Math.random() * free.length)];
+            el._busy = true;
+            el.classList.add("is-auto");
+            el.style.fontWeight = pick(el);
+            el._autoTimer = setTimeout(function () {
+              el.style.fontWeight = "";
+              el._autoTimer = setTimeout(function () {
+                el._busy = false;
+                el.classList.remove("is-auto"); delete el.dataset.w;
+              }, 1100);
+            }, 1100 + Math.random() * 900);
+          }
+        }
+        setTimeout(pulse, 450 + Math.random() * 750);
+      }
+      setTimeout(pulse, 900);
+    })();
+  </script>
+  <script>
+    // ── "LET'S WORK TOGETHER!": same per-letter weight changes + hover spin ──
+    (function () {
+      var h = document.querySelector("#contact .contact-heading");
+      if (!h) return;
+      h.setAttribute("aria-label", h.textContent.trim());
+      // wrap only the text (the smiley icon stays), keeping each word unbreakable
+      var walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT), nodes = [], n;
+      while ((n = walker.nextNode())) if (!n.parentNode.closest("svg")) nodes.push(n);
+      nodes.forEach(function (node) {
+        var frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          var word = document.createElement("span");
+          word.className = "word"; word.setAttribute("aria-hidden", "true");
+          part.split("").forEach(function (c) {
+            var ch = document.createElement("span"); ch.className = "hero-name-char"; ch.textContent = c; word.appendChild(ch);
+          });
+          frag.appendChild(word);
+        });
+        node.parentNode.replaceChild(frag, node);
+      });
       var chars = h.querySelectorAll(".hero-name-char");
       function lock() {
         // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
