@@ -1126,6 +1126,17 @@
       pointer-events: none;
     }
     .footer-bottom a:hover .footer-arrow { opacity: 1; transform: translate(0, 0); }
+  
+    /* cover across the top of the title card: the home thumbnail, a little shorter */
+    .project-cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; } }
   </style>
 </head>
 <body>
@@ -1168,6 +1179,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
+    <video class="project-cover" src="../pyxd-cover.mp4" poster="../pyxd-cover.jpg" autoplay muted loop playsinline aria-label="Two people wearing the Pyxd t-shirt beside the pyxMAGIC logo"></video>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Pyxd, Inc.<span class="title-sub">Design systems &amp; brand&nbsp;identity</span></h1>
@@ -1798,6 +1810,13 @@
       addEventListener('resize', layout);
       if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
       layout();
+    })();
+  </script>
+  <script>
+    // reduced motion: hold the cover video on a still frame
+    (function () {
+      var v = document.querySelector("video.project-cover");
+      if (v && window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
     })();
   </script>
 </body>
