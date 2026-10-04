@@ -1542,7 +1542,7 @@
       el.addEventListener('mouseleave', resetCursor);
     });
 
-    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals drawn by dot swell (no cursor interaction) ──
+    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals + a cursor "ink" trail, all drawn by dot swell ──
     (function () {
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
@@ -1550,6 +1550,10 @@
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
+      // Cursor ink: dots the cursor passes over swell at once, hold briefly, then ease back
+      // slowly, so a quick stroke leaves a fading line you can draw with.
+      const INK_R = 16, INK_HOLD = 450, INK_FADE = 2600;   // brush radius (px), hold and fade-out (ms)
+      let inked = new Map(), lastX = null, lastY = null;   // dot index -> { k: strength 0..1, t: time inked }
       const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
@@ -1558,7 +1562,7 @@
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dots = []; hot = new Set();
+        dots = []; hot = new Set(); inked = new Map();
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
           for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
@@ -1673,13 +1677,17 @@
           const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
           for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
         }
+        for (const [i, e] of inked) { if (strength(e, now) <= 0) inked.delete(i); else touch.add(i); }
         const path = new Path2D(), next = new Set(), half = SPACING / 2;
         for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
-          d.r += (BASE_R + (MAX_R - BASE_R) * k - d.r) * 0.08;
+          const e = inked.get(i);
+          const ik = e ? e.k * strength(e, now) : 0;
+          const target = BASE_R + (MAX_R - BASE_R) * Math.max(k, ik);
+          d.r += (target - d.r) * (target > d.r && ik > k ? 0.35 : 0.08);   // ink swells in quickly, everything eases back slowly
           if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
           next.add(i);
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
@@ -1690,8 +1698,36 @@
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
         spirals = spirals.filter(sp => !sp.done);
 
-        if (document.visibilityState !== 'hidden' && !calm) raf = requestAnimationFrame(frame);
+        if (document.visibilityState !== 'hidden' && (!calm || inked.size || hot.size)) raf = requestAnimationFrame(frame);
       }
+
+      function ink(x, y, now) {
+        const ix0 = Math.max(0, Math.floor((x - INK_R - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((x + INK_R - SPACING / 2) / SPACING));
+        const iy0 = Math.max(0, Math.floor((y - INK_R - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((y + INK_R - SPACING / 2) / SPACING));
+        for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) {
+          const i = ix * rows + iy, d = dots[i], u = 1 - Math.hypot(d.x - x, d.y - y) / INK_R;
+          if (u <= 0) continue;
+          const k = u * u * (3 - 2 * u), cur = inked.get(i);
+          if (!cur || k >= cur.k * strength(cur, now)) inked.set(i, { k: k, t: now });
+        }
+      }
+      // 1 while holding, then a slow ease-out back to 0
+      function strength(e, now) {
+        const a = now - e.t - INK_HOLD;
+        if (a <= 0) return 1;
+        const f = Math.min(1, a / INK_FADE);
+        return 1 - f * f * (3 - 2 * f);
+      }
+      document.addEventListener('mousemove', e => {
+        const now = performance.now(), x = e.clientX, y = e.clientY;
+        if (lastX !== null) {   // fill in between samples so fast strokes stay continuous
+          const steps = Math.max(1, Math.ceil(Math.hypot(x - lastX, y - lastY) / (SPACING / 2)));
+          for (let n = 1; n <= steps; n++) ink(lastX + (x - lastX) * n / steps, lastY + (y - lastY) * n / steps, now);
+        } else ink(x, y, now);
+        lastX = x; lastY = y;
+        wake();
+      }, { passive: true });
+      document.addEventListener('mouseleave', () => { lastX = lastY = null; });
 
       function wake() {
         if (raf === null && document.visibilityState !== 'hidden') raf = requestAnimationFrame(frame);
