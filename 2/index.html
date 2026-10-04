@@ -645,8 +645,11 @@
 
     .footer-bottom a {
       color: #444;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      /* underline drawn as one line under the whole link: iOS Safari leaves gaps
+         under the wide word spacing when it's a text-decoration */
+      text-decoration: none;
+      background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat;
+      padding-bottom: 3px;
       font-style: normal;
       letter-spacing: 0.1em;
       word-spacing: 0.7em;
