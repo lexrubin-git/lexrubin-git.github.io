@@ -1434,60 +1434,54 @@
       prevBtn.hidden = false;
       nextBtn.hidden = false;
 
-      let index = 0;
-      const maxIndex = total - visibleCount;
-
-      function layout() {
-        const slotWidth = viewport.clientWidth / visibleCount;
-        slots.forEach(slot => {
-          slot.style.width = slotWidth + 'px';
-          slot.style.flexBasis = slotWidth + 'px';
+      // Endless slide, like the project galleries but at half their pace. The track holds
+      // the slots plus copies (copies open the same lightbox), auto-scrolls, pauses while
+      // hovered, and the arrows glide exactly one slot.
+      const SPEED = 20;
+      const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      track.style.transition = 'none';
+      const copies = [];
+      function slotW() { return viewport.clientWidth / visibleCount; }
+      function addCopy() {
+        slots.forEach(orig => {
+          const k = orig.cloneNode(true);
+          k.setAttribute('aria-hidden', 'true');
+          k.classList.remove('artwork-lightbox-trigger');   // keep copies out of the lightbox's slide list
+          k.addEventListener('click', () => orig.click());
+          k.addEventListener('mouseenter', () => orig.dispatchEvent(new Event('mouseenter')));
+          k.addEventListener('mouseleave', () => orig.dispatchEvent(new Event('mouseleave')));
+          track.appendChild(k); copies.push(k);
         });
-        index = Math.min(index, maxIndex);
-        track.style.transition = 'none';
-        track.style.transform = 'translateX(' + (-index * slotWidth) + 'px)';
-        void track.offsetWidth;
-        track.style.transition = '';
-        updateButtons();
       }
-
-      function goTo(i) {
-        index = Math.max(0, Math.min(maxIndex, i));
-        const slotWidth = viewport.clientWidth / visibleCount;
-        track.style.transform = 'translateX(' + (-index * slotWidth) + 'px)';
-        updateButtons();
+      function sizeAll() {
+        const w = slotW();
+        slots.concat(copies).forEach(el => { el.style.width = w + 'px'; el.style.flexBasis = w + 'px'; el.style.borderRight = '1px solid var(--border)'; });
       }
+      // two identical halves, each at least as wide as the row
+      const sets = Math.max(1, Math.ceil(visibleCount / total));
+      for (let n = 1; n < 2 * sets; n++) addCopy();
+      sizeAll();
+      window.addEventListener('resize', sizeAll);
 
-      function updateButtons() {
-        prevBtn.disabled = index <= 0;
-        nextBtn.disabled = index >= maxIndex;
+      let x = 0, last = null, hover = false, tween = null;
+      strip.addEventListener('mouseenter', () => { hover = true; });
+      strip.addEventListener('mouseleave', () => { hover = false; });
+      const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      function go(dir) { const from = tween ? tween.to : x; tween = { from: x, to: from + dir * slotW(), start: performance.now(), dur: 550 }; }
+      prevBtn.addEventListener('click', () => go(-1));
+      nextBtn.addEventListener('click', () => go(1));
+      function frame(now) {
+        const dt = last === null ? 0 : Math.min(now - last, 100) / 1000; last = now;
+        if (tween) {
+          const t = Math.min(1, (now - tween.start) / tween.dur);
+          x = tween.from + (tween.to - tween.from) * ease(t);
+          if (t >= 1) tween = null;
+        } else if (!hover && !calm && !document.hidden && !document.getElementById('lightbox').classList.contains('open')) x += SPEED * dt;
+        const half = slotW() * total * sets, shown = ((x % half) + half) % half;
+        track.style.transform = 'translateX(' + (-shown) + 'px)';
+        requestAnimationFrame(frame);
       }
-
-      prevBtn.addEventListener('click', () => { goTo(index - 1); restartAuto(); });
-      nextBtn.addEventListener('click', () => { goTo(index + 1); restartAuto(); });
-      window.addEventListener('resize', layout);
-
-      layout();
-
-      // Auto-advance one image every 5s, same as pressing the right arrow; wraps back
-      // to the start at the end. Waits while hovered, while the lightbox is open, or
-      // while the tab is hidden; a manual arrow click restarts the wait.
-      const AUTO_MS = 5000;
-      let autoTimer = null, hovering = false;
-      function restartAuto() {
-        clearTimeout(autoTimer);
-        if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        autoTimer = setTimeout(tick, AUTO_MS);
-      }
-      function tick() {
-        const lb = document.getElementById('lightbox');
-        if (!hovering && !document.hidden && !(lb && lb.classList.contains('open')))
-          goTo(index >= maxIndex ? 0 : index + 1);
-        restartAuto();
-      }
-      strip.addEventListener('mouseenter', () => { hovering = true; });
-      strip.addEventListener('mouseleave', () => { hovering = false; restartAuto(); });
-      restartAuto();
+      requestAnimationFrame(frame);
     }
 
     document.querySelectorAll('.gallery-strip').forEach(strip => initCarousel(strip, 3));
