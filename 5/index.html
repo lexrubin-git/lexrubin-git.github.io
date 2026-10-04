@@ -765,7 +765,40 @@
       border-bottom: 1px solid var(--border);
     }
     @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; } }
-    .project-cover-link { display: block; }
+    .project-cover-link { display: block; position: relative; }
+    /* hover label, same style as the About photo's "View LinkedIn" */
+    .cover-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      white-space: nowrap;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .cover-label-arrow {
+      display: inline-block;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      vertical-align: bottom;
+      transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+    }
+    .project-cover-link:hover .cover-label { opacity: 1; transform: translateX(-50%); }
+    .project-cover-link:hover .cover-label-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    @media (hover: none) {
+      .cover-label { opacity: 1; transform: translateX(-50%); }
+      .cover-label-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    }
     .project-cover-link .project-cover { transition: filter 0.3s ease; }
     .project-cover-link:hover .project-cover { filter: brightness(1.08); }
   </style>
@@ -811,7 +844,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <a class="project-cover-link" href="https://crosswordleague.com" target="_blank" rel="noopener" aria-label="Visit CrosswordLeague.com"><video class="project-cover" src="../crossword-cover.mp4?v=4" poster="../crossword-cover.jpg?v=4" autoplay muted loop playsinline aria-label="CrosswordLeague.com logo between a laptop and two phones showing the game"></video></a>
+    <a class="project-cover-link" href="https://crosswordleague.com" target="_blank" rel="noopener" aria-label="Visit CrosswordLeague.com"><video class="project-cover" src="../crossword-cover.mp4?v=4" poster="../crossword-cover.jpg?v=4" autoplay muted loop playsinline aria-label="CrosswordLeague.com logo between a laptop and two phones showing the game"></video><span class="cover-label">Go to CrosswordLeague.com<span class="cover-label-arrow" aria-hidden="true">&#8599;</span></span></a>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title"><a class="title-link" href="https://crosswordleague.com" target="_blank" rel="noopener">CrosswordLeague.com<span class="title-link-arrow" aria-hidden="true">&#8599;</span></a><span class="title-sub">End-to-end product design</span></h1>
