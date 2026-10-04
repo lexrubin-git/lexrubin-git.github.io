@@ -2107,12 +2107,27 @@
       if (!art || !gal) return 0;
       var navH = nav ? nav.getBoundingClientRect().height : 0;
       var top = art.getBoundingClientRect().top, h = gal.getBoundingClientRect().bottom - top;
-      var centeredTop = navH + Math.max(0, (innerHeight - navH - h) / 2);
       var maxScroll = document.documentElement.scrollHeight - innerHeight;
-      var endTop = Math.max(centeredTop, top + (scrollY - maxScroll));   // can't scroll past the page end
+      var endTop = Math.max(navH, top + (scrollY - maxScroll));   // done at the page bottom, where Artwork sits centered above the footer
       var start = innerHeight * 0.95;
       return Math.min(1, Math.max(0, (start - top) / Math.max(1, start - endTop)));
     };
+    // At the very bottom, Artwork should sit evenly between the header and the footer: size
+    // the gap above the footer so the space above the panel equals the space below it
+    // (only grows past the base gap; recomputed from scratch on resize).
+    function fitArtworkRoom() {
+      var art = document.getElementById("artwork"), gal = art && art.nextElementSibling, nav = document.querySelector("nav"), foot = document.querySelector("footer");
+      if (!art || !gal || !foot) return;
+      gal.style.marginBottom = "";
+      var navH = nav ? nav.getBoundingClientRect().height : 0;
+      var artH = gal.getBoundingClientRect().bottom - art.getBoundingClientRect().top;
+      var gap = (innerHeight - navH - foot.getBoundingClientRect().height - artH) / 2;
+      var base = parseFloat(getComputedStyle(gal).marginBottom);
+      if (gap > base) gal.style.marginBottom = Math.floor(gap) + "px";
+    }
+    fitArtworkRoom();
+    addEventListener("load", fitArtworkRoom);
+    addEventListener("resize", fitArtworkRoom);
     (function () {
       var grid = document.querySelector(".portfolio-grid"), art = document.getElementById("artwork");
       if (!grid || !art) return;
