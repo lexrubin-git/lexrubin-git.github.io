@@ -1173,6 +1173,35 @@
       border-bottom: 1px solid var(--border);
     }
     @media (max-width: 768px) { .project-cover { aspect-ratio: 2 / 1; object-position: left center; } }
+  
+    /* ── PROJECT GALLERY: endless horizontal scroller, pauses on hover ── */
+    .artworks-grid.marquee { display: block; overflow: hidden; }
+    .marquee-track { display: flex; width: max-content; animation: gallery-marquee var(--marquee-dur, 60s) linear infinite; }
+    .artworks-grid.marquee:hover .marquee-track { animation-play-state: paused; }
+    @keyframes gallery-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-track .artwork-card {
+      flex: 0 0 auto;
+      width: 360px;
+      border: 0 !important;
+      border-right: 1px solid var(--border) !important;
+      grid-column: auto !important;
+    }
+    .marquee-track .artwork-card-img,
+    .marquee-track .slideshow-img {
+      width: 100% !important;
+      height: 270px !important;
+      aspect-ratio: auto !important;
+      object-fit: cover;
+    }
+    .marquee-track .slideshow-btn, .marquee-track .slideshow-counter { display: none; }
+    @media (max-width: 768px) {
+      .marquee-track .artwork-card { width: 240px; }
+      .marquee-track .artwork-card-img, .marquee-track .slideshow-img { height: 180px !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .artworks-grid.marquee { overflow-x: auto; }
+      .marquee-track { animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -1850,6 +1879,41 @@
     (function () {
       var v = document.querySelector("video.project-cover");
       if (v && window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { v.removeAttribute("autoplay"); v.pause(); }
+    })();
+  </script>
+
+  <script>
+    // ── PROJECT GALLERY: endless horizontal scroller ──
+    (function () {
+      var grid = document.getElementById("artwork-grid");
+      if (!grid) return;
+      var cards = Array.prototype.filter.call(grid.children, function (el) { return el.classList.contains("artwork-card"); });
+      if (!cards.length) return;
+      var track = document.createElement("div");
+      track.className = "marquee-track";
+      cards.forEach(function (c) { track.appendChild(c); });
+      grid.innerHTML = "";
+      grid.appendChild(track);
+      grid.classList.add("marquee");
+      function addCopy() {
+        cards.forEach(function (c) {
+          var k = c.cloneNode(true);
+          k.setAttribute("aria-hidden", "true");
+          k.querySelectorAll("a, button, video").forEach(function (el) { el.setAttribute("tabindex", "-1"); });
+          k.querySelectorAll("video").forEach(function (v) { v.muted = true; v.autoplay = true; v.play && v.play().catch(function () {}); });
+          k.addEventListener("click", function (e) { e.preventDefault(); c.click(); });   // copies open the same lightbox
+          k.addEventListener("mouseenter", function () { c.dispatchEvent(new Event("mouseenter")); });   // same cursor as the original
+          k.addEventListener("mouseleave", function () { c.dispatchEvent(new Event("mouseleave")); });
+          track.appendChild(k);
+        });
+      }
+      // The loop slides by half the track, so the track is two identical halves, each at
+      // least as wide as the screen: k copies of the set per half, 2k sets in total.
+      var setW = track.scrollWidth || 1, k = Math.max(1, Math.ceil(Math.max(innerWidth, 1400) / setW));
+      for (var n = 1; n < 2 * k; n++) addCopy();
+      requestAnimationFrame(function () {
+        track.style.setProperty("--marquee-dur", Math.round(track.scrollWidth / 2 / 40) + "s");
+      });
     })();
   </script>
 </body>
