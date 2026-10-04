@@ -1639,6 +1639,7 @@
           if (gap > IDLE_MS) velX = 0;
           else velX += (gdx / dt - velX) * (1 - Math.exp(-dt / VEL_TAU_MS));
           var el = e.target.closest ? e.target.closest(".hero-name-char") : null;
+          if (el && !h.contains(el)) el = null;   // only this heading's letters
           if (el !== hoverEl) {
             if (hoverEl) {
               if (Math.abs(velX) >= FLICK_PX_PER_MS) spinOut(hoverEl, Math.sign(velX));
