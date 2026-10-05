@@ -1579,9 +1579,13 @@
       if (!h) return;
       var text = h.textContent;
       h.setAttribute("aria-label", text);
-      h.innerHTML = text.split("").map(function (c) {
-        return c === " " ? " " : '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
-      }).join("");
+      // letters of a word stay on one line together (inline-block letters could otherwise wrap
+      // mid-word, e.g. "L / EX RUBIN" on phones while the font is still loading)
+      h.innerHTML = text.split(" ").map(function (w) {
+        return '<span style="white-space: nowrap;">' + w.split("").map(function (c) {
+          return '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
+        }).join("") + '</span>';
+      }).join(" ");
       var chars = h.querySelectorAll(".hero-name-char");
       function lock() {
         // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
