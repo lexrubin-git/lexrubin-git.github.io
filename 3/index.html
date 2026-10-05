@@ -1285,7 +1285,7 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <video class="project-cover" src="../watch-cover.mp4" poster="../index3.png" autoplay muted loop playsinline aria-label="Three Apple Watch faces animating"></video>
+    <video class="project-cover" src="../watch-cover.mp4" poster="../watch-cover.jpg" autoplay muted loop playsinline aria-label="Three Apple Watch faces animating"></video>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Apple Watch face<span class="title-sub">Glanceable UI design</span></h1>
@@ -2029,6 +2029,14 @@
         b.addEventListener("mouseleave", resetCursor);
       });
     })();
+  </script>
+  <script>
+    // ── VIDEO STILLS: keep the poster painted behind the video, so a browser dropping/re-decoding
+    // the frames of a paused or scrolled-away video shows the still instead of a black box ──
+    document.querySelectorAll("video.item-video[poster], video.project-cover[poster]").forEach(function (v) {
+      var src = new URL(v.getAttribute("poster"), location.href).href;
+      v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
+    });
   </script>
 </body>
 </html>

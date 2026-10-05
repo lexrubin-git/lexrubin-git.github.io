@@ -1146,7 +1146,7 @@
     <!-- Apple Watch -->
     <div class="portfolio-item full-width" onclick="window.location='3/'">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="index3.png" data-src="watch-cover.mp4" aria-label="Apple Watch face animation"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="watch-cover.jpg" data-src="watch-cover.mp4" aria-label="Apple Watch face animation"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -2100,6 +2100,14 @@
       addEventListener("resize", update);
       update();
     })();
+  </script>
+  <script>
+    // ── VIDEO STILLS: keep the poster painted behind the video, so a browser dropping/re-decoding
+    // the frames of a paused or scrolled-away video shows the still instead of a black box ──
+    document.querySelectorAll("video.item-video[poster], video.project-cover[poster]").forEach(function (v) {
+      var src = new URL(v.getAttribute("poster"), location.href).href;
+      v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
+    });
   </script>
 </body>
 </html>
