@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lex Rubin Portfolio</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=EB+Garamond&family=Inter:wght@300;400;500;600&family=Jost&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -359,6 +359,69 @@
       aspect-ratio: 8 / 3;
     }
 
+    /* ── PERSONAL WEBSITES: a labelled row of half-width cards ── */
+    .portfolio-group {
+      grid-column: 1 / -1;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.55s forwards;
+    }
+    .group-label {
+      border: 1px solid var(--border);
+      background: var(--black);
+      padding: 1.1rem 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #aaa;
+      font-weight: 600;
+    }
+    .group-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      margin-top: -1px;   /* cards sit right under the label, sharing its bottom line */
+    }
+    .group-items .portfolio-item { animation: none; opacity: 1; transform: none; }
+    .group-items .portfolio-item .item-image { aspect-ratio: 16 / 10; }
+
+    /* Site thumbnail: the live site's hero rebuilt at 1440x900 and scaled to the card, so its
+       type stays crisp. 1 design px = var(--u). */
+    .site-thumb { container-type: inline-size; background: #041419; }
+    .site-zoom { position: absolute; inset: 0; transition: transform 0.6s ease; --u: calc(100cqw / 1440); }
+    .portfolio-item:hover .site-zoom { transform: scale(1.06); }
+    .portfolio-item:hover .site-thumb video { transform: none; }
+    .site-video { position: absolute; left: 0; right: 0; top: -22%; bottom: -22%; }
+    .site-shade { position: absolute; inset: 0; background: linear-gradient(rgba(4,20,25,0.5), rgba(4,20,25,0.2) 50%, rgba(4,20,25,0.85)); }
+    .site-stage { position: absolute; inset: 0; color: #ebe7df; font-family: 'EB Garamond', Georgia, serif; font-weight: 400; }
+    .bg-head {
+      position: absolute; top: calc(40 * var(--u)); left: calc(128 * var(--u)); right: calc(128 * var(--u));
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .bg-name { font-size: calc(40 * var(--u)); line-height: 1; white-space: nowrap; display: flex; align-items: baseline; gap: calc(16 * var(--u)); }
+    .bg-name span { font-size: calc(24.27 * var(--u)); color: #93a7ab; }
+    .bg-nav { display: flex; gap: calc(32 * var(--u)); font-size: calc(18 * var(--u)); letter-spacing: 0.14em; white-space: nowrap; }
+    .bg-news {
+      position: absolute; left: 0; right: 0; bottom: calc(96 * var(--u));
+      display: flex; align-items: center; justify-content: center; gap: calc(24 * var(--u));
+      font-size: calc(16 * var(--u)); white-space: nowrap;
+    }
+    .bg-label { font-family: 'Jost', sans-serif; font-size: calc(13 * var(--u)); letter-spacing: 0.22em; text-transform: uppercase; display: inline-block; animation: bg-wobble 3s ease-in-out infinite; }
+    .bg-link { font-family: 'Jost', sans-serif; font-size: calc(15.2 * var(--u)); text-transform: uppercase; text-decoration: underline; text-underline-offset: calc(4 * var(--u)); text-decoration-thickness: max(1px, calc(1.5 * var(--u))); }
+    .bg-note { color: rgba(235,231,223,0.8); }
+    .bg-cue { position: absolute; left: 50%; bottom: calc(20 * var(--u)); transform: translateX(-50%); padding: calc(8 * var(--u)); display: flex; flex-direction: column; align-items: center; }
+    .bg-cue svg {
+      width: calc(80 * var(--u)); height: calc(22 * var(--u)); margin-top: calc(-12 * var(--u));
+      fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+      opacity: 0.15; animation: bg-cue 1.8s ease-in-out infinite;
+    }
+    .bg-cue svg:first-child { margin-top: 0; }
+    @keyframes bg-wobble { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+    @keyframes bg-cue { 0%, 100% { opacity: 0.15; transform: translateY(-2px); } 40% { opacity: 0.85; transform: translateY(1px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-label { animation: none; }
+      .bg-cue svg { animation: none; opacity: 0.5; }
+    }
+
     .overlay { display: contents; }
 
     .overlay-text {
@@ -594,6 +657,8 @@
       .portfolio-grid {
         grid-template-columns: 1fr;
       }
+      .group-items { grid-template-columns: 1fr; gap: 1.25rem; }
+      .group-label { padding: 1rem 1.25rem; font-size: 0.62rem; letter-spacing: 0.2em; }
       .portfolio-item {
         border-right: none;
       }
@@ -1643,6 +1708,42 @@
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Personal Websites -->
+    <div class="portfolio-group">
+      <div class="group-label">Personal Websites</div>
+      <div class="group-items">
+
+        <!-- brendanpgalvin.com: the site's own hero, rebuilt small (its video under its header) -->
+        <div class="portfolio-item" onclick="window.open('https://brendanpgalvin.com', '_blank', 'noopener')">
+          <div class="item-image site-thumb" role="img" aria-label="brendanpgalvin.com home page: Brendan Galvin, Composer, over a dark video of him conducting">
+            <div class="site-zoom">
+              <div class="site-video"><video class="item-video" muted loop playsinline preload="none" poster="brendan-cover.jpg" data-src="brendan-cover.mp4" aria-hidden="true"></video></div>
+              <div class="site-shade"></div>
+              <div class="site-stage" aria-hidden="true">
+                <div class="bg-head">
+                  <div class="bg-name">Brendan Galvin<span>Composer</span></div>
+                  <div class="bg-nav"><span>music reel</span><span>about</span><span>film / tv</span><span>contact</span></div>
+                </div>
+                <div class="bg-news">
+                  <span class="bg-label">What's New?</span>
+                  <span><span class="bg-link">Zurich Film Festival — International Finalist</span><span class="bg-note"> — One of three finalists, 14th International Film Music Competition</span></span>
+                </div>
+                <div class="bg-cue">
+                  <svg viewBox="0 0 72 22"><path d="M3 3l33 16 33-16"/></svg>
+                  <svg viewBox="0 0 72 22" style="animation-delay:0.18s"><path d="M3 3l33 16 33-16"/></svg>
+                  <svg viewBox="0 0 72 22" style="animation-delay:0.36s"><path d="M3 3l33 16 33-16"/></svg>
+                </div>
+              </div>
+            </div>
+            <div class="overlay">
+              <span class="overlay-text">Visit Site</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
