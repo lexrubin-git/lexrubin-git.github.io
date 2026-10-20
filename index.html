@@ -377,9 +377,29 @@
       background: var(--black);
       aspect-ratio: 16 / 10;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 1.1rem;
     }
+    .cs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    /* subtitle link to the contact form: underline draws in and the arrow nudges on hover */
+    .cs-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45em;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      color: #777;
+      text-decoration: none;
+      padding-bottom: 3px;
+      background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+      transition: color 0.25s, background-size 0.3s ease;
+    }
+    .cs-cta:hover, .cs-cta:focus-visible { color: #ddd; background-size: 100% 1px; }
+    .cs-cta:focus-visible { outline: 1px solid var(--white); outline-offset: 4px; }
+    .cs-cta-arrow { width: 0.95em; height: 0.95em; transition: transform 0.25s ease; }
+    .cs-cta:hover .cs-cta-arrow { transform: translateX(3px); }
     .cs-text {
       font-family: 'Archivo', 'Inter', sans-serif;
       font-size: clamp(1.4rem, 3vw, 2rem);
@@ -1292,8 +1312,10 @@
         </div>
 
         <!-- placeholder for the next site -->
-        <div class="coming-soon" aria-label="Coming soon">
+        <div class="coming-soon">
+          <span class="cs-sr">Coming soon</span>
           <span class="cs-text" aria-hidden="true"><span>C</span><span>o</span><span>m</span><span>i</span><span>n</span><span>g</span> <span>s</span><span>o</span><span>o</span><span>n</span><span class="cs-dot">.</span><span class="cs-dot">.</span><span class="cs-dot">.</span></span>
+          <a class="cs-cta" href="about/#contact">Need a personal site?<svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
 
       </div>
@@ -1492,8 +1514,8 @@
       el.addEventListener('mouseleave', resetCursor);
     });
 
-    // Footer links — pinpoint dot, medium ring
-    document.querySelectorAll('footer a').forEach(el => {
+    // Footer links and the "Need a personal site?" link — pinpoint dot, medium ring
+    document.querySelectorAll('footer a, .cs-cta').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
