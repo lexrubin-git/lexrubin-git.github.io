@@ -371,19 +371,16 @@
       gap: 1.75rem;
     }
 
-    /* "Coming soon..." card: letters ripple through the hero name's weights, dots tick in turn */
+    /* placeholder card next to the site thumbnail */
     .coming-soon {
       border: 1px solid var(--border);
       background: var(--black);
       aspect-ratio: 16 / 10;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1.1rem;
     }
-    .cs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-    /* subtitle link to the contact form: underline draws in and the arrow nudges on hover */
+    /* link to the contact form: underline draws in and the arrow nudges on hover */
     .cs-cta {
       display: inline-flex;
       align-items: center;
@@ -400,39 +397,6 @@
     .cs-cta:focus-visible { outline: 1px solid var(--white); outline-offset: 4px; }
     .cs-cta-arrow { width: 0.95em; height: 0.95em; transition: transform 0.25s ease; }
     .cs-cta:hover .cs-cta-arrow { transform: translateX(3px); }
-    .cs-text {
-      font-family: 'Archivo', 'Inter', sans-serif;
-      font-size: clamp(1.4rem, 3vw, 2rem);
-      color: #888;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-    }
-    .cs-text span { display: inline-block; text-align: center; font-weight: 300; animation: cs-weight 2.6s ease-in-out infinite; }
-    .cs-text span:nth-child(2)  { animation-delay: 0.1s; }
-    .cs-text span:nth-child(3)  { animation-delay: 0.2s; }
-    .cs-text span:nth-child(4)  { animation-delay: 0.3s; }
-    .cs-text span:nth-child(5)  { animation-delay: 0.4s; }
-    .cs-text span:nth-child(6)  { animation-delay: 0.5s; }
-    .cs-text span:nth-child(7)  { animation-delay: 0.7s; }
-    .cs-text span:nth-child(8)  { animation-delay: 0.8s; }
-    .cs-text span:nth-child(9)  { animation-delay: 0.9s; }
-    .cs-text span:nth-child(10) { animation-delay: 1s; }
-    .cs-text .cs-dot { font-weight: 900; animation: cs-dot 1.5s steps(1, end) infinite; }
-    .cs-text .cs-dot:nth-child(11) { animation-delay: 0s; }
-    .cs-text .cs-dot:nth-child(12) { animation-delay: 0.25s; }
-    .cs-text .cs-dot:nth-child(13) { animation-delay: 0.5s; }
-    @keyframes cs-weight {
-      0%, 60%, 100% { font-weight: 300; color: #888; }
-      25% { font-weight: 900; color: #e6e6e6; }
-    }
-    @keyframes cs-dot {
-      0%  { opacity: 0.15; }
-      20% { opacity: 1; }
-      80% { opacity: 0.15; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .cs-text span, .cs-text .cs-dot { animation: none; }
-    }
     .group-items .portfolio-item { animation: none; opacity: 1; transform: none; }
     .group-items .portfolio-item .item-image { aspect-ratio: 16 / 10; }
 
@@ -1313,8 +1277,6 @@
 
         <!-- placeholder for the next site -->
         <div class="coming-soon">
-          <span class="cs-sr">Coming soon</span>
-          <span class="cs-text" aria-hidden="true"><span>C</span><span>o</span><span>m</span><span>i</span><span>n</span><span>g</span> <span>s</span><span>o</span><span>o</span><span>n</span><span class="cs-dot">.</span><span class="cs-dot">.</span><span class="cs-dot">.</span></span>
           <a class="cs-cta" href="about/#contact">Need a personal site?<svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
 
@@ -1329,7 +1291,6 @@
     <div class="artwork-hero">
       <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
         <h1 class="artwork-main-title">Artwork</h1>
-        <span style="font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:#666;">Design and art all created by me!</span>
       </div>
     </div>
   </div>
@@ -2264,21 +2225,6 @@
       var src = new URL(v.getAttribute("poster"), location.href).href;
       v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
     });
-  </script>
-  <script>
-    // ── "COMING SOON...": lock each letter to its heaviest width (in em) so the weight ripple doesn't shift the line ──
-    (function () {
-      var h = document.querySelector(".cs-text");
-      if (!h) return;
-      var chars = h.querySelectorAll("span");
-      function lock() {
-        var fs = parseFloat(getComputedStyle(h).fontSize);
-        chars.forEach(function (el) { el.style.animation = "none"; el.style.fontWeight = "900"; el.style.width = ""; });
-        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
-        chars.forEach(function (el) { el.style.animation = ""; el.style.fontWeight = ""; });
-      }
-      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
-    })();
   </script>
 </body>
 </html>
