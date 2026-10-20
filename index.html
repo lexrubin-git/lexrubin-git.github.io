@@ -365,21 +365,53 @@
       opacity: 0;
       animation: fadeUp 0.6s ease 0.55s forwards;
     }
-    .group-label {
-      border: 1px solid var(--border);
-      background: var(--black);
-      padding: 1.1rem 1.5rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #aaa;
-      font-weight: 600;
-    }
     .group-items {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.75rem;
-      margin-top: -1px;   /* cards sit right under the label, sharing its bottom line */
+    }
+
+    /* "Coming soon..." card: letters ripple through the hero name's weights, dots tick in turn */
+    .coming-soon {
+      border: 1px solid var(--border);
+      background: var(--black);
+      aspect-ratio: 16 / 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cs-text {
+      font-family: 'Archivo', 'Inter', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #888;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .cs-text span { display: inline-block; text-align: center; font-weight: 300; animation: cs-weight 2.6s ease-in-out infinite; }
+    .cs-text span:nth-child(2)  { animation-delay: 0.1s; }
+    .cs-text span:nth-child(3)  { animation-delay: 0.2s; }
+    .cs-text span:nth-child(4)  { animation-delay: 0.3s; }
+    .cs-text span:nth-child(5)  { animation-delay: 0.4s; }
+    .cs-text span:nth-child(6)  { animation-delay: 0.5s; }
+    .cs-text span:nth-child(7)  { animation-delay: 0.7s; }
+    .cs-text span:nth-child(8)  { animation-delay: 0.8s; }
+    .cs-text span:nth-child(9)  { animation-delay: 0.9s; }
+    .cs-text span:nth-child(10) { animation-delay: 1s; }
+    .cs-text .cs-dot { font-weight: 900; animation: cs-dot 1.5s steps(1, end) infinite; }
+    .cs-text .cs-dot:nth-child(11) { animation-delay: 0s; }
+    .cs-text .cs-dot:nth-child(12) { animation-delay: 0.25s; }
+    .cs-text .cs-dot:nth-child(13) { animation-delay: 0.5s; }
+    @keyframes cs-weight {
+      0%, 60%, 100% { font-weight: 300; color: #888; }
+      25% { font-weight: 900; color: #e6e6e6; }
+    }
+    @keyframes cs-dot {
+      0%  { opacity: 0.15; }
+      20% { opacity: 1; }
+      80% { opacity: 0.15; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cs-text span, .cs-text .cs-dot { animation: none; }
     }
     .group-items .portfolio-item { animation: none; opacity: 1; transform: none; }
     .group-items .portfolio-item .item-image { aspect-ratio: 16 / 10; }
@@ -658,7 +690,6 @@
         grid-template-columns: 1fr;
       }
       .group-items { grid-template-columns: 1fr; gap: 1.25rem; }
-      .group-label { padding: 1rem 1.25rem; font-size: 0.62rem; letter-spacing: 0.2em; }
       .portfolio-item {
         border-right: none;
       }
@@ -1713,7 +1744,6 @@
 
     <!-- Personal Websites -->
     <div class="portfolio-group">
-      <div class="group-label">Personal Websites</div>
       <div class="group-items">
 
         <!-- brendanpgalvin.com: the site's own hero, rebuilt small (its video under its header) -->
@@ -1742,6 +1772,11 @@
               <span class="overlay-text">Visit Site</span>
             </div>
           </div>
+        </div>
+
+        <!-- placeholder for the next site -->
+        <div class="coming-soon" aria-label="Coming soon">
+          <span class="cs-text" aria-hidden="true"><span>C</span><span>o</span><span>m</span><span>i</span><span>n</span><span>g</span> <span>s</span><span>o</span><span>o</span><span>n</span><span class="cs-dot">.</span><span class="cs-dot">.</span><span class="cs-dot">.</span></span>
         </div>
 
       </div>
@@ -3235,6 +3270,21 @@
       var src = new URL(v.getAttribute("poster"), location.href).href;
       v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
     });
+  </script>
+  <script>
+    // ── "COMING SOON...": lock each letter to its heaviest width (in em) so the weight ripple doesn't shift the line ──
+    (function () {
+      var h = document.querySelector(".cs-text");
+      if (!h) return;
+      var chars = h.querySelectorAll("span");
+      function lock() {
+        var fs = parseFloat(getComputedStyle(h).fontSize);
+        chars.forEach(function (el) { el.style.animation = "none"; el.style.fontWeight = "900"; el.style.width = ""; });
+        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+        chars.forEach(function (el) { el.style.animation = ""; el.style.fontWeight = ""; });
+      }
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+    })();
   </script>
 </body>
 </html>
