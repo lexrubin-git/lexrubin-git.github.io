@@ -367,7 +367,7 @@
     }
     .group-items {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);   /* equal halves even with the thumbnail's nowrap text */
       gap: 1.75rem;
     }
 
@@ -375,8 +375,7 @@
     .coming-soon {
       border: 1px solid var(--border);
       background: var(--black);
-      aspect-ratio: 16 / 10;
-      display: flex;
+      display: flex;   /* no aspect ratio of its own: it stretches to the site card's height */
       align-items: center;
       justify-content: center;
     }
@@ -691,7 +690,9 @@
       .portfolio-grid {
         grid-template-columns: 1fr;
       }
-      .group-items { grid-template-columns: 1fr; gap: 1.25rem; }
+      /* keep the two half-width cards side by side, like desktop */
+      .group-items { gap: 1.25rem; }
+      .cs-cta { font-size: min(0.68rem, 2.75vw); letter-spacing: 0.04em; white-space: nowrap; }   /* one line in the half-width box */
       .portfolio-item {
         border-right: none;
       }
