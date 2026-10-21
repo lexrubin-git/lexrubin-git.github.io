@@ -206,7 +206,7 @@
     .portfolio-item { border: 1px solid var(--border); }
     /* same gap above the Artwork card (which now has its own top border) */
     #artwork { margin-top: 1.75rem; }
-    #artwork .artwork-hero { border-top: 1px solid var(--border); }
+    #artwork .artwork-hero, #sites .artwork-hero { border-top: 1px solid var(--border); }
     /* and the same gap between the artwork gallery and the footer */
     #artwork + .page-wrapper { margin-bottom: 1.75rem; }
     @media (max-width: 768px) {
@@ -741,7 +741,7 @@
     }
 
     /* the Artwork title uses the hero name's face so its letters can morph weight */
-    #artwork .artwork-main-title { font-family: 'Archivo', 'Inter', sans-serif; font-weight: 900; letter-spacing: 0.01em; }
+    #artwork .artwork-main-title, #sites .artwork-main-title { font-family: 'Archivo', 'Inter', sans-serif; font-weight: 900; letter-spacing: 0.01em; }
     .artwork-main-title {
       font-size: 3rem;
       font-weight: 600;
@@ -1263,7 +1263,12 @@
     </div>
 
     <!-- Personal Websites -->
-    <div class="portfolio-group">
+    <div class="portfolio-group" id="sites">
+      <div class="artwork-hero">
+        <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
+          <h2 class="artwork-main-title">Personal Websites</h2>
+        </div>
+      </div>
       <div class="group-items">
 
         <!-- brendanpgalvin.com: the site's own hero, rebuilt small (its video under its header) -->
@@ -2019,10 +2024,8 @@
     })();
   </script>
   <script>
-    // ── "ARTWORK" TITLE: same per-letter weight changes + hover spin as the hero name ──
-    (function () {
-      var h = document.querySelector("#artwork .artwork-main-title");
-      if (!h) return;
+    // ── "ARTWORK" + "PERSONAL WEBSITES" TITLES: same per-letter weight changes + hover spin as the hero name ──
+    document.querySelectorAll("#artwork .artwork-main-title, #sites .artwork-main-title").forEach(function (h) {
       var text = h.textContent;
       h.setAttribute("aria-label", text);
       // letters of a word stay on one line together (inline-block letters could otherwise wrap
@@ -2141,7 +2144,7 @@
         setTimeout(pulse, 450 + Math.random() * 750);
       }
       setTimeout(pulse, 900);
-    })();
+    });
   </script>
 
   <script>
