@@ -397,6 +397,24 @@
     .cs-cta:focus-visible { outline: 1px solid var(--white); outline-offset: 4px; }
     .cs-cta-arrow { width: 0.95em; height: 0.95em; transition: transform 0.25s ease; }
     .cs-cta:hover .cs-cta-arrow { transform: translateX(3px); }
+    /* idle: a soft light sweeps across the words, then the arrow nudges toward the click */
+    .cs-cta-text {
+      background: linear-gradient(100deg, #777 42%, #e6e6e6 50%, #777 58%) 100% 0 / 250% 100% no-repeat;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: cs-shine 4s ease-in-out infinite;
+    }
+    .cs-cta .cs-cta-arrow { animation: cs-nudge 4s ease-in-out infinite; }
+    .cs-cta:hover .cs-cta-text, .cs-cta:focus-visible .cs-cta-text { animation: none; -webkit-text-fill-color: currentColor; }
+    .cs-cta:hover .cs-cta-arrow, .cs-cta:focus-visible .cs-cta-arrow { animation: none; }
+    @keyframes cs-shine { 0% { background-position: 100% 0; } 50%, 100% { background-position: 0 0; } }
+    @keyframes cs-nudge { 0%, 44%, 66%, 100% { transform: translateX(0); } 52% { transform: translateX(5px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .cs-cta-text { animation: none; background: none; -webkit-text-fill-color: currentColor; }
+      .cs-cta .cs-cta-arrow { animation: none; }
+    }
+    /* the "opens elsewhere" arrow on the Visit Site hover labels */
+    .overlay-text .ur-arrow { margin-left: 0.4em; }
     .group-items .portfolio-item { animation: none; opacity: 1; transform: none; }
     .group-items .portfolio-item .item-image { aspect-ratio: 16 / 10; }
 
@@ -1208,7 +1226,7 @@
       <div class="item-image">
         <video class="item-video" muted loop playsinline preload="none" poster="crossword-cover.jpg?v=4" data-src="crossword-cover.mp4?v=4" aria-label="CrosswordLeague.com animation with a laptop and two phones showing the game"></video>
         <div class="overlay">
-          <span class="overlay-text">Visit Site</span>
+          <span class="overlay-text">Visit Site<svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
         </div>
       </div>
     </div>
@@ -1270,14 +1288,14 @@
               </div>
             </div>
             <div class="overlay">
-              <span class="overlay-text">Visit Site</span>
+              <span class="overlay-text">Visit Site<svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
             </div>
           </div>
         </div>
 
         <!-- placeholder for the next site -->
         <div class="coming-soon">
-          <a class="cs-cta" href="about/#contact">Need a personal site?<svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="cs-cta" href="about/#contact"><span class="cs-cta-text">Need a personal site?</span><svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
 
       </div>
