@@ -1924,12 +1924,23 @@
       }).join(" ");
       var chars = h.querySelectorAll(".hero-name-char");
       function lock() {
-        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
-        var fs = parseFloat(getComputedStyle(h).fontSize);
-        chars.forEach(function (el) { el.style.width = ""; });
+        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font).
+        // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
+        var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
+        chars.forEach(function (el) {
+          saved.push(el.style.fontWeight);
+          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+        });
         chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
+        chars.forEach(function (el) { el.style.transition = ""; });
       }
-      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+      // wait for Archivo itself: fonts.ready alone can resolve before the heading's font has even been
+      // requested, which locked the widths to the fallback font's letters
+      (document.fonts && document.fonts.load
+        ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
+        : Promise.resolve()).then(lock);
       var WEIGHTS = [100, 200, 300, 400, 500, 600];
       function pick(el) {
         var w, prev = el.dataset.w;
@@ -2047,12 +2058,23 @@
       }).join(" ");
       var chars = h.querySelectorAll(".hero-name-char");
       function lock() {
-        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font)
-        var fs = parseFloat(getComputedStyle(h).fontSize);
-        chars.forEach(function (el) { el.style.width = ""; });
+        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font).
+        // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
+        var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
+        chars.forEach(function (el) {
+          saved.push(el.style.fontWeight);
+          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+        });
         chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
+        chars.forEach(function (el) { el.style.transition = ""; });
       }
-      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+      // wait for Archivo itself: fonts.ready alone can resolve before the heading's font has even been
+      // requested, which locked the widths to the fallback font's letters
+      (document.fonts && document.fonts.load
+        ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
+        : Promise.resolve()).then(lock);
       var WEIGHTS = [100, 200, 300, 400, 500, 600];
       function pick(el) {
         var w, prev = el.dataset.w;
