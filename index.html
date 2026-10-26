@@ -373,7 +373,7 @@
     .portfolio-group {
       grid-column: 1 / -1;
       opacity: 0;
-      animation: fadeUp 0.6s ease 0.55s forwards;
+      animation: fadeUp 0.6s ease 0.65s forwards;
     }
     .group-items {
       display: grid;
@@ -490,6 +490,17 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* unreleased project: a grey veil over the video, no link */
+    .portfolio-item.is-soon { cursor: default; }
+    .is-soon .item-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(60, 60, 60, 0.55);
+      z-index: 10;
+      pointer-events: none;
+    }
+
     /* ── FOOTER ── */
     footer {
       background: var(--black);
@@ -589,6 +600,7 @@
     .portfolio-item:nth-child(3) { animation-delay: 0.25s; }
     .portfolio-item:nth-child(4) { animation-delay: 0.35s; }
     .portfolio-item:nth-child(5) { animation-delay: 0.45s; }
+    .portfolio-item:nth-child(6) { animation-delay: 0.55s; }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -1258,6 +1270,16 @@
         <video class="item-video" muted loop playsinline preload="none" poster="pyxd-cover.jpg?v=2" data-src="pyxd-cover.mp4?v=2" aria-label="Two people wearing the PyxMagic t-shirt beside the PyxMagic logo"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1for80 (coming soon) -->
+    <div class="portfolio-item full-width is-soon">
+      <div class="item-image">
+        <video class="item-video" muted loop playsinline preload="none" poster="1for80-cover.jpg" data-src="1for80-cover.mp4" aria-label="1for80: a job application helper app shown on a laptop"></video>
+        <div class="overlay">
+          <span class="overlay-text">Coming Soon...</span>
         </div>
       </div>
     </div>
