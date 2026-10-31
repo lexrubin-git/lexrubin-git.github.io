@@ -124,7 +124,7 @@
     .hero-name-char.is-auto { transition: font-weight 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
     .hero-name {
       font-family: 'Archivo', 'Inter', sans-serif;
-      font-size: clamp(2.6rem, 6vw, 4rem);
+      font-size: clamp(2.03rem, 4.68vw, 3.12rem);
       font-weight: 900;
       line-height: 1.05;
       letter-spacing: 0.01em;
@@ -134,15 +134,92 @@
     .hero-lead {
       max-width: 640px;
       margin: 1.4rem auto 0;
-      font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+      font-size: clamp(0.84rem, 1.5vw, 0.95rem);
       font-weight: 400;
-      line-height: 1.45;
-      color: #b5b5b5;
+      line-height: 1.5;
+      color: #888;
     }
+    .hero-lead-more { margin-top: 0.9rem; }
+    /* name + intro: one left-aligned block near the card's left edge, exactly as wide as the
+       name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
+       so they wrap to the name's width; text-wrap: balance keeps their lines even, with no orphans */
+    .hero-copy { width: fit-content; margin: 0 0 0 2.5rem; text-align: left; }
+    .hero-copy .hero-lead { margin-left: 0; max-width: none; width: 0; min-width: 100%; }
+    @media (max-width: 768px) { .hero-copy { margin: 0; } }
+    /* name + intro on the left, portrait (links to LinkedIn) in the space on the right */
+    .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    .about-photo-link {
+      display: block;
+      position: relative;
+      flex: 0 0 200px;
+      margin-right: 2.5rem;   /* mirrors the text's inset from the left edge */
+      text-decoration: none;
+    }
+    .about-photo-wrap { width: 100%; aspect-ratio: 3 / 4; overflow: hidden; position: relative; }
+    .about-photo-wrap img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: brightness(0.6);
+      transition: transform 0.6s ease, filter 0.5s ease;
+    }
+    .about-photo-link:hover .about-photo-wrap img { filter: brightness(1); transform: scale(1.04); }
+    /* "View LinkedIn" only appears on hover, its arrow sliding in */
+    .about-photo-linkedin-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      white-space: nowrap;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .about-li-arrow {
+      display: inline-block;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      vertical-align: bottom;
+      transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+    }
+    .about-photo-link:hover .about-li-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    .about-photo-link:hover .about-photo-linkedin-label { opacity: 1; transform: translateX(-50%); }
+    .about-photo-link:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
+    /* touch screens can't hover, so they keep the label (with its arrow) showing */
+    @media (hover: none) {
+      .about-photo-linkedin-label { opacity: 1; transform: translateX(-50%); }
+      .about-li-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
+    }
+    /* phones: portrait sits above the name, smaller */
+    @media (max-width: 768px) {
+      .hero-top { flex-direction: column-reverse; align-items: flex-start; gap: 1.5rem; }
+      .about-photo-link { flex: none; width: 140px; margin: 0; }
+    }
+    /* "artwork section": a quiet link, a faint underline that brightens on hover */
+    .hero-lead a {
+      color: inherit;
+      text-decoration: none;
+      background: linear-gradient(rgba(136,136,136,0.45), rgba(136,136,136,0.45)) left bottom / 100% 1px no-repeat;
+      padding-bottom: 1px;
+      transition: color 0.25s, background-size 0.25s;
+    }
+    .hero-lead a:hover, .hero-lead a:focus-visible { color: #ccc; background-image: linear-gradient(#ccc, #ccc); }
+    .hero-lead a:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
+    .hero-lead a:hover strong, .hero-lead a:focus-visible strong { animation: none; -webkit-text-fill-color: currentColor; }
     /* same idle light sweep as "Need a personal site?" (cs-shine) */
     .hero-lead strong {
       font-weight: 600;
-      background: linear-gradient(100deg, #b5b5b5 42%, #fff 50%, #b5b5b5 58%) 100% 0 / 250% 100% no-repeat;
+      background: linear-gradient(100deg, #888 42%, #fff 50%, #888 58%) 100% 0 / 250% 100% no-repeat;
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: cs-shine 4s ease-in-out infinite;
@@ -449,7 +526,10 @@
       font-size: calc(16 * var(--u)); white-space: nowrap;
     }
     .bg-label { font-family: 'Jost', sans-serif; font-size: calc(13 * var(--u)); letter-spacing: 0.22em; text-transform: uppercase; display: inline-block; animation: bg-wobble 3s ease-in-out infinite; }
-    .bg-link { font-family: 'Jost', sans-serif; font-size: calc(15.2 * var(--u)); text-transform: uppercase; text-decoration: underline; text-underline-offset: calc(4 * var(--u)); text-decoration-thickness: max(1px, calc(1.5 * var(--u))); }
+    .bg-link { font-family: 'Jost', sans-serif; font-size: calc(15.2 * var(--u)); text-transform: uppercase;
+      /* underline as a background line at the site's real 1.5px, scaled: a text-decoration can't go
+         under 1px, which at thumbnail size made it about twice as heavy as on the actual site */
+      background: linear-gradient(currentColor, currentColor) left bottom / 100% calc(1.5 * var(--u)) no-repeat; }
     .bg-note { color: rgba(235,231,223,0.8); }
     .bg-cue { position: absolute; left: 50%; bottom: calc(20 * var(--u)); transform: translateX(-50%); padding: calc(8 * var(--u)); display: flex; flex-direction: column; align-items: center; }
     .bg-cue svg {
@@ -537,38 +617,6 @@
       word-spacing: 0.7em;
     }
 
-    .ticker-wrap {
-      overflow: hidden;
-      padding: 1.1rem 0;
-      background: #0a1a10;
-    }
-    .ticker-track {
-      display: flex;
-      gap: 0;
-      animation: ticker 22s linear infinite;
-      white-space: nowrap;
-      width: max-content;
-    }
-    .ticker-item {
-      font-size: 0.65rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #EDE6D6;
-      padding: 0 3rem;
-      opacity: 0.7;
-    }
-    .ticker-sep {
-      color: #2E5E35;
-      padding: 0;
-      opacity: 1 !important;
-      font-size: 0.5rem;
-    }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-
     .footer-bottom span {
       font-style: normal;
     }
@@ -605,6 +653,29 @@
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD DECK: once the scroll script runs it owns each card's transform, so the
+       entrance keeps only its fade (and lets go of opacity when done, for the dimming) ── */
+    .deck-card.deck-card {   /* doubled class: outranks each card's own entrance animation */
+      opacity: 1;
+      transform: none;
+      animation-name: deck-fade;
+      animation-fill-mode: backwards;
+      transform-origin: 50% 0;
+      will-change: transform;
+    }
+    @keyframes deck-fade { from { opacity: 0; } }
+    /* distance shade: a card still coming up from below is dark. The gradient is three card-heights
+       tall (clear third, soft edge, dark third); --far 1 shows the dark third, 0 the clear third, and
+       in between the soft edge slides down the card, so it lightens from the top into its normal look */
+    .deck-card.deck-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 33.34%, rgba(0,0,0,0.75) 66.66%) 0 calc(var(--far, 0) * 100%) / 100% 300% no-repeat;
     }
 
     nav {
@@ -772,6 +843,333 @@
       letter-spacing: -0.01em;
     }
 
+    /* ── CONTACT (moved here from the About page) ── */
+    .contact-section {
+      max-width: 900px;
+      width: calc(100% - 8rem);
+      margin: 0 auto 1.75rem;
+      border: 1px solid var(--border);
+      background: var(--black);
+      padding: 4.5rem 2rem 5rem;
+      display: flex;
+      justify-content: center;
+      scroll-margin-top: 130px;
+    }
+    .contact-container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .contact-heading {
+      font-family: 'Archivo', 'Inter', sans-serif;   /* the hero name's face, so letters can morph weight */
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+    .contact-heading .nowrap, .contact-heading .word { white-space: nowrap; }
+    .contact-heading-icon { width: 0.8em; height: 0.8em; margin-left: 0.3em; vertical-align: -0.06em; }
+    /* the smiley animates with the letters: its stroke stands in for their font weight */
+    .contact-heading-icon.hero-name-char { transform-origin: 50% 50%; transition: stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    .contact-heading-icon.hero-name-char.is-auto { transition: stroke-width 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+
+    .contact-sub {
+      font-size: 0.85rem;
+      color: #888;
+      text-align: center;
+      letter-spacing: 0.16em;
+      line-height: 1.7;
+      margin-bottom: 2.8rem;
+    }
+
+    .contact-sub a {
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-sub a:hover { color: #bbb; }
+
+    /* ── FORM ── */
+    .contact-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #333;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      padding: 0.9rem 1.1rem;
+      outline: none;
+      transition: border-color 0.25s;
+      letter-spacing: 0.03em;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: #555;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: #666;
+    }
+
+    .contact-form input.invalid,
+    .contact-form textarea.invalid {
+      border-color: #a05050;
+    }
+
+    .contact-form input.valid,
+    .contact-form textarea.valid {
+      border-color: #7aaa88;
+    }
+
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 160px;
+    }
+
+    .contact-form button {
+      align-self: flex-start;
+      background: #333;
+      color: #bbb;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .contact-form button:hover {
+      background: #444;
+      color: #ddd;
+    }
+
+    /* ── SKILL TICKER BARS ── */
+    .skill-tickers {
+      max-width: 900px;
+      width: calc(100% - 8rem);
+      margin: 0 auto 1.75rem;
+      border: 1px solid var(--border);
+      background: var(--black);
+    }
+
+    .ticker-row {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      height: 52px;
+    }
+    .ticker-row:last-child { border-bottom: none; }
+
+    .ticker-label {
+      flex-shrink: 0;
+      width: 180px;
+      padding: 0 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #aaa;
+      font-weight: 600;
+      border-right: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+
+    .ticker-inner {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .ticker-row:nth-child(1) .ticker-inner { animation: tickerLeft 22s ease-in-out infinite; }
+    .ticker-row:nth-child(2) .ticker-inner { animation: tickerRight 28s ease-in-out infinite; }
+    .ticker-row:nth-child(3) .ticker-inner { animation: tickerLeft 20s ease-in-out infinite; }
+
+    @keyframes tickerLeft {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes tickerRight {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 0 1.6rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: #555;
+      text-transform: uppercase;
+    }
+
+    .ticker-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #333;
+      flex-shrink: 0;
+    }
+
+    .ticker-item.highlight {
+      color: #999;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section {
+      border: 1px solid var(--border);
+      margin: 0 auto 1.75rem;
+      max-width: 900px;
+      width: calc(100% - 8rem);
+      background: var(--black);
+    }
+
+    /* label runs vertically in its own column on the left, like the home page Artwork/Designs rows */
+    .testimonials-section { display: flex; }
+    .testimonials-header {
+      flex-shrink: 0;
+      width: 52px;   /* same as a skill ticker row is tall (52px) */
+      box-sizing: border-box;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .testimonials-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #aaa;   /* same shade as the Software / Interpersonal / Design labels */
+      font-weight: 600;
+      user-select: none;
+    }
+    .testimonials-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .testimonials-body .testimonial-slider { flex: 1; align-content: center; }
+
+    .testimonial-slider {
+      padding: 2.5rem 3rem;
+      position: relative;
+      display: grid;
+    }
+
+    .testimonial-slide { grid-area: 1 / 1; visibility: hidden; pointer-events: none; }
+    .testimonial-slide.active { visibility: visible; pointer-events: auto; }
+
+    .testimonial-relation {
+      font-size: 0.9rem;
+      color: #555;
+      font-style: italic;
+      margin-bottom: 1.2rem;
+    }
+
+    .testimonial-quote {
+      font-size: 0.88rem;
+      color: #888;
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 1.4rem;
+      padding-left: 0.5rem;
+      border-left: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .testimonial-author {
+      font-size: 0.82rem;
+      color: #555;
+      font-style: italic;
+    }
+
+    .testimonial-nav {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      height: 51px;                /* + 1px top divider = 52px, same as a skill ticker row */
+      box-sizing: content-box;
+    }
+
+    /* each arrow gets its own full-height cell, split off by one vertical line; the whole
+       cell is the button. Cell width keeps the arrows where they sat before. */
+    .t-btn {
+      flex: 0 0 auto;
+      width: 7.3rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--white);
+      font-size: 1.1rem;
+      font-family: 'Inter', sans-serif;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    #t-prev { border-right: 1px solid var(--border); }
+    #t-next { border-left: 1px solid var(--border); }
+    .t-btn:hover { background: rgba(255,255,255,0.03); opacity: 1; }
+    .t-btn:focus-visible { outline: 1px solid var(--white); outline-offset: -4px; }
+
+    .t-dots { display: flex; gap: 0.5rem; align-items: center; }
+    .t-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #333;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .t-dot.active { background: #777; }
+
+    @media (max-width: 768px) {
+      .skill-tickers, .testimonials-section { width: calc(100% - 1.5rem); margin-bottom: 1.25rem; }
+      .contact-section { width: calc(100% - 1.5rem); padding: 3rem 1.25rem 3.5rem; margin-bottom: 1.25rem; scroll-margin-top: 80px; }
+      .contact-heading { font-size: 2rem; }
+      .ticker-label { width: 125px; padding: 0 0.75rem; font-size: 0.62rem; letter-spacing: 0.18em; }
+      .testimonials-label { font-size: 0.6rem; letter-spacing: 0.2em; }
+      .testimonial-slider { padding: 1.5rem; }
+      .t-btn { width: 5.3rem; }
+      .testimonial-quote { font-size: 0.83rem; }
+    }
+
     /* ── SECTION ARROWS ── */
     /* Arrows between the hero and the project grid already sit inside the
        grid wrapper's padding, so they just fill it */
@@ -795,6 +1193,12 @@
       border-right: 1px solid var(--border);
     }
     .arrow-cell:last-child { border-right: none; }
+
+    /* gallery strips can be dragged: open hand over them, closed while dragging */
+    .gallery-images.is-draggable { touch-action: pan-y; }
+    .gallery-images.is-draggable, .gallery-images.is-draggable * { cursor: grab; }
+    .gallery-images.is-draggable .gallery-nav-btn { cursor: pointer; }
+    .gallery-images.dragging, .gallery-images.dragging * { cursor: grabbing !important; user-select: none; }
 
     /* ── GALLERY PANELS ── */
     .gallery-section {
@@ -1208,8 +1612,7 @@
     <div class="nav-links" id="nav-links">
       <a href="#" class="active">Portfolio</a>
       <a href="#artwork">Artwork</a>
-      <a href="about/">About</a>
-      <a href="about/#contact">Contact</a>
+      <a href="#contact">Contact</a>
       <a href="/Resume.pdf?v=2026-10" target="_blank">Resume<span class="nav-link-icon" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
     </div>
     <button class="nav-hamburger" id="hamburger" aria-label="Menu">
@@ -1220,11 +1623,20 @@
   <!-- GRID -->
   <div class="grid-wrapper">
   <section class="hero" aria-labelledby="hero-name">
-    <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
-    <h2 class="hero-lead"><strong>Product &amp; UI/UX Designer</strong></h2>
+    <div class="hero-top">
+    <div class="hero-copy">
+      <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
+      <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
+      <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the <a href="#artwork"><strong>artwork section</strong></a> below!</p>
+    </div>
+    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
+      <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.jpg" alt="Lex Rubin" /></div>
+    </a>
+    </div>
     <div class="hero-ctas">
       <a href="#work" class="hero-btn hero-btn-primary">View Work<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></a>
-      <a href="about/#contact" class="hero-btn hero-btn-secondary">Get in Touch<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="8" r="2" fill="currentColor" stroke="none"></circle><circle cx="16.5" cy="8" r="2" fill="currentColor" stroke="none"></circle><path class="hero-btn-mouth" d="M4 14.5s3 4.5 8 4.5 8-4.5 8-4.5"></path></svg></a>
+      <a href="#contact" class="hero-btn hero-btn-secondary">Get in Touch<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="8" r="2" fill="currentColor" stroke="none"></circle><circle cx="16.5" cy="8" r="2" fill="currentColor" stroke="none"></circle><path class="hero-btn-mouth" d="M4 14.5s3 4.5 8 4.5 8-4.5 8-4.5"></path></svg></a>
     </div>
   </section>
   <div class="section-arrows" aria-hidden="true">
@@ -1333,7 +1745,7 @@
 
         <!-- placeholder for the next site -->
         <div class="coming-soon">
-          <a class="cs-cta" href="about/#contact"><span class="cs-cta-text">Need a personal site?</span><svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="cs-cta" href="#contact"><span class="cs-cta-text">Need a personal site?</span><svg class="cs-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
 
       </div>
@@ -1436,6 +1848,117 @@
     </div>
   </div>
 
+  <!-- TESTIMONIALS -->
+  <div class="testimonials-section">
+    <div class="testimonials-header"><span class="testimonials-label">Testimonials</span></div>
+    <div class="testimonials-body">
+
+    <div class="testimonial-slider">
+      <div class="testimonial-slide active">
+        <div class="testimonial-relation">*As a friend and colleague</div>
+        <p class="testimonial-quote">"Working with Lex has been one of the greatest honors of my life. His passion and creativity truly shine through in his work, making collaboration seamless and productive."</p>
+        <div class="testimonial-author">— Alex Heiken</div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="testimonial-relation">*As a design collaborator</div>
+        <p class="testimonial-quote">"Collaborated seamlessly on the Adobe Suite programs."</p>
+        <div class="testimonial-author">— Senior Advisor, Global Research and Consulting at UC Berkeley, Ethan Kincaid</div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="testimonial-relation">*As a business partner and peer</div>
+        <p class="testimonial-quote">"He had a really quick turn-around time. It was pretty remarkable. The designs were captivating and impressive."</p>
+        <div class="testimonial-author">— Gavin A. Wilson</div>
+      </div>
+    </div>
+
+    <div class="testimonial-nav">
+      <button class="t-btn" id="t-prev" aria-label="Previous testimonial">&lsaquo;</button>
+      <div class="t-dots">
+        <div class="t-dot active" data-i="0"></div>
+        <div class="t-dot" data-i="1"></div>
+        <div class="t-dot" data-i="2"></div>
+      </div>
+      <button class="t-btn" id="t-next" aria-label="Next testimonial">&rsaquo;</button>
+    </div>
+    </div>
+  </div>
+
+  <!-- SKILL TICKER BARS -->
+  <div class="skill-tickers">
+    <div class="ticker-row">
+      <div class="ticker-label">Software</div>
+      <div class="ticker-track">
+        <div class="ticker-inner">
+          <span class="ticker-item highlight">Adobe Suite</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Figma</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Canva</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Adobe Suite</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Figma</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Canva</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Adobe Suite</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Figma</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Canva</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Adobe Suite</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Figma</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Canva</span><span class="ticker-dot"></span>
+        </div>
+      </div>
+    </div>
+    <div class="ticker-row">
+      <div class="ticker-label">Interpersonal</div>
+      <div class="ticker-track">
+        <div class="ticker-inner">
+          <span class="ticker-item highlight">Client Communication</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Time Management</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Problem Solving</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Dependability</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Collaboration</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Client Communication</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Time Management</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Problem Solving</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Dependability</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Collaboration</span><span class="ticker-dot"></span>
+        </div>
+      </div>
+    </div>
+    <div class="ticker-row">
+      <div class="ticker-label">Design</div>
+      <div class="ticker-track">
+        <div class="ticker-inner">
+          <span class="ticker-item highlight">Logo Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Brand Identity</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Graphic Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Web Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Animation</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Logo Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Brand Identity</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Graphic Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item highlight">Web Design</span><span class="ticker-dot"></span>
+          <span class="ticker-item">Animation</span><span class="ticker-dot"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="contact-container">
+    <h2 class="contact-heading">Let's work <span class="nowrap">together!<svg class="contact-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></span></h2>
+    <p class="contact-sub">
+      send me a message below, or<br>
+      just email me at <a href="mailto:lexrubin@gmail.com">lexrubin@gmail.com</a>
+    </p>
+
+    <div class="contact-form" id="contact-form">
+      <input type="text" id="field-name" placeholder="Name" />
+      <input type="email" id="field-email" placeholder="*Email Address" required />
+      <textarea id="field-message" placeholder="*Leave your message here :)" required></textarea>
+      <button type="button" id="submit-btn">Submit</button>
+      <p id="form-status" style="font-size:0.82rem;letter-spacing:0.14em;margin-top:0.25rem;display:none;"></p>
+    </div>
+    </div>
+  </section>
+
   <footer>
     <div style="border-top: 1px solid rgba(255,255,255,0.1);"></div>
     <div class="footer-bottom">
@@ -1502,19 +2025,19 @@
     }
 
     // Nav links — small dot, wide ring
-    document.querySelectorAll('nav a, .hero-btn').forEach(el => {
+    document.querySelectorAll('nav a, .hero-btn, .hero-lead a').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','52px','52px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
 
     // Portfolio items — bigger ring on hover
-    document.querySelectorAll('.portfolio-item').forEach(el => {
+    document.querySelectorAll('.portfolio-item, .about-photo-link').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('10px','10px','50%','54px','54px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
 
     // Text — I-beam thin bar, tiny ring
-    document.querySelectorAll('h1, h2, h3, .item-title').forEach(el => {
+    document.querySelectorAll('h1, h2, h3, .item-title, .hero-lead').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
@@ -1640,17 +2163,58 @@
       let x = 0, last = null, hover = false, tween = null;
       strip.addEventListener('mouseenter', () => { hover = true; });
       strip.addEventListener('mouseleave', () => { hover = false; });
+
+      // Click and hold to drag the strip; let go and it flings on, slowing to a stop. A drag isn't
+      // a click, so the click that follows it is swallowed (no lightbox, no Instagram).
+      let drag = null, dragged = false, fling = 0;
+      viewport.classList.add('is-draggable');
+      viewport.addEventListener('pointerdown', e => {
+        if (e.button !== 0 || e.target.closest('.gallery-nav-btn')) return;
+        drag = { id: e.pointerId, sx: e.clientX, x0: x, lx: e.clientX, lt: e.timeStamp, v: 0 };
+        dragged = false;
+      });
+      window.addEventListener('pointermove', e => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const dx = e.clientX - drag.sx;
+        if (!dragged && Math.abs(dx) > 6) {
+          dragged = true; tween = null; fling = 0;
+          viewport.classList.add('dragging');
+          try { viewport.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        if (!dragged) return;
+        x = drag.x0 - dx;
+        const dt = Math.max(1, e.timeStamp - drag.lt);
+        drag.v = 0.8 * ((drag.lx - e.clientX) / dt) + 0.2 * drag.v;   // px/ms, lightly smoothed
+        drag.lx = e.clientX; drag.lt = e.timeStamp;
+      });
+      function endDrag() {
+        if (!drag) return;
+        if (dragged) fling = Math.max(-4, Math.min(4, drag.v));
+        drag = null;
+        viewport.classList.remove('dragging');
+      }
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+      viewport.addEventListener('click', e => { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
+      viewport.addEventListener('dragstart', e => e.preventDefault());
       const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       function go(dir) { const from = tween ? tween.to : x; tween = { from: x, to: from + dir * slotW(), start: performance.now(), dur: 550 }; }
       prevBtn.addEventListener('click', () => go(-1));
       nextBtn.addEventListener('click', () => go(1));
       function frame(now) {
         const dt = last === null ? 0 : Math.min(now - last, 100) / 1000; last = now;
-        if (tween) {
+        if (drag) {
+          // held: the strip follows the pointer
+        } else if (tween) {
           const t = Math.min(1, (now - tween.start) / tween.dur);
           x = tween.from + (tween.to - tween.from) * ease(t);
           if (t >= 1) tween = null;
         } else if (!hover && !calm && !document.hidden && !document.getElementById('lightbox').classList.contains('open')) x += SPEED * dt;
+        if (fling && !drag) {
+          x += fling * dt * 1000;
+          fling *= Math.exp(-dt * 1000 / 325);
+          if (Math.abs(fling) < 0.01) fling = 0;
+        }
         const half = slotW() * total * sets, shown = ((x % half) + half) % half;
         track.style.transform = 'translateX(' + (-shown) + 'px)';
         requestAnimationFrame(frame);
@@ -1755,6 +2319,26 @@
       // straight away (in the same slot) while the old tail is still draining.
       let spirals = [], slots = [], firstRun = true;
       const TAIL = 420, REACH = 13, SAMPLES = 90, RAMP_IN = 0.06, RAMP_OUT = 0.25;
+      // Scroll wind: scrolling blows the spirals the opposite way (up when scrolling down, down when
+      // scrolling up). A gust builds quickly, stretches each coil (its far side is pushed harder,
+      // with a slight sideways ripple) and, once the scrolling stops, slowly glides them back.
+      const GUST_GAIN = 70,        // push (px) per px/ms of scroll speed
+            GUST_MAX = 160,        // strongest push (px)
+            GUST_IN = 350,         // ms for a gust to build
+            GUST_OUT = 1000,       // ms for the spirals to glide back once it eases
+            GUST_STRETCH = 0.55,   // how much more the leading side of a coil is pushed
+            GUST_RIPPLE = 0.18;    // sideways ripple, as a share of the push
+      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null;
+      function blow(now) {
+        const dt = windT === null ? 16 : Math.max(1, Math.min(now - windT, 100)); windT = now;   // never 0: two frames can share a timestamp
+        const v = (window.scrollY - windScroll) / dt; windScroll = window.scrollY;
+        windV += (v - windV) * (1 - Math.exp(-dt / 120));
+        const target = Math.max(-GUST_MAX, Math.min(GUST_MAX, -windV * GUST_GAIN));   // against the scroll
+        const building = Math.abs(target) > Math.abs(wind) && target * wind >= 0;
+        wind += (target - wind) * (1 - Math.exp(-dt / (building ? GUST_IN : GUST_OUT)));
+        if (!isFinite(wind) || !isFinite(windV)) wind = windV = 0;
+        if (Math.abs(wind) < 0.05 && !target) wind = 0;
+      }
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
 
       // Glide: a quick sine ramp up (so it gets going right away), a long even cruise, then a
@@ -1785,6 +2369,7 @@
           if (score >= 200) break;
         }
         const sp = { slot, side, rMax, cx, cy, b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
+                     gust: 0.75 + Math.random() * 0.5,   // each spiral catches the wind a little differently
                      len: b * thMax * thMax / 2, start: now, dur: 32000 + Math.random() * 16000, done: false,
                      x0: cx - rMax - REACH, x1: cx + rMax + REACH, y0: cy - rMax - REACH, y1: cy + rMax + REACH,
                      trail: null };
@@ -1812,6 +2397,7 @@
       function frame(now) {
         raf = null;
         if (firstRun && spirals.length >= 3) firstRun = false;
+        if (!calm) blow(now);
         if (!calm) for (let slot = 0; slot < 3; slot++)
           if (now >= slots[slot] && !spirals.some(sp => sp.slot === slot && !sp.done)) { spawn(now, slot); slots[slot] = Infinity; }
 
@@ -1822,15 +2408,25 @@
           if (t >= 1) { sp.done = true; slots[sp.slot] = now; continue; }   // next one in this slot starts right away
           // head runs past the end by one tail length, so the tail drains into the finish
           const head = (sp.len + TAIL) * glide(t);
-          const trail = [];
+          const trail = [], push = wind * sp.gust;
+          let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
           for (let i = 0; i <= SAMPLES; i++) {
             const s = head - TAIL * (i / SAMPLES);
             if (s < 0 || s > sp.len) continue;
             const w = Math.pow(1 - i / SAMPLES, 1.6);       // full at the head, fading down the tail
-            const [px, py] = at(sp, s);
+            let [px, py] = at(sp, s);
+            if (push) {
+              // -1 on the side the wind comes from, +1 on the side it blows toward
+              const rel = (py - sp.cy) / sp.rMax * Math.sign(push);
+              px += push * GUST_RIPPLE * Math.sin(rel * 2.4 + sp.rot);
+              py += push * (1 + GUST_STRETCH * rel);
+            }
             trail.push(px, py, w);
+            if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
           }
           sp.trail = trail;
+          // dots to redraw: around the trail as it's drawn now (dots it left keep shrinking back via hot)
+          sp.x0 = x0 - REACH; sp.x1 = x1 + REACH; sp.y0 = y0 - REACH; sp.y1 = y1 + REACH;
         }
 
         // Only dots inside an active spiral, or still shrinking back, are redrawn: the
@@ -1939,21 +2535,28 @@
       h.setAttribute("aria-label", text);
       // letters of a word stay on one line together (inline-block letters could otherwise wrap
       // mid-word, e.g. "L / EX RUBIN" on phones while the font is still loading)
-      h.innerHTML = text.split(" ").map(function (w) {
-        return '<span style="white-space: nowrap;">' + w.split("").map(function (c) {
-          return '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
-        }).join("") + '</span>';
-      }).join(" ");
+      function letters(s) {
+        return s.trim().split(" ").map(function (w) {
+          return '<span style="white-space: nowrap;">' + w.split("").map(function (c) {
+            return '<span class="hero-name-char" aria-hidden="true">' + c + '</span>';
+          }).join("") + '</span>';
+        }).join(" ");
+      }
+      // keep any wrapper spans around their letters
+      h.innerHTML = Array.prototype.map.call(h.childNodes, function (n) {
+        if (!n.textContent.trim()) return "";
+        return n.nodeType === 1 ? '<span class="' + n.className + '">' + letters(n.textContent) + '</span>' : letters(n.textContent);
+      }).filter(Boolean).join(" ");
       var chars = h.querySelectorAll(".hero-name-char");
       function lock() {
-        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font).
-        // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
-        var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
+        // measure each letter at its resting (heaviest) weight and lock that width (in em, so it scales with the font).
+        // A letter can be mid-pulse when this runs, so measure everything at rest with transitions off, then put it back.
+        var saved = [];
         chars.forEach(function (el) {
           saved.push(el.style.fontWeight);
-          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+          el.style.transition = "none"; el.style.fontWeight = ""; el.style.width = "";
         });
-        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / parseFloat(getComputedStyle(el).fontSize)).toFixed(4) + "em"; });
         chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
         h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
         chars.forEach(function (el) { el.style.transition = ""; });
@@ -2277,17 +2880,20 @@
     // ── NAV: highlight the section you have scrolled to ──
     (function () {
       var links = document.querySelectorAll("#nav-links a");
-      var home = links[0], spot = null, target = null;
-      links.forEach(function (a) { if (a.getAttribute("href").indexOf('#artwork') > -1) spot = a; });
-      target = document.querySelector('#artwork');
-      if (!home || !spot || !target) return;
-      var base = document.querySelector("#nav-links a.active") || home;
+      var home = links[0];
+      // each section's link, in page order; the last one whose top has passed 45% of the screen wins
+      var spots = ["#artwork", "#contact"].map(function (id) {
+        var a = Array.prototype.find.call(links, function (l) { return l.getAttribute("href") === id; });
+        return { a: a, el: document.querySelector(id) };
+      }).filter(function (x) { return x.a && x.el; });
+      if (!home || !spots.length) return;
       function update() {
-        var top = target.getBoundingClientRect().top;
+        var on = home;
         var atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
-        var inSection = top < innerHeight * 0.45 || atBottom;
+        spots.forEach(function (x) { if (x.el.getBoundingClientRect().top < innerHeight * 0.45) on = x.a; });
+        if (atBottom) on = spots[spots.length - 1].a;
         links.forEach(function (a) { a.classList.remove("active"); });
-        (inSection ? spot : base).classList.add("active");
+        on.classList.add("active");
       }
       addEventListener("scroll", update, { passive: true });
       addEventListener("resize", update);
@@ -2302,5 +2908,430 @@
       v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
     });
   </script>
+  <script>
+    // ── CARD DECK: project cards are dealt onto the page as you scroll ──
+    // Coming up from below, a card is tipped back, a touch small and leaning (alternating
+    // sides, like a coin walking over knuckles) and rolls flat as it rises. Heading off the
+    // top, a card lags the scroll, shrinks and dims, so the next one slides over it like the
+    // top card of a shuffle. Everything eases toward its target, so it trails the scroll softly.
+    (function () {
+      var deck = document.getElementById("work");
+      if (!deck || !window.requestAnimationFrame) return;
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // the project cards, then every card-box below them, in page order
+      var cards = Array.prototype.filter.call(deck.children, function (el) {
+        return el.classList.contains("portfolio-item") || el.classList.contains("portfolio-group");
+      }).concat(Array.prototype.slice.call(document.querySelectorAll(
+        "#artwork .artwork-hero, #artwork + .page-wrapper .gallery-section, .testimonials-section, .skill-tickers, #contact")));
+      if (!cards.length) return;
+      cards.forEach(function (el) { el.classList.add("deck-card"); });
+
+      var NAV = 110,            // the sticky header covers this much of the top
+          RISE = 110,           // px a card starts below its spot
+          TIP = 22,             // deg it's tipped back on arrival
+          LEAN = 2,             // deg of alternating lean on arrival
+          SHRINK = 0.08,        // how much smaller it starts
+          ENTER = 0.75,         // share of the screen height a card takes to settle in
+          SHADE = 0.2,          // share of the screen height (from the bottom) a card is shaded for
+          LAG = 0.3,            // share of its height a leaving card falls behind the scroll
+          SINK = 0.07,          // how much a leaving card shrinks
+          DIM = 0.55,           // how much a leaving card fades
+          DIM_FROM = 0.5,       // share of a leaving card that's under the header before it starts to fade
+          EXIT = 1.6,           // card heights of scrolling a leaving card takes to fall back fully
+          TAU = 140;            // ms smoothing: higher = softer trail
+
+      var state = cards.map(function (el, i) {
+        el.style.position = "relative";
+        el.style.zIndex = i + 1;   // later cards land on top
+        return { el: el, top: 0, h: 0, enter: 0, exit: 0, side: i % 2 ? 1 : -1, last: i === cards.length - 1 };
+      });
+
+      // layout positions, ignoring transforms (so the motion never feeds back into itself)
+      function measure() {
+        state.forEach(function (s) {
+          var y = 0, n = s.el;
+          while (n) { y += n.offsetTop; n = n.offsetParent; }
+          s.top = y; s.h = s.el.offsetHeight;
+        });
+      }
+
+      function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+      function targets(s) {
+        var vh = window.innerHeight, top = s.top - window.scrollY;
+        // 0 while the card's top is at the bottom edge, 1 once it has risen ENTER of the screen
+        var p = clamp((vh - top) / (vh * ENTER));
+        var enter = 1 - Math.pow(1 - p, 3);
+        // the last item isn't covered by anything, so it doesn't fall behind
+        var exit = s.last ? 0 : clamp((NAV - top) / (s.h * EXIT));
+        return [enter, exit];
+      }
+
+      function paint(s) {
+        var k = 1 - s.enter, q = s.exit;
+        var y = k * RISE + q * s.h * LAG;
+        var sc = (1 - k * SHRINK) * (1 - q * SINK);
+        s.el.style.transform = "perspective(1400px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+          "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
+        var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
+        s.el.style.opacity = (1 - fade * DIM).toFixed(3);
+        // the shade only covers the first SHADE of the screen a card rises through, so it's at
+        // full brightness from there on, long before it finishes settling
+        s.el.style.setProperty("--far", clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4));
+      }
+
+      var raf = 0, prev = 0;
+      function frame(t) {
+        var dt = prev ? Math.min(t - prev, 64) : 16;
+        prev = t;
+        var a = 1 - Math.exp(-dt / TAU), moving = false;
+        state.forEach(function (s) {
+          var g = targets(s);
+          var de = g[0] - s.enter, dx = g[1] - s.exit;
+          if (Math.abs(de) > 0.0005 || Math.abs(dx) > 0.0005) {
+            s.enter += de * a; s.exit += dx * a; moving = true;
+          } else { s.enter = g[0]; s.exit = g[1]; }
+          paint(s);
+        });
+        raf = moving ? requestAnimationFrame(frame) : 0;
+        if (!raf) prev = 0;
+      }
+      function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+
+      measure();
+      // cards already on screen at load start un-dealt and settle in, alongside their fade
+      state.forEach(paint);
+      kick();
+      addEventListener("scroll", kick, { passive: true });
+      addEventListener("resize", function () { measure(); kick(); });
+      if (window.ResizeObserver) new ResizeObserver(function () { measure(); kick(); }).observe(deck);
+      addEventListener("load", function () { measure(); kick(); });
+    })();
+  </script>
+  <script>
+    // ── WHEEL GLIDE: mouse-wheel notches move a little less far and ease to a stop, so the
+    // card deck gets more frames per notch. Trackpads (which already glide), keys, the
+    // scrollbar and anything that scrolls on its own keep the browser's native scrolling. ──
+    (function () {
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var SPEED = 0.8,   // share of a normal notch's distance
+          TAU = 90;      // ms easing; kept short so it never feels behind the wheel
+      var root = document.documentElement, cur = 0, target = null, raf = 0, prev = 0;
+      function maxY() { return root.scrollHeight - innerHeight; }
+      function scrollsItself(n) {
+        for (; n && n !== document.body && n !== root; n = n.parentElement) {
+          var o = getComputedStyle(n).overflowY;
+          if ((o === "auto" || o === "scroll") && n.scrollHeight > n.clientHeight + 1) return true;
+        }
+        return false;
+      }
+      function stop() {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0; prev = 0; target = null; root.style.scrollBehavior = "";
+      }
+      function step(t) {
+        var dt = prev ? Math.min(t - prev, 64) : 16;
+        prev = t;
+        var dy = target - cur;
+        if (Math.abs(dy) < 0.5) { scrollTo(0, target); stop(); return; }
+        cur += dy * (1 - Math.exp(-dt / TAU));
+        scrollTo(0, cur);
+        raf = requestAnimationFrame(step);
+      }
+      addEventListener("wheel", function (e) {
+        if (e.ctrlKey || e.shiftKey || e.defaultPrevented || !e.deltaY || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        if (document.querySelector(".lightbox.open") || scrollsItself(e.target)) return;
+        var d = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? innerHeight : 1);
+        if (e.deltaMode === 0 && Math.abs(d) < 40) { if (raf) stop(); return; }   // trackpad
+        e.preventDefault();
+        if (target === null) { cur = scrollY; target = scrollY; root.style.scrollBehavior = "auto"; }
+        target = Math.max(0, Math.min(maxY(), target + d * SPEED));
+        if (!raf) raf = requestAnimationFrame(step);
+      }, { passive: false });
+      // keys, scrollbar drags, link jumps and touch take over from a glide in progress
+      ["keydown", "mousedown", "touchstart"].forEach(function (ev) { addEventListener(ev, function () { if (raf) stop(); }, { passive: true }); });
+    })();
+  </script>
+  <script>
+    // ── TESTIMONIALS, SKILL TICKERS + CONTACT (moved here from the About page) ──
+    (function () {
+      // ── CONTACT FORM ──
+      function isValidEmail(val) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+      }
+
+      function attachValidation(id) {
+        const el = document.getElementById(id);
+        function check() {
+          const isEmail = id === 'field-email';
+          const isName  = id === 'field-name';
+          const ok = isEmail ? isValidEmail(el.value) : el.value.trim().length > 0;
+          el.classList.toggle('valid', ok);
+          el.classList.toggle('invalid', !ok && el.value.length > 0 && !isName);
+          if (el.value.length === 0) el.classList.remove('invalid');
+        }
+        el.addEventListener('blur', () => {
+          const isEmail = id === 'field-email';
+          const isName  = id === 'field-name';
+          const ok = isEmail ? isValidEmail(el.value) : el.value.trim().length > 0;
+          el.classList.toggle('valid', ok);
+          el.classList.toggle('invalid', !ok && !(isName && el.value.length === 0));
+        });
+        el.addEventListener('input', check);
+      }
+
+      attachValidation('field-name');
+      attachValidation('field-email');
+      attachValidation('field-message');
+
+      async function submitForm() {
+        const btn    = document.getElementById('submit-btn');
+        const status = document.getElementById('form-status');
+        const email  = document.getElementById('field-email').value.trim();
+        const message = document.getElementById('field-message').value.trim();
+
+        if (!email || !message) {
+          status.style.display = 'block';
+          status.style.color = '#a05050';
+          status.textContent = 'Please fill in your email and message.';
+          return;
+        }
+
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+        status.style.display = 'none';
+
+        try {
+          const res = await fetch('https://formspree.io/f/xjgagypd', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name:    document.getElementById('field-name').value.trim(),
+              email:   email,
+              message: message
+            })
+          });
+
+          if (res.ok) {
+            btn.textContent = 'Sent';
+            document.getElementById('field-name').value = '';
+            document.getElementById('field-email').value = '';
+            document.getElementById('field-message').value = '';
+            status.style.display = 'block';
+            status.style.color = '#7aaa88';
+            status.textContent = "Message sent — I'll be in touch soon!";
+          } else {
+            throw new Error('Failed');
+          }
+        } catch (e) {
+          btn.textContent = 'Submit';
+          btn.disabled = false;
+          status.style.display = 'block';
+          status.style.color = '#a05050';
+          status.textContent = 'Something went wrong. Please try again.';
+        }
+      }
+
+      // ── TESTIMONIALS ──
+      const slides = document.querySelectorAll('.testimonial-slide');
+      const dots   = document.querySelectorAll('.t-dot');
+      let current  = 0;
+
+      function goTo(i) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = (i + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+
+      document.getElementById('t-prev').addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
+      document.getElementById('t-next').addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });
+      dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.i); resetAutoplay(); }));
+
+      const testimonialSection = document.querySelector('.testimonials-section');
+      let autoplayTimer = setInterval(() => goTo(current + 1), 4000);
+
+      function resetAutoplay() {
+        clearInterval(autoplayTimer);
+        autoplayTimer = setInterval(() => goTo(current + 1), 4000);
+      }
+
+      testimonialSection.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
+      testimonialSection.addEventListener('mouseleave', () => resetAutoplay());
+
+      document.getElementById('submit-btn').addEventListener('click', submitForm);
+
+      // custom cursor: text bar over reading text, small dot + ring over controls
+      if (typeof setCursor === 'function' && typeof resetCursor === 'function') {
+        document.querySelectorAll('.testimonials-header, .testimonial-quote, .testimonial-relation, .testimonial-author, .ticker-label, .ticker-item, .contact-form input, .contact-form textarea, .contact-sub').forEach(el => {
+          el.addEventListener('mouseenter', () => setCursor('2px','20px','1px','14px','14px','50%','1px'));
+          el.addEventListener('mouseleave', resetCursor);
+        });
+        document.querySelectorAll('.t-btn').forEach(el => {
+          el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
+          el.addEventListener('mouseleave', resetCursor);
+        });
+        document.querySelectorAll('#submit-btn').forEach(el => {
+          el.addEventListener('mouseenter', () => setCursor('6px','6px','50%','48px','48px','50%','1px'));
+          el.addEventListener('mouseleave', resetCursor);
+        });
+      }
+    })();
+  </script>
+  <script>
+    // ── "LET'S WORK TOGETHER!": same per-letter weight changes + hover spin ──
+    (function () {
+      var h = document.querySelector("#contact .contact-heading");
+      if (!h) return;
+      h.setAttribute("aria-label", h.textContent.trim());
+      // wrap only the text (the smiley icon stays), keeping each word unbreakable
+      var walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT), nodes = [], n;
+      while ((n = walker.nextNode())) if (!n.parentNode.closest("svg")) nodes.push(n);
+      nodes.forEach(function (node) {
+        var frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          var word = document.createElement("span");
+          word.className = "word"; word.setAttribute("aria-hidden", "true");
+          part.split("").forEach(function (c) {
+            var ch = document.createElement("span"); ch.className = "hero-name-char"; ch.textContent = c; word.appendChild(ch);
+          });
+          frag.appendChild(word);
+        });
+        node.parentNode.replaceChild(frag, node);
+      });
+      var chars = h.querySelectorAll(".hero-name-char");
+      function lock() {
+        // measure each letter at its heavy weight and lock that width (in em, so it scales with the font).
+        // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
+        var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
+        chars.forEach(function (el) {
+          saved.push(el.style.fontWeight);
+          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+        });
+        chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
+        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
+        chars.forEach(function (el) { el.style.transition = ""; });
+      }
+      // wait for Archivo itself: fonts.ready alone can resolve before the heading's font has even been
+      // requested, which locked the widths to the fallback font's letters
+      (document.fonts && document.fonts.load
+        ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
+        : Promise.resolve()).then(lock);
+      // the smiley joins in: it spins like a letter, and its line thins and thickens the way the
+      // letters' weight does (it keeps its own size, so it isn't width-locked)
+      var icon = h.querySelector(".contact-heading-icon");
+      if (icon) icon.classList.add("hero-name-char");
+      var pool = Array.prototype.slice.call(chars).concat(icon ? [icon] : []);
+      function setWeight(el, w) {
+        if (el === icon) el.style.strokeWidth = w ? (0.75 + 1.5 * (w - 100) / 800).toFixed(2) : "";   // 900 -> 2.25, its resting stroke
+        else el.style.fontWeight = w || "";
+      }
+      var WEIGHTS = [100, 200, 300, 400, 500, 600];
+      function pick(el) {
+        var w, prev = el.dataset.w;
+        do { w = WEIGHTS[Math.floor(Math.random() * WEIGHTS.length)]; } while (String(w) === prev);
+        el.dataset.w = w;
+        return w;
+      }
+
+      // Hover spin ("dreidel"), ported from CrosswordLeague's achievement icons:
+      // sideways cursor movement over a letter spins it in 3D in that direction, a fast
+      // swipe off it throws a decelerating two-turn spin-down, otherwise it eases back.
+      // Transforms don't affect layout, so nothing around the letter moves.
+      (function () {
+        var PX_TO_DEG = 1.4, PERSPECTIVE_PX = 400, HOVER_SCALE = 1.06, RETURN_MS = 400,
+            SPIN_MS = 1400, SPIN_TURNS = 2, FLICK_PX_PER_MS = 2.0, VEL_TAU_MS = 30, IDLE_MS = 120;
+        var angle = new WeakMap(), spin = new WeakMap();
+        var hoverEl = null, lastX = 0, velX = 0, prevX = 0, prevT = 0;
+        function paint(el, a, sc) { el.style.transform = "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + a + "deg) scale(" + sc + ")"; }
+        function shortest(raw) { return ((raw % 360) + 540) % 360 - 180; }
+        function returnToRest(el) {
+          var norm = shortest(angle.get(el) || 0);
+          el.style.transition = "none";
+          paint(el, norm, HOVER_SCALE);
+          requestAnimationFrame(function () { requestAnimationFrame(function () {
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            paint(el, 0, 1);
+          }); });
+          angle.set(el, 0);
+          setTimeout(function () { el.style.transition = ""; el.style.willChange = ""; }, RETURN_MS + 50);
+        }
+        function spinOut(el, dir) {
+          if (!el.animate) { returnToRest(el); return; }
+          var norm = shortest(angle.get(el) || 0);
+          angle.set(el, 0);
+          el.style.transition = "";
+          el.style.transform = "";
+          var anim = el.animate([
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + norm + "deg) scale(" + HOVER_SCALE + ")" },
+            { transform: "perspective(" + PERSPECTIVE_PX + "px) rotateY(" + (dir * 360 * SPIN_TURNS) + "deg) scale(1)" }
+          ], { duration: SPIN_MS, easing: "cubic-bezier(0.05, 0.95, 0.1, 1)" });
+          spin.set(el, anim);
+          anim.addEventListener("finish", function () {
+            if (spin.get(el) !== anim) return;
+            spin.delete(el);
+            el.style.willChange = "";
+          });
+        }
+        document.addEventListener("mousemove", function (e) {
+          var t = e.timeStamp || performance.now();
+          var gap = t - prevT, dt = Math.min(Math.max(gap, 0.5), VEL_TAU_MS), gdx = e.clientX - prevX;
+          prevX = e.clientX; prevT = t;
+          if (gap > IDLE_MS) velX = 0;
+          else velX += (gdx / dt - velX) * (1 - Math.exp(-dt / VEL_TAU_MS));
+          var el = e.target.closest ? e.target.closest(".hero-name-char") : null;
+          if (el && !h.contains(el)) el = null;   // only this heading's letters
+          if (el !== hoverEl) {
+            if (hoverEl) {
+              if (Math.abs(velX) >= FLICK_PX_PER_MS) spinOut(hoverEl, Math.sign(velX));
+              else returnToRest(hoverEl);
+            }
+            hoverEl = el;
+            if (el) {
+              var running = spin.get(el); if (running) running.cancel(); spin.delete(el);
+              el.style.transition = ""; el.style.willChange = "transform"; lastX = e.clientX;
+            }
+          }
+          if (!el) return;
+          var dx = e.clientX - lastX;
+          lastX = e.clientX;
+          var next = (angle.get(el) || 0) + dx * PX_TO_DEG;
+          angle.set(el, next);
+          paint(el, next, HOVER_SCALE);
+        }, { passive: true });
+      })();
+
+      // Automatic pulse: a random free letter eases thin, holds, then eases back
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var visible = true;
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(h);
+      }
+      function pulse() {
+        if (visible && !document.hidden) {
+          var free = pool.filter(function (el) { return !el._busy; });
+          if (free.length) {
+            var el = free[Math.floor(Math.random() * free.length)];
+            el._busy = true;
+            el.classList.add("is-auto");
+            setWeight(el, pick(el));
+            el._autoTimer = setTimeout(function () {
+              setWeight(el, 0);
+              el._autoTimer = setTimeout(function () {
+                el._busy = false;
+                el.classList.remove("is-auto"); delete el.dataset.w;
+              }, 1100);
+            }, 1100 + Math.random() * 900);
+          }
+        }
+        setTimeout(pulse, 450 + Math.random() * 750);
+      }
+      setTimeout(pulse, 900);
+    })();
+  </script>
+  <script src="/click-fx.js" defer></script>
 </body>
 </html>

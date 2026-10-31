@@ -1185,6 +1185,9 @@
     .artworks-grid.marquee { display: block; overflow: hidden; }
     .marquee-track { display: flex; width: max-content; animation: gallery-marquee var(--marquee-dur, 60s) linear infinite; }
     .artworks-grid.marquee:hover .marquee-track { animation-play-state: paused; }
+    /* the gallery can be dragged: open hand over it, closed while dragging */
+    .artworks-grid.marquee { touch-action: pan-y; cursor: grab; }
+    .artworks-grid.marquee.dragging, .artworks-grid.marquee.dragging * { cursor: grabbing !important; user-select: none; }
     /* arrows over the ends of the gallery row, same look as the home Artwork arrows */
     .artworks-grid.marquee { position: relative; }
     .marquee-btn {
@@ -1279,8 +1282,7 @@
   <div class="nav-links" id="nav-links">
       <a href="/" class="active">Portfolio</a>
       <a href="/#artwork">Artwork</a>
-      <a href="/about/">About</a>
-      <a href="/about/#contact">Contact</a>
+      <a href="/#contact">Contact</a>
       <a href="/Resume.pdf?v=2026-10" target="_blank">Resume<span class="nav-link-icon" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -1935,6 +1937,39 @@
       grid.appendChild(prev); grid.appendChild(next);
       grid.addEventListener("mouseenter", function () { hover = true; });
       grid.addEventListener("mouseleave", function () { hover = false; });
+
+      // Click and hold to drag the gallery; let go and it flings on, slowing to a stop. A drag
+      // isn't a click, so the click that follows it is swallowed (nothing opens).
+      var drag = null, dragged = false, fling = 0;
+      grid.addEventListener("pointerdown", function (e) {
+        if (e.button !== 0 || e.target.closest(".marquee-btn")) return;
+        drag = { id: e.pointerId, sx: e.clientX, x0: x, lx: e.clientX, lt: e.timeStamp, v: 0 };
+        dragged = false;
+      });
+      addEventListener("pointermove", function (e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.sx;
+        if (!dragged && Math.abs(dx) > 6) {
+          dragged = true; tween = null; fling = 0;
+          grid.classList.add("dragging");
+          try { grid.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        if (!dragged) return;
+        x = drag.x0 - dx;
+        var dt = Math.max(1, e.timeStamp - drag.lt);
+        drag.v = 0.8 * ((drag.lx - e.clientX) / dt) + 0.2 * drag.v;   // px/ms, lightly smoothed
+        drag.lx = e.clientX; drag.lt = e.timeStamp;
+      });
+      function endDrag() {
+        if (!drag) return;
+        if (dragged) fling = Math.max(-4, Math.min(4, drag.v));
+        drag = null;
+        grid.classList.remove("dragging");
+      }
+      addEventListener("pointerup", endDrag);
+      addEventListener("pointercancel", endDrag);
+      grid.addEventListener("click", function (e) { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
+      grid.addEventListener("dragstart", function (e) { e.preventDefault(); });
       function half() { return track.scrollWidth / 2 || 1; }
       function step() { return cards[0].getBoundingClientRect().width || 300; }
       function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
@@ -1943,11 +1978,18 @@
       next.addEventListener("click", function (e) { e.stopPropagation(); go(1); });
       function frame(now) {
         var dt = last === null ? 0 : Math.min(now - last, 100) / 1000; last = now;
-        if (tween) {
+        if (drag) {
+          // held: the gallery follows the pointer
+        } else if (tween) {
           var t = Math.min(1, (now - tween.start) / tween.dur);
           x = tween.from + (tween.to - tween.from) * ease(t);
           if (t >= 1) tween = null;
         } else if (!hover && !calm && !document.hidden) x += SPEED * dt;
+        if (fling && !drag) {
+          x += fling * dt * 1000;
+          fling *= Math.exp(-dt * 1000 / 325);
+          if (Math.abs(fling) < 0.01) fling = 0;
+        }
         var h = half(), shown = ((x % h) + h) % h;
         track.style.transform = "translateX(" + (-shown) + "px)";
         requestAnimationFrame(frame);
@@ -2010,5 +2052,6 @@
       v.style.background = "url(\"" + src + "\") " + getComputedStyle(v).objectPosition + " / cover no-repeat";
     });
   </script>
+  <script src="/click-fx.js" defer></script>
 </body>
 </html>
