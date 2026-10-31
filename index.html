@@ -140,12 +140,12 @@
       color: #666;
     }
     .hero-lead-more { margin-top: 0.9rem; }
-    /* name + intro: one left-aligned block, exactly as wide as the
+    /* name + intro: one centred block, exactly as wide as the
        name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
        so they wrap to the name's width; text-wrap: balance keeps their lines even, with no orphans */
-    .hero-copy { width: fit-content; margin: 0; text-align: left; }
+    .hero-copy { width: fit-content; margin: 0; text-align: center; }
     .hero-copy .hero-lead { margin-left: 0; max-width: none; width: 0; min-width: 100%; }
-    /* portrait (links to LinkedIn) on the left, name + intro on the right; the pair sits in the middle */
+    /* name + intro on the left, portrait (links to LinkedIn) on the right; the pair sits in the middle */
     .hero-top { display: flex; align-items: center; justify-content: center; gap: 3.5rem; }
     .about-photo-link {
       display: block;
@@ -153,12 +153,12 @@
       flex: 0 0 158px;
       text-decoration: none;
     }
-    .about-photo-wrap { width: 100%; aspect-ratio: 3 / 4; overflow: hidden; position: relative; }
+    .about-photo-wrap { width: 100%; aspect-ratio: 480 / 642; position: relative; }   /* cut-out PNG: no frame, nothing cropped */
     .about-photo-wrap img {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center top;
+      object-fit: contain;
+      object-position: center bottom;
       filter: brightness(0.6);
       transition: transform 0.6s ease, filter 0.5s ease;
     }
@@ -1622,15 +1622,15 @@
   <div class="grid-wrapper">
   <section class="hero" aria-labelledby="hero-name">
     <div class="hero-top">
-    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
-      <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.jpg" alt="Lex Rubin" /></div>
-    </a>
     <div class="hero-copy">
       <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
       <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
       <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the <a href="#artwork"><strong>artwork section</strong></a> below!</p>
     </div>
+    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
+      <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" /></div>
+    </a>
     </div>
     <div class="hero-ctas">
       <a href="#work" class="hero-btn hero-btn-primary">View Work<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></a>
