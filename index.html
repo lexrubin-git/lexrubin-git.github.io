@@ -102,7 +102,7 @@
     .hero {
       max-width: 900px;
       margin: 0 auto;
-      padding: 5.5rem 2rem 4.5rem;
+      padding: 2.75rem 2rem 2.5rem;   /* tighter than before the portrait, so the card keeps its old height */
       text-align: center;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
@@ -137,22 +137,20 @@
       font-size: clamp(0.84rem, 1.5vw, 0.95rem);
       font-weight: 400;
       line-height: 1.5;
-      color: #888;
+      color: #666;
     }
     .hero-lead-more { margin-top: 0.9rem; }
-    /* name + intro: one left-aligned block near the card's left edge, exactly as wide as the
+    /* name + intro: one left-aligned block, exactly as wide as the
        name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
        so they wrap to the name's width; text-wrap: balance keeps their lines even, with no orphans */
-    .hero-copy { width: fit-content; margin: 0 0 0 2.5rem; text-align: left; }
+    .hero-copy { width: fit-content; margin: 0; text-align: left; }
     .hero-copy .hero-lead { margin-left: 0; max-width: none; width: 0; min-width: 100%; }
-    @media (max-width: 768px) { .hero-copy { margin: 0; } }
-    /* name + intro on the left, portrait (links to LinkedIn) in the space on the right */
-    .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    /* portrait (links to LinkedIn) on the left, name + intro on the right; the pair sits in the middle */
+    .hero-top { display: flex; align-items: center; justify-content: center; gap: 3.5rem; }
     .about-photo-link {
       display: block;
       position: relative;
-      flex: 0 0 200px;
-      margin-right: 2.5rem;   /* mirrors the text's inset from the left edge */
+      flex: 0 0 158px;
       text-decoration: none;
     }
     .about-photo-wrap { width: 100%; aspect-ratio: 3 / 4; overflow: hidden; position: relative; }
@@ -200,10 +198,10 @@
       .about-photo-linkedin-label { opacity: 1; transform: translateX(-50%); }
       .about-li-arrow { max-width: 1em; opacity: 1; margin-left: 0.35em; }
     }
-    /* phones: portrait sits above the name, smaller */
+    /* phones: same side-by-side layout, with a smaller portrait */
     @media (max-width: 768px) {
-      .hero-top { flex-direction: column-reverse; align-items: flex-start; gap: 1.5rem; }
-      .about-photo-link { flex: none; width: 140px; margin: 0; }
+      .hero-top { gap: 1.25rem; }
+      .about-photo-link { flex: 0 0 96px; }
     }
     /* "artwork section": a quiet link, a faint underline that brightens on hover */
     .hero-lead a {
@@ -216,22 +214,22 @@
     .hero-lead a:hover, .hero-lead a:focus-visible { color: #ccc; background-image: linear-gradient(#ccc, #ccc); }
     .hero-lead a:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
     .hero-lead a:hover strong, .hero-lead a:focus-visible strong { animation: none; -webkit-text-fill-color: currentColor; }
-    /* same idle light sweep as "Need a personal site?" (cs-shine) */
-    .hero-lead strong {
-      font-weight: 600;
-      background: linear-gradient(100deg, #888 42%, #fff 50%, #888 58%) 100% 0 / 250% 100% no-repeat;
+    .hero-lead strong { font-weight: 600; color: #8a8a8a; }
+    /* "artwork section" keeps the idle light sweep of "Need a personal site?" (cs-shine) */
+    .hero-lead a strong {
+      background: linear-gradient(100deg, #8a8a8a 42%, #fff 50%, #8a8a8a 58%) 100% 0 / 250% 100% no-repeat;
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: cs-shine 4s ease-in-out infinite;
     }
     @media (prefers-reduced-motion: reduce) {
-      .hero-lead strong { animation: none; background: none; -webkit-text-fill-color: currentColor; }
+      .hero-lead a strong { animation: none; background: none; -webkit-text-fill-color: currentColor; }
     }
     .hero-ctas {
       display: flex;
       justify-content: center;
       gap: 1rem;
-      margin-top: 2.4rem;
+      margin-top: 1.9rem;
     }
     .hero-btn {
       display: inline-flex;
@@ -776,7 +774,7 @@
 
       .grid-wrapper { padding: 0 0.75rem; }
 
-      .hero { padding: 3.25rem 1.25rem 2.75rem; }
+      .hero { padding: 2rem 1.25rem 1.75rem; }
       .hero-ctas { flex-direction: column; align-items: stretch; gap: 0.75rem; max-width: 320px; margin-left: auto; margin-right: auto; }
       #work, #artwork { scroll-margin-top: 70px; }
 
@@ -1624,15 +1622,15 @@
   <div class="grid-wrapper">
   <section class="hero" aria-labelledby="hero-name">
     <div class="hero-top">
+    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
+      <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.jpg" alt="Lex Rubin" /></div>
+    </a>
     <div class="hero-copy">
       <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
       <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
       <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the <a href="#artwork"><strong>artwork section</strong></a> below!</p>
     </div>
-    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
-      <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.jpg" alt="Lex Rubin" /></div>
-    </a>
     </div>
     <div class="hero-ctas">
       <a href="#work" class="hero-btn hero-btn-primary">View Work<svg class="hero-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></a>
@@ -1966,7 +1964,7 @@
       <div class="footer-links">
         <span>© 2026 Lex Rubin</span>
         <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn<span class="footer-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
-        <a href="/">Home Page</a>
+        <a href="/Resume.pdf?v=2026-10" target="_blank">Resume<span class="footer-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
         <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
       </div>
       <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
