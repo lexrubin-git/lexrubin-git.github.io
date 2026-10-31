@@ -1253,23 +1253,26 @@
     .lightbox:not(.open), .lightbox:not(.open) * { pointer-events: none !important; }
       /* ── HERO LAYOUT: title + description side by side (the description is sized to match the
        title's height, see HERO DESCRIPTION FIT), then tags, tools and project type in one centred row ── */
-    .artwork-title-row { align-items: flex-start; padding-bottom: 1.75rem; gap: 2.5rem; }
+    .artwork-title-row { align-items: flex-start; padding-bottom: 1.1rem; gap: 2.5rem; }
     .artwork-title-row .hero-title-col { flex: 1 1 auto; }
     .artwork-title-row .hero-desc { flex: 0 0 min(25rem, 44%); margin: 0; max-width: none; line-height: 1.45; text-align: right; }
-    .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.9rem 1.75rem; padding: 0 2.5rem 2.5rem; }
-    .hero-meta-row .hero-tags { justify-content: center; }
+    /* tags flush left under the title, tools centred, project type flush right under the description */
+    .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.9rem 1.75rem; padding: 0 2.5rem 2.5rem; }
+    .hero-meta-row .hero-tags { justify-content: flex-start; flex-wrap: nowrap; }
     .hero-meta-row .hero-tools, .hero-meta-row .hero-type { margin: 0; }
     @media (max-width: 768px) {
       .artwork-title-row { padding-bottom: 1.25rem; gap: 1rem; }
       .artwork-title-row .hero-desc { flex: none; font-size: 1rem; text-align: left; }
-      .hero-meta-row { padding: 0 1.5rem 2rem; }
+      .hero-meta-row { padding: 0 1.5rem 2rem; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      .hero-meta-row .hero-tags { flex-wrap: wrap; }
     }
     /* "Don't feel like reading…": a quiet italic line under the tags row that opens the gallery */
-    .hero-meta-row { padding-bottom: 1.25rem; }
-    .hero-skip { padding: 0 2.5rem 2.5rem; text-align: center; color: #6f6f6f; font-size: 0.85rem; line-height: 1.5; }
+    /* below the tags row, a dotted rule across the card; the line sits centred in the strip under it */
+    .hero-meta-row { padding-bottom: 1.6rem; }
+    .hero-skip { padding: 1.3rem 2.5rem; border-top: 1px dotted rgba(255,255,255,0.18); text-align: center; color: #6f6f6f; font-size: 0.85rem; line-height: 1.5; }
     .hero-skip a { color: #9a9a9a; text-decoration: none; background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat; padding-bottom: 1px; transition: color 0.25s; }
     .hero-skip a:hover, .hero-skip a:focus-visible { color: var(--white); }
-    @media (max-width: 768px) { .hero-meta-row { padding-bottom: 1rem; } .hero-skip { padding: 0 1.5rem 2rem; } }
+    @media (max-width: 768px) { .hero-meta-row { padding-bottom: 1.25rem; } .hero-skip { padding: 1.1rem 1.5rem; } }
 </style>
 </head>
 <body>
