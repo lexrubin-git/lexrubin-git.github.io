@@ -153,7 +153,7 @@
       flex: 0 0 158px;
       text-decoration: none;
     }
-    /* cut-out PNG: no frame, nothing cropped. The dim and hover zoom are on the wrap, so the eyes go with the face */
+    /* cut-out PNG: no frame, nothing cropped. The dim and hover zoom are on the wrap, so the stretch canvas goes with the photo */
     .about-photo-wrap {
       width: 100%; aspect-ratio: 428 / 595; position: relative;
       filter: brightness(0.82);
@@ -166,33 +166,8 @@
     .about-photo-link { touch-action: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
     .about-photo-stretch { position: absolute; left: -15%; top: -15%; width: 130%; height: 130%; pointer-events: none; visibility: hidden; }
     .about-photo-wrap.pressed .about-photo-stretch { visibility: visible; }
-    .about-photo-wrap.pressed > img, .about-photo-wrap.pressed .eye { visibility: hidden; }
+    .about-photo-wrap.pressed > img { visibility: hidden; }
     .about-photo-wrap.pressed { filter: brightness(1); }
-    /* Eyes: each white is laid over the photo's own eye (positions in % of the 428x595 photo) and
-       masks its iris, so the iris can roll under the lids. The iris is trimmed to a circle around
-       its pupil, enlarged a little, and slowly turns toward the cursor (script: PORTRAIT EYES).
-       The left white is drawn a little wider than its file so it fills that eye's wider opening. */
-    .eye {
-      position: absolute; pointer-events: none;
-      background: var(--eye) 0 0 / 100% 100% no-repeat;
-      /* the mask is the white grown ~2px out to the lids (its file has 3px padding all round), so the
-         iris shows right up to the lid line; under it the photo's own iris is painted out */
-      -webkit-mask: var(--eye-mask) center / 110.345% 128.571% no-repeat; mask: var(--eye-mask) center / 110.345% 128.571% no-repeat;
-    }
-    .eye-l { --eye: url(/about/eye-left.png);  --eye-mask: url(/about/eye-left-mask.png);  left: 23.314%; top: 44.834%; width: 14.744%; height: 3.275%; }   /* 63.1x19.5 at (99.8, 266.8) */
-    .eye-r { --eye: url(/about/eye-right.png); --eye-mask: url(/about/eye-right-mask.png); left: 57.138%; top: 45.458%; width: 12.576%; height: 3.275%; }   /* 53.8x19.5 at (244.6, 270.5) */
-    .iris {
-      position: absolute;   /* 25.1x25.1 photo px (27x27 file) */
-      background: var(--iris) 0 0 / 100% 100% no-repeat;
-      /* the iris circle, centred on the pupil (the file's top rows are the iris mirrored, so the
-         circle stays whole wherever the lid line falls) */
-      -webkit-mask: radial-gradient(circle closest-side at 50% 50%, #000 90%, transparent 100%);
-      mask: radial-gradient(circle closest-side at 50% 50%, #000 90%, transparent 100%);
-      transform-origin: 50% 50%;
-      transform: translate(var(--ix, 0px), var(--iy, 0px)) scale(1.15);
-    }
-    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 35.294%; top: -19.048%; width: 39.706%; height: 128.571%; }   /* at (122.1, 263.1) */
-    .eye-r .iris { --iris: url(/about/iris-right.png); left: 20.690%; top: -23.810%; width: 46.552%; height: 128.571%; }   /* at (255.7, 265.8) */
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
       position: absolute;
@@ -301,12 +276,16 @@
     /* same gap above the Artwork card (which now has its own top border) */
     #artwork { margin-top: 1.75rem; }
     #artwork .artwork-hero, #sites .artwork-hero { border-top: 1px solid var(--border); }
-    /* and the same gap between the artwork gallery and the footer */
-    #artwork + .page-wrapper { margin-bottom: 1.75rem; }
+    /* and the same gap below the artwork card */
+    #artwork { margin-bottom: 1.75rem; }
+    /* the Artwork header and its gallery are dealt in as one card: the wrapper takes the deck motion,
+       so the two keep their own look but drop their separate entrance animations */
+    .artwork-card { max-width: 900px; margin: 0 auto; }
+    .artwork-card > .artwork-hero, .artwork-card > .gallery-section { opacity: 1; animation: none; }
     @media (max-width: 768px) {
       .portfolio-grid { row-gap: 1.25rem; margin-top: 1.25rem; }
       #artwork { margin-top: 1.25rem; }
-      #artwork + .page-wrapper { margin-bottom: 1.25rem; }
+      #artwork { margin-bottom: 1.25rem; }
     }
 
     .item-header, .item-image, .img-placeholder, .overlay, .overlay-text, .item-title, .item-tags, .item-subtitle, .item-chips, .item-chip {
@@ -1638,7 +1617,7 @@
     </div>
     <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link" draggable="false">
       <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" draggable="false" /><canvas class="about-photo-stretch" aria-hidden="true"></canvas><div class="eye eye-l" aria-hidden="true"><div class="iris"></div></div><div class="eye eye-r" aria-hidden="true"><div class="iris"></div></div></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" draggable="false" /><canvas class="about-photo-stretch" aria-hidden="true"></canvas></div>
     </a>
     </div>
     <div class="hero-ctas">
@@ -1763,14 +1742,12 @@
 
   <!-- ── ARTWORK ── -->
   <div class="page-wrapper" id="artwork">
+   <div class="artwork-card">
     <div class="artwork-hero">
       <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
         <h1 class="artwork-main-title">Artwork</h1>
       </div>
     </div>
-  </div>
-
-  <div class="page-wrapper">
     <div class="gallery-section">
 
       <!-- DESIGNS row -->
@@ -1853,6 +1830,7 @@
       </div>
 
     </div>
+   </div>
   </div>
 
   <!-- TESTIMONIALS -->
@@ -2283,45 +2261,8 @@
       el.addEventListener('mouseleave', resetCursor);
     });
 
-    // ── PORTRAIT EYES: the irises slowly turn toward the cursor, staying inside each eye ──
-    (function () {
-      const eyes = Array.from(document.querySelectorAll('.about-photo-wrap .eye'));
-      if (!eyes.length || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-      const MAX_X = 8, MAX_Y = 2,   // furthest an iris travels from rest, in photo px (an eye is ~58x21)
-            REACH = 260,            // cursor distance (screen px) at which the iris is fully turned
-            TAU = 320;              // ms smoothing: higher = slower to follow
-      const st = eyes.map(el => ({ el, iris: el.firstElementChild, x: 0, y: 0, tx: 0, ty: 0 }));
-      let raf = null, last = 0;
-      function aim(mx, my) {
-        for (const e of st) {
-          const r = e.el.getBoundingClientRect();
-          const dx = mx - (r.left + r.width / 2), dy = my - (r.top + r.height / 2), d = Math.hypot(dx, dy);
-          const k = d ? Math.min(1, d / REACH) / d : 0;
-          e.tx = dx * k * MAX_X; e.ty = dy * k * MAX_Y;
-        }
-        if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); }
-      }
-      function step(now) {
-        raf = null;
-        const a = 1 - Math.exp(-Math.min(now - last, 64) / TAU); last = now;
-        let moving = false;
-        for (const e of st) {
-          e.x += (e.tx - e.x) * a; e.y += (e.ty - e.y) * a;
-          if (Math.abs(e.tx - e.x) > 0.01 || Math.abs(e.ty - e.y) > 0.01) moving = true;
-          const px = e.el.parentNode.offsetWidth / 428;   // photo px -> CSS px at the current portrait size
-          e.iris.style.setProperty('--ix', (e.x * px).toFixed(2) + 'px');
-          e.iris.style.setProperty('--iy', (e.y * px).toFixed(2) + 'px');
-        }
-        if (moving) raf = requestAnimationFrame(step);
-      }
-      document.addEventListener('mousemove', ev => aim(ev.clientX, ev.clientY), { passive: true });
-      // the irises keep tracking the cursor's last spot as the page scrolls under it
-      let mx = null, my = null;
-      document.addEventListener('mousemove', ev => { mx = ev.clientX; my = ev.clientY; }, { passive: true });
-      addEventListener('scroll', () => { if (mx !== null) aim(mx, my); }, { passive: true });
-    })();
-
-    // ── PORTRAIT STRETCH: press and hold the portrait to swap in the wink photo; drag to stretch the
+    // ── PORTRAIT STRETCH: press and hold the portrait to swap in a wink photo (the left eye winks if you
+    // hold the left half, the right eye if you hold the right half); drag to stretch the
     // spot you're holding. It gives most right under the cursor and less and less out to the edge of
     // the affected area, with heavy resistance, then springs back on release. Only a plain click
     // (short, no drag) opens LinkedIn. ──
@@ -2332,10 +2273,13 @@
       const PAD = 0.15,          // canvas overhang on each side, as a share of the photo (matches the CSS)
             GIVE = 0.10,         // most the held spot can move, as a share of the photo width
             RESIST = 0.55,       // drag distance (photo widths) for ~76% of that give: higher = stiffer
-            RADIUS = 0.62,       // reach of the stretch around the held spot, in photo widths
+            RADIUS = 0.95,       // reach of the stretch around the held spot, in photo widths
             CLICK_MS = 300, CLICK_PX = 5;   // a press longer or further than this isn't a click
-      // where the wink photo sits in the 428x595 portrait box (as shares of it), lined up face to face
-      const WINK_X = -0.02048, WINK_Y = -0.00084, WINK_W = 0.99292, WINK_H = 1.00130;
+      // each wink photo and where it sits in the 428x595 portrait box (as shares of it), lined up on the open eye and nose
+      const WINKS = [
+        { src: '/about/lex-wink-left.webp',  x: -0.08178, y: -0.02185, w: 1.09617, h: 1.05546 },   // left half held
+        { src: '/about/lex-wink-right.webp', x: -0.04439, y: -0.02353, w: 1.04662, h: 1.05546 }    // right half held
+      ];
 
       const gl = cv.getContext('webgl', { premultipliedAlpha: true, alpha: true });
       if (!gl) return;
@@ -2348,6 +2292,7 @@
         float w(vec2 q){ float f = clamp(1.0 - length(q - a) / rad, 0.0, 1.0); return f * f * (3.0 - 2.0 * f); }
         void main(){
           vec2 p = vec2(v.x, 1.0 - v.y) * (box * (1.0 + 2.0 * pad)) - box * pad;   // photo-box px
+          if (p.y > box.y) { gl_FragColor = vec4(0.0); return; }   // cut at the bottom edge, like the portrait
           vec2 q = p;
           for (int i = 0; i < 4; i++) q = p - d * w(q);
           vec2 uv = (q - img0) / (img1 - img0);
@@ -2365,19 +2310,21 @@
       const loc = n => gl.getUniformLocation(prog, n), ap = gl.getAttribLocation(prog, 'p');
       gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
       const U = { box: loc('box'), a: loc('a'), d: loc('d'), img0: loc('img0'), img1: loc('img1'), pad: loc('pad'), rad: loc('rad') };
-      let ready = false;
-      const img = new Image();
-      img.onload = () => {
-        gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        ready = true;
-      };
-      img.src = '/about/lex-wink.webp';
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      WINKS.forEach(wk => {
+        const img = new Image();
+        img.onload = () => {
+          wk.tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, wk.tex);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        };
+        img.src = wk.src;
+      });
+      let wink = WINKS[0];
 
       let W = 0, H = 0;   // photo box size, CSS px (unscaled by the hover zoom)
       let held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
@@ -2392,7 +2339,8 @@
 
         gl.uniform2f(U.box, W, H); gl.uniform1f(U.pad, PAD); gl.uniform1f(U.rad, RADIUS * W);
         gl.uniform2f(U.a, ax, ay); gl.uniform2f(U.d, dx, dy);
-        gl.uniform2f(U.img0, WINK_X * W, WINK_Y * H); gl.uniform2f(U.img1, (WINK_X + WINK_W) * W, (WINK_Y + WINK_H) * H);
+        gl.bindTexture(gl.TEXTURE_2D, wink.tex);
+        gl.uniform2f(U.img0, wink.x * W, wink.y * H); gl.uniform2f(U.img1, (wink.x + wink.w) * W, (wink.y + wink.h) * H);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       // client px -> photo-box px (undoing the hover zoom)
@@ -2405,9 +2353,9 @@
         raf = null;
         const dt = Math.min(now - last, 48) / 16.67; last = now;
         const gx = held ? tx : 0, gy = held ? ty : 0;
-        vx = (vx + (gx - dx) * 0.22 * dt) * Math.pow(0.68, dt); vy = (vy + (gy - dy) * 0.22 * dt) * Math.pow(0.68, dt);
+        vx = (vx + (gx - dx) * 0.35 * dt) * Math.pow(0.55, dt); vy = (vy + (gy - dy) * 0.35 * dt) * Math.pow(0.55, dt);
         dx += vx * dt; dy += vy * dt;
-        if (!held && Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05 && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+        if (!held && Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3 && Math.abs(vx) < 0.3 && Math.abs(vy) < 0.3) {
           dx = dy = vx = vy = 0; wrap.classList.remove('pressed'); return;
         }
         draw();
@@ -2416,10 +2364,12 @@
       function kick() { if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); } }
 
       link.addEventListener('pointerdown', e => {
-        if (e.button !== 0 || !ready) return;
+        if (e.button !== 0) return;
+        const [x, y] = local(e);
+        wink = WINKS[x < wrap.offsetWidth / 2 ? 0 : 1];
+        if (!wink.tex) return;   // not loaded yet
         // (no preventDefault here: it would stop the mouse events the custom cursor follows; native
         // drag and text selection are already off via draggable="false", dragstart and user-select)
-        const [x, y] = local(e);
         held = true; moved = false; t0 = performance.now(); pid = e.pointerId;
         ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0;
         dx = dy = vx = vy = 0;
@@ -3060,7 +3010,7 @@
       var cards = Array.prototype.filter.call(deck.children, function (el) {
         return el.classList.contains("portfolio-item") || el.classList.contains("portfolio-group");
       }).concat(Array.prototype.slice.call(document.querySelectorAll(
-        "#artwork .artwork-hero, #artwork + .page-wrapper .gallery-section, .testimonials-section, .skill-tickers, #contact")));
+        "#artwork .artwork-card, .testimonials-section, .skill-tickers, #contact")));
       if (!cards.length) return;
       cards.forEach(function (el) { el.classList.add("deck-card"); });
 
