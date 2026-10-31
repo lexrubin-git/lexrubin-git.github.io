@@ -156,11 +156,18 @@
     /* cut-out PNG: no frame, nothing cropped. The dim and hover zoom are on the wrap, so the eyes go with the face */
     .about-photo-wrap {
       width: 100%; aspect-ratio: 480 / 642; position: relative;
-      filter: brightness(0.6);
+      filter: brightness(0.82);
       transition: transform 0.6s ease, filter 0.5s ease;
     }
     .about-photo-link:hover .about-photo-wrap { filter: brightness(1); transform: scale(1.04); }
     .about-photo-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* Press and hold: the wink photo replaces the portrait, drawn on a canvas a little larger than
+       the photo so the spot you hold can be stretched (script: PORTRAIT STRETCH) */
+    .about-photo-link { touch-action: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+    .about-photo-stretch { position: absolute; left: -15%; top: -15%; width: 130%; height: 130%; pointer-events: none; visibility: hidden; }
+    .about-photo-wrap.pressed .about-photo-stretch { visibility: visible; }
+    .about-photo-wrap.pressed > img, .about-photo-wrap.pressed .eye { visibility: hidden; }
+    .about-photo-wrap.pressed { filter: brightness(1); }
     /* Eyes: each white is laid over the photo's own eye (positions in % of the 480x642 photo) and
        masks its iris, so the iris can roll under the lids. The iris is trimmed round, enlarged a
        little, and slowly turns toward the cursor (script: PORTRAIT EYES). */
@@ -169,7 +176,7 @@
       background: var(--eye) 0 0 / 100% 100% no-repeat;
       -webkit-mask: var(--eye) 0 0 / 100% 100% no-repeat; mask: var(--eye) 0 0 / 100% 100% no-repeat;
     }
-    .eye-l { --eye: url(/about/eye-left.png);  left: 27.917%; top: 44.860%; width: 12.083%; height: 3.271%; }   /* 58x21 at (134, 288) */
+    .eye-l { --eye: url(/about/eye-left.png);  left: 27.5%; top: 44.860%; width: 12.083%; height: 3.271%; }   /* 58x21 at (132, 288) */
     .eye-r { --eye: url(/about/eye-right.png); left: 59.167%; top: 45.483%; width: 12.083%; height: 3.271%; }   /* 58x21 at (284, 292) */
     .iris {
       position: absolute; width: 46.552%; height: 100%;   /* 27x21 */
@@ -178,7 +185,7 @@
       mask: radial-gradient(ellipse 44% 57% at 50% 45%, #000 88%, transparent 100%);
       transform: translate(var(--ix, 0px), var(--iy, 0px)) scale(1.15);
     }
-    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 31.034%; top: 9.524%; }   /* at (152, 290) */
+    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 31.034%; top: 9.524%; }   /* at (150, 290) */
     .eye-r .iris { --iris: url(/about/iris-right.png); left: 20.690%; top: 4.762%; }   /* at (296, 293) */
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
@@ -1623,9 +1630,9 @@
       <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
       <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the artwork section below!</p>
     </div>
-    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
+    <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link" draggable="false">
       <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" /><div class="eye eye-l" aria-hidden="true"><div class="iris"></div></div><div class="eye eye-r" aria-hidden="true"><div class="iris"></div></div></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" draggable="false" /><canvas class="about-photo-stretch" aria-hidden="true"></canvas><div class="eye eye-l" aria-hidden="true"><div class="iris"></div></div><div class="eye eye-r" aria-hidden="true"><div class="iris"></div></div></div>
     </a>
     </div>
     <div class="hero-ctas">
@@ -2308,7 +2315,133 @@
       addEventListener('scroll', () => { if (mx !== null) aim(mx, my); }, { passive: true });
     })();
 
-    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals + a cursor "ink" trail, all drawn by dot swell ──
+    // ── PORTRAIT STRETCH: press and hold the portrait to swap in the wink photo; drag to stretch the
+    // spot you're holding. It gives most right under the cursor and less and less out to the edge of
+    // the affected area, with heavy resistance, then springs back on release. Only a plain click
+    // (short, no drag) opens LinkedIn. ──
+    (function () {
+      const link = document.querySelector('.about-photo-link'), wrap = link && link.querySelector('.about-photo-wrap');
+      const cv = wrap && wrap.querySelector('.about-photo-stretch');
+      if (!cv) return;
+      const PAD = 0.15,          // canvas overhang on each side, as a share of the photo (matches the CSS)
+            GIVE = 0.10,         // most the held spot can move, as a share of the photo width
+            RESIST = 0.55,       // drag distance (photo widths) for ~76% of that give: higher = stiffer
+            RADIUS = 0.62,       // reach of the stretch around the held spot, in photo widths
+            CLICK_MS = 300, CLICK_PX = 5;   // a press longer or further than this isn't a click
+      const IMG_W = 1035, IMG_H = 1451;     // the wink photo, fit by height into the 480x642 portrait box
+
+      const gl = cv.getContext('webgl', { premultipliedAlpha: true, alpha: true });
+      if (!gl) return;
+      const vs = 'attribute vec2 p; varying vec2 v; void main(){ v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }';
+      // For each canvas pixel, find where it came from: q = p - D * w(q), solved by a few fixed-point
+      // steps, where w falls smoothly from 1 at the held spot to 0 at RADIUS.
+      const fs = `precision mediump float;
+        varying vec2 v; uniform sampler2D t;
+        uniform vec2 box, a, d, img0, img1; uniform float pad, rad;
+        float w(vec2 q){ float f = clamp(1.0 - length(q - a) / rad, 0.0, 1.0); return f * f * (3.0 - 2.0 * f); }
+        void main(){
+          vec2 p = vec2(v.x, 1.0 - v.y) * (box * (1.0 + 2.0 * pad)) - box * pad;   // photo-box px
+          vec2 q = p;
+          for (int i = 0; i < 4; i++) q = p - d * w(q);
+          vec2 uv = (q - img0) / (img1 - img0);
+          if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) { gl_FragColor = vec4(0.0); return; }
+          gl_FragColor = texture2D(t, uv);
+        }`;
+      function sh(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+      gl.useProgram(prog);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = n => gl.getUniformLocation(prog, n), ap = gl.getAttribLocation(prog, 'p');
+      gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+      const U = { box: loc('box'), a: loc('a'), d: loc('d'), img0: loc('img0'), img1: loc('img1'), pad: loc('pad'), rad: loc('rad') };
+      let ready = false;
+      const img = new Image();
+      img.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        ready = true;
+      };
+      img.src = '/about/lex-wink.webp';
+
+      let W = 0, H = 0;   // photo box size, CSS px (unscaled by the hover zoom)
+      let held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
+      let t0 = 0, moved = false, raf = null, last = 0, pid = null;
+      function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        W = wrap.offsetWidth; H = wrap.offsetHeight;
+        const cw = Math.round(W * (1 + 2 * PAD) * dpr), ch = Math.round(H * (1 + 2 * PAD) * dpr);
+        if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+        gl.viewport(0, 0, cw, ch);
+        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        const iw = H * IMG_W / IMG_H, ix = (W - iw) / 2;
+        gl.uniform2f(U.box, W, H); gl.uniform1f(U.pad, PAD); gl.uniform1f(U.rad, RADIUS * W);
+        gl.uniform2f(U.a, ax, ay); gl.uniform2f(U.d, dx, dy);
+        gl.uniform2f(U.img0, ix, 0); gl.uniform2f(U.img1, ix + iw, H);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      // client px -> photo-box px (undoing the hover zoom)
+      function local(e) {
+        const r = wrap.getBoundingClientRect(), k = wrap.offsetWidth / r.width;
+        return [(e.clientX - r.left) * k, (e.clientY - r.top) * k, k];
+      }
+      // a spring: held, it chases the resisted drag; let go, it settles back to rest with a little wobble
+      function step(now) {
+        raf = null;
+        const dt = Math.min(now - last, 48) / 16.67; last = now;
+        const gx = held ? tx : 0, gy = held ? ty : 0;
+        vx = (vx + (gx - dx) * 0.22 * dt) * Math.pow(0.68, dt); vy = (vy + (gy - dy) * 0.22 * dt) * Math.pow(0.68, dt);
+        dx += vx * dt; dy += vy * dt;
+        if (!held && Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05 && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+          dx = dy = vx = vy = 0; wrap.classList.remove('pressed'); return;
+        }
+        draw();
+        raf = requestAnimationFrame(step);
+      }
+      function kick() { if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); } }
+
+      link.addEventListener('pointerdown', e => {
+        if (e.button !== 0 || !ready) return;
+        // (no preventDefault here: it would stop the mouse events the custom cursor follows; native
+        // drag and text selection are already off via draggable="false", dragstart and user-select)
+        const [x, y] = local(e);
+        held = true; moved = false; t0 = performance.now(); pid = e.pointerId;
+        ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0;
+        dx = dy = vx = vy = 0;
+        link.setPointerCapture(e.pointerId);
+        wrap.classList.add('pressed'); draw(); kick();
+      });
+      link.addEventListener('pointermove', e => {
+        if (!held || e.pointerId !== pid) return;
+        const k = local(e)[2], mx = (e.clientX - sx) * k, my = (e.clientY - sy) * k, m = Math.hypot(mx, my);
+        if (Math.hypot(e.clientX - sx, e.clientY - sy) > CLICK_PX) moved = true;
+        // heavy resistance: the pull eases toward GIVE however far you drag
+        const g = m ? GIVE * W * Math.tanh(m / (RESIST * W)) / m : 0;
+        tx = mx * g; ty = my * g; kick();
+      });
+      function release(e) {
+        if (!held || e.pointerId !== pid) return;
+        held = false; pid = null; kick();
+      }
+      link.addEventListener('pointerup', release);
+      link.addEventListener('pointercancel', release);
+      // only a quick, still press counts as a click (and opens LinkedIn)
+      link.addEventListener('click', e => {
+        if (t0 && (moved || performance.now() - t0 > CLICK_MS)) e.preventDefault();   // t0 is 0 for keyboard clicks
+        moved = false; t0 = 0;
+      });
+      link.addEventListener('dragstart', e => e.preventDefault());
+    })();
+
+    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals, drawn by dot swell ──
     (function () {
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
@@ -2316,13 +2449,6 @@
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
-      // Cursor ink: dots the cursor passes over swell at once, hold briefly, then ease back
-      // slowly, so a quick stroke leaves a fading line you can draw with. The stroke is kept as
-      // points rather than swollen dots, so it can ride the scroll wind: it is carried along
-      // with the spirals but INK_DRIFT times as far, giving a parallax between drawing and coils.
-      const INK_R = 16, INK_HOLD = 650, INK_FADE = 3200,   // brush radius (px), hold and fade-out (ms)
-            INK_DRIFT = 1.5;                               // how much harder the wind carries ink than spirals
-      let strokes = [], inkOff = 0, lastX = null, lastY = null;   // stroke points { x, y, t }, y before drift
       const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
@@ -2331,10 +2457,10 @@
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dots = []; hot = new Set(); strokes = [];
+        dots = []; hot = new Set();
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
-          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R, ink: false });
+          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
         base.width = cv.width; base.height = cv.height;
         bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const bp = new Path2D();
@@ -2478,35 +2604,14 @@
           const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
           for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
         }
-        // ink: each live stroke point, shifted by the wind, swells the dots under its brush
-        inkOff = INK_DRIFT * wind;
-        strokes = strokes.filter(p => now - p.t < INK_HOLD + INK_FADE);
-        const inked = new Map();   // dot index -> ink strength 0..1 this frame
-        for (const p of strokes) {
-          const f = strength(p.t, now), y = p.y + inkOff;
-          if (f <= 0) continue;
-          const ix0 = Math.max(0, Math.floor((p.x - INK_R - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((p.x + INK_R - SPACING / 2) / SPACING));
-          const iy0 = Math.max(0, Math.floor((y - INK_R - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((y + INK_R - SPACING / 2) / SPACING));
-          for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) {
-            const i = ix * rows + iy, d = dots[i], u = 1 - Math.hypot(d.x - p.x, d.y - y) / INK_R;
-            if (u <= 0) continue;
-            const k = u * u * (3 - 2 * u) * f;
-            if (k > (inked.get(i) || 0)) inked.set(i, k);
-          }
-        }
-        for (const i of inked.keys()) touch.add(i);
         const path = new Path2D(), next = new Set(), half = SPACING / 2;
         for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
-          const ik = inked.get(i) || 0;
-          if (ik || k) d.ink = ik > k;   // remember what last drew this dot
-          const target = BASE_R + (MAX_R - BASE_R) * Math.max(k, ik);
-          // ink swells in quickly and lets go fairly quickly too, so a drifting drawing stays crisp
-          // (its fade is already gradual); spiral dots ease back slowly to draw their tails
-          d.r += (target - d.r) * (d.ink ? (target > d.r ? 0.35 : 0.25) : 0.08);
+          const target = BASE_R + (MAX_R - BASE_R) * k;
+          d.r += (target - d.r) * 0.08;   // eases in and back slowly, which draws the tails
           if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
           next.add(i);
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
@@ -2517,33 +2622,9 @@
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
         spirals = spirals.filter(sp => !sp.done);
 
-        if (document.visibilityState !== 'hidden' && (!calm || strokes.length || hot.size)) raf = requestAnimationFrame(frame);
+        if (document.visibilityState !== 'hidden' && (!calm || hot.size)) raf = requestAnimationFrame(frame);
       }
 
-      // add a stroke point under the cursor, stored before the current drift so it moves with the ink
-      function ink(x, y, now) {
-        y -= inkOff;
-        const last = strokes[strokes.length - 1];
-        if (last && Math.abs(last.x - x) < 3 && Math.abs(last.y - y) < 3) { last.t = now; return; }   // lingering: refresh, don't pile up
-        strokes.push({ x: x, y: y, t: now });
-      }
-      // 1 while holding, then a slow ease-out back to 0
-      function strength(t, now) {
-        const a = now - t - INK_HOLD;
-        if (a <= 0) return 1;
-        const f = Math.min(1, a / INK_FADE);
-        return 1 - f * f * (3 - 2 * f);
-      }
-      document.addEventListener('mousemove', e => {
-        const now = performance.now(), x = e.clientX, y = e.clientY;
-        if (lastX !== null) {   // fill in between samples so fast strokes stay continuous
-          const steps = Math.max(1, Math.ceil(Math.hypot(x - lastX, y - lastY) / (SPACING / 2)));
-          for (let n = 1; n <= steps; n++) ink(lastX + (x - lastX) * n / steps, lastY + (y - lastY) * n / steps, now);
-        } else ink(x, y, now);
-        lastX = x; lastY = y;
-        wake();
-      }, { passive: true });
-      document.addEventListener('mouseleave', () => { lastX = lastY = null; });
 
       function wake() {
         if (raf === null && document.visibilityState !== 'hidden') raf = requestAnimationFrame(frame);

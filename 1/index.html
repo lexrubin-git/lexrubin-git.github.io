@@ -1646,7 +1646,7 @@
       });
     })();
 
-    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals + a cursor "ink" trail, all drawn by dot swell ──
+    // ── AMBIENT BACKGROUND HALFTONE: slow random spirals, drawn by dot swell ──
     (function () {
       const cv = document.getElementById('bgHalftone');
       if (!cv) return;
@@ -1654,13 +1654,6 @@
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
-      // Cursor ink: dots the cursor passes over swell at once, hold briefly, then ease back
-      // slowly, so a quick stroke leaves a fading line you can draw with. The stroke is kept as
-      // points rather than swollen dots, so it can ride the scroll wind: it is carried along
-      // with the spirals but INK_DRIFT times as far, giving a parallax between drawing and coils.
-      const INK_R = 16, INK_HOLD = 650, INK_FADE = 3200,   // brush radius (px), hold and fade-out (ms)
-            INK_DRIFT = 1.5;                               // how much harder the wind carries ink than spirals
-      let strokes = [], inkOff = 0, lastX = null, lastY = null;   // stroke points { x, y, t }, y before drift
       const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
@@ -1669,10 +1662,10 @@
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dots = []; hot = new Set(); strokes = [];
+        dots = []; hot = new Set();
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
-          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R, ink: false });
+          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
         base.width = cv.width; base.height = cv.height;
         bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const bp = new Path2D();
@@ -1816,35 +1809,14 @@
           const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
           for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
         }
-        // ink: each live stroke point, shifted by the wind, swells the dots under its brush
-        inkOff = INK_DRIFT * wind;
-        strokes = strokes.filter(p => now - p.t < INK_HOLD + INK_FADE);
-        const inked = new Map();   // dot index -> ink strength 0..1 this frame
-        for (const p of strokes) {
-          const f = strength(p.t, now), y = p.y + inkOff;
-          if (f <= 0) continue;
-          const ix0 = Math.max(0, Math.floor((p.x - INK_R - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((p.x + INK_R - SPACING / 2) / SPACING));
-          const iy0 = Math.max(0, Math.floor((y - INK_R - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((y + INK_R - SPACING / 2) / SPACING));
-          for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) {
-            const i = ix * rows + iy, d = dots[i], u = 1 - Math.hypot(d.x - p.x, d.y - y) / INK_R;
-            if (u <= 0) continue;
-            const k = u * u * (3 - 2 * u) * f;
-            if (k > (inked.get(i) || 0)) inked.set(i, k);
-          }
-        }
-        for (const i of inked.keys()) touch.add(i);
         const path = new Path2D(), next = new Set(), half = SPACING / 2;
         for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
-          const ik = inked.get(i) || 0;
-          if (ik || k) d.ink = ik > k;   // remember what last drew this dot
-          const target = BASE_R + (MAX_R - BASE_R) * Math.max(k, ik);
-          // ink swells in quickly and lets go fairly quickly too, so a drifting drawing stays crisp
-          // (its fade is already gradual); spiral dots ease back slowly to draw their tails
-          d.r += (target - d.r) * (d.ink ? (target > d.r ? 0.35 : 0.25) : 0.08);
+          const target = BASE_R + (MAX_R - BASE_R) * k;
+          d.r += (target - d.r) * 0.08;   // eases in and back slowly, which draws the tails
           if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
           next.add(i);
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
@@ -1855,33 +1827,9 @@
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
         spirals = spirals.filter(sp => !sp.done);
 
-        if (document.visibilityState !== 'hidden' && (!calm || strokes.length || hot.size)) raf = requestAnimationFrame(frame);
+        if (document.visibilityState !== 'hidden' && (!calm || hot.size)) raf = requestAnimationFrame(frame);
       }
 
-      // add a stroke point under the cursor, stored before the current drift so it moves with the ink
-      function ink(x, y, now) {
-        y -= inkOff;
-        const last = strokes[strokes.length - 1];
-        if (last && Math.abs(last.x - x) < 3 && Math.abs(last.y - y) < 3) { last.t = now; return; }   // lingering: refresh, don't pile up
-        strokes.push({ x: x, y: y, t: now });
-      }
-      // 1 while holding, then a slow ease-out back to 0
-      function strength(t, now) {
-        const a = now - t - INK_HOLD;
-        if (a <= 0) return 1;
-        const f = Math.min(1, a / INK_FADE);
-        return 1 - f * f * (3 - 2 * f);
-      }
-      document.addEventListener('mousemove', e => {
-        const now = performance.now(), x = e.clientX, y = e.clientY;
-        if (lastX !== null) {   // fill in between samples so fast strokes stay continuous
-          const steps = Math.max(1, Math.ceil(Math.hypot(x - lastX, y - lastY) / (SPACING / 2)));
-          for (let n = 1; n <= steps; n++) ink(lastX + (x - lastX) * n / steps, lastY + (y - lastY) * n / steps, now);
-        } else ink(x, y, now);
-        lastX = x; lastY = y;
-        wake();
-      }, { passive: true });
-      document.addEventListener('mouseleave', () => { lastX = lastY = null; });
 
       function wake() {
         if (raf === null && document.visibilityState !== 'hidden') raf = requestAnimationFrame(frame);
