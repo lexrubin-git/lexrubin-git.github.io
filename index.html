@@ -109,7 +109,7 @@
       border-bottom: 1px solid var(--border);
       background: var(--black);
       position: relative;
-      overflow: hidden;
+      overflow: visible;   /* the portrait can be lifted up past the card's edge */
     }
     .hero-name, .hero-lead { text-wrap: balance; }
     /* Letters of the name randomly ease to thinner weights on their own, inside a
@@ -168,6 +168,12 @@
     .about-photo-wrap.pressed .about-photo-stretch { visibility: visible; }
     .about-photo-wrap.pressed > img { visibility: hidden; }
     .about-photo-wrap.pressed { filter: brightness(1); }
+    /* the photo's own motion (idle sway, lift, airborne wobble, drop) lives on this layer, set by the
+       script; it pivots a little below centre, roughly at the hips */
+    .about-photo-float { position: relative; transform-origin: 50% 65%; will-change: transform; }
+    .about-photo-link.lifted.lifted .about-photo-linkedin-label { opacity: 0; }   /* doubled: outranks the :hover rule */
+    /* while it's up in the air it comes forward, over the sticky header */
+    .about-photo-link.lifted { z-index: 101; }
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
       position: absolute;
@@ -280,8 +286,8 @@
     #artwork { margin-bottom: 1.75rem; }
     /* the Artwork header and its gallery are dealt in as one card: the wrapper takes the deck motion,
        so the two keep their own look but drop their separate entrance animations */
-    .artwork-card { max-width: 900px; margin: 0 auto; }
-    .artwork-card > .artwork-hero, .artwork-card > .gallery-section { opacity: 1; animation: none; }
+    .artwork-deck { max-width: 900px; margin: 0 auto; }
+    .artwork-deck > .artwork-hero, .artwork-deck > .gallery-section { opacity: 1; animation: none; }
     @media (max-width: 768px) {
       .portfolio-grid { row-gap: 1.25rem; margin-top: 1.25rem; }
       #artwork { margin-top: 1.25rem; }
@@ -1617,7 +1623,7 @@
     </div>
     <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link" draggable="false">
       <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" draggable="false" /><canvas class="about-photo-stretch" aria-hidden="true"></canvas></div>
+      <div class="about-photo-float"><div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" draggable="false" /><canvas class="about-photo-stretch" aria-hidden="true"></canvas></div></div>
     </a>
     </div>
     <div class="hero-ctas">
@@ -1742,7 +1748,7 @@
 
   <!-- ── ARTWORK ── -->
   <div class="page-wrapper" id="artwork">
-   <div class="artwork-card">
+   <div class="artwork-deck">
     <div class="artwork-hero">
       <div class="artwork-title-row" style="display:flex; align-items:center; justify-content:space-between;">
         <h1 class="artwork-main-title">Artwork</h1>
@@ -2327,8 +2333,22 @@
       let wink = WINKS[0];
 
       let W = 0, H = 0;   // photo box size, CSS px (unscaled by the hover zoom)
+      const float = link.querySelector('.about-photo-float');
+      const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Motion, in seconds and photo px. Idle: a slow, subtle rock. Dragged up: the whole photo is
+      // lifted (with a little give, up to LIFT_MAX) and, once off the ground, wobbles like someone
+      // floating and trying to find their balance. Let go: it falls under gravity, lands with a small
+      // bounce and squash, and settles back into the idle rock.
+      const SWAY = 1.4, SWAY_T = 3.6,           // idle rock: degrees each way, seconds per cycle
+            LIFT_MAX = 0.5,                     // highest lift, in photo heights
+            AIR = 24,                           // px of lift for the full airborne wobble
+            WOBBLE = 6,                         // airborne wobble, degrees
+            GRAVITY = 2200, BOUNCE = 0.28;      // fall (px/s^2) and how much of the landing speed bounces back
+
       let held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
-      let t0 = 0, moved = false, raf = null, last = 0, pid = null;
+      let t0 = 0, moved = false, pid = null, raf = null, last = 0, visible = true, hover = false;
+      let lift = 0, lift0 = 0, vLift = 0, liftT = 0, ang = 0, vAng = 0, sq = 0, vSq = 0, cvx = 0, lastCx = 0, lastCt = 0;
+      const phase = Math.random() * 10;
       function draw() {
         const dpr = window.devicePixelRatio || 1;
         W = wrap.offsetWidth; H = wrap.offsetHeight;
@@ -2348,20 +2368,65 @@
         const r = wrap.getBoundingClientRect(), k = wrap.offsetWidth / r.width;
         return [(e.clientX - r.left) * k, (e.clientY - r.top) * k, k];
       }
-      // a spring: held, it chases the resisted drag; let go, it settles back to rest with a little wobble
-      function step(now) {
+      function spring(x, v, target, k, c, dt) { v += ((target - x) * k - v * c) * dt; return [x + v * dt, v]; }
+
+      function tick(now) {
         raf = null;
-        const dt = Math.min(now - last, 48) / 16.67; last = now;
-        const gx = held ? tx : 0, gy = held ? ty : 0;
-        vx = (vx + (gx - dx) * 0.35 * dt) * Math.pow(0.55, dt); vy = (vy + (gy - dy) * 0.35 * dt) * Math.pow(0.55, dt);
-        dx += vx * dt; dy += vy * dt;
-        if (!held && Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3 && Math.abs(vx) < 0.3 && Math.abs(vy) < 0.3) {
-          dx = dy = vx = vy = 0; wrap.classList.remove('pressed'); return;
+        const dt = Math.min(now - last, 50) / 1000, t = now / 1000 + phase; last = now;
+        const H0 = wrap.offsetHeight || 1;
+
+        // lift: follows the drag while held, falls under gravity once let go
+        if (held) [lift, vLift] = spring(lift, vLift, liftT, 260, 26, dt);
+        else if (lift > 0 || vLift > 0) {
+          vLift -= GRAVITY * dt; lift += vLift * dt;
+          if (lift <= 0) {
+            const hit = -vLift; lift = 0;
+            if (hit > 120) {                                    // land: bounce, squash and a jolt of wobble
+              vLift = hit * BOUNCE;
+              vSq -= hit * 0.0009;
+              vAng += (ang >= 0 ? 1 : -1) * hit * 0.05;
+            } else vLift = 0;
+          }
         }
-        draw();
-        raf = requestAnimationFrame(step);
+        const air = Math.min(1, lift / AIR);
+
+        // tilt: idle rock on the ground (none on hover or while held), a restless balancing wobble in the air
+        let target = 0;
+        if (!calm) {
+          if (air > 0.01) target = air * WOBBLE * (0.65 * Math.sin(t * 2 * Math.PI * 0.7) + 0.35 * Math.sin(t * 2 * Math.PI * 1.7 + 1.3));
+          else if (!hover && !held) target = SWAY * Math.sin(t * 2 * Math.PI / SWAY_T);
+        }
+        // in the air, swinging the cursor sideways makes the body lag and tip the other way
+        if (held && air > 0.01) vAng -= cvx * 0.04 * air;
+        cvx *= Math.exp(-dt / 0.08);
+        [ang, vAng] = spring(ang, vAng, target, air > 0.01 ? 40 : 30, air > 0.01 ? 5 : 9, dt);
+        [sq, vSq] = spring(sq, vSq, 0, 500, 22, dt);
+
+        const sway = calm ? 0 : air * 3 * Math.sin(t * 2 * Math.PI * 1.1 + 2);   // a little sideways drift in the air
+        float.style.transform = 'translate(' + sway.toFixed(2) + 'px,' + (-lift).toFixed(2) + 'px) rotate(' + ang.toFixed(3) + 'deg) scale(' +
+          (1 - sq * 0.5).toFixed(4) + ',' + (1 + sq).toFixed(4) + ')';
+        link.classList.toggle('lifted', lift > 2);
+
+        // stretch (only while a wink is showing): springs toward the resisted pull, then back to rest
+        if (wrap.classList.contains('pressed')) {
+          const s2 = 60 * dt, gx = held ? tx : 0, gy = held ? ty : 0;
+          vx = (vx + (gx - dx) * 0.35 * s2) * Math.pow(0.55, s2); vy = (vy + (gy - dy) * 0.35 * s2) * Math.pow(0.55, s2);
+          dx += vx * s2; dy += vy * s2;
+          if (!held && Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3 && Math.abs(vx) < 0.3 && Math.abs(vy) < 0.3) {
+            dx = dy = vx = vy = 0; wrap.classList.remove('pressed');
+          } else draw();
+        }
+
+        // keep running while on screen (the idle rock never stops); otherwise only until it's all at rest
+        const busy = held || lift > 0 || vLift !== 0 || Math.abs(ang - target) > 0.01 || Math.abs(vAng) > 0.01 ||
+                     Math.abs(sq) > 0.0005 || wrap.classList.contains('pressed');
+        if (document.visibilityState !== 'hidden' && (busy || (visible && !calm))) raf = requestAnimationFrame(tick);
       }
-      function kick() { if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); } }
+      function kick() { if (raf === null) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+      if (window.IntersectionObserver) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(link);
+      document.addEventListener('visibilitychange', kick);
+      link.addEventListener('pointerenter', () => { hover = true; kick(); });
+      link.addEventListener('pointerleave', () => { hover = false; kick(); });
 
       link.addEventListener('pointerdown', e => {
         if (e.button !== 0) return;
@@ -2371,22 +2436,29 @@
         // (no preventDefault here: it would stop the mouse events the custom cursor follows; native
         // drag and text selection are already off via draggable="false", dragstart and user-select)
         held = true; moved = false; t0 = performance.now(); pid = e.pointerId;
-        ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0;
-        dx = dy = vx = vy = 0;
+        ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0; dx = dy = vx = vy = 0;
+        lift0 = liftT = lift; vLift = 0; cvx = 0; lastCx = e.clientX; lastCt = performance.now();   // caught mid-fall: held where it is
         link.setPointerCapture(e.pointerId);
         wrap.classList.add('pressed'); draw(); kick();
       });
       link.addEventListener('pointermove', e => {
         if (!held || e.pointerId !== pid) return;
-        const k = local(e)[2], mx = (e.clientX - sx) * k, my = (e.clientY - sy) * k, m = Math.hypot(mx, my);
+        const k = local(e)[2], mx = (e.clientX - sx) * k, my = (e.clientY - sy) * k;
         if (Math.hypot(e.clientX - sx, e.clientY - sy) > CLICK_PX) moved = true;
-        // heavy resistance: the pull eases toward GIVE however far you drag
+        // dragging up lifts the whole photo (easing off toward LIFT_MAX)...
+        const L = LIFT_MAX * wrap.offsetHeight, from = L * Math.atanh(Math.min(lift0 / L, 0.99));
+        liftT = L * Math.tanh(Math.max(0, from - my) / L);
+        // ...and whatever the lift doesn't follow stretches the held spot, with heavy resistance
+        const rx = mx, ry = my + (liftT - lift0), m = Math.hypot(rx, ry);
         const g = m ? GIVE * W * Math.tanh(m / (RESIST * W)) / m : 0;
-        tx = mx * g; ty = my * g; kick();
+        tx = rx * g; ty = ry * g;
+        const now = performance.now(), dtc = Math.max(1, now - lastCt);
+        cvx += ((e.clientX - lastCx) / dtc * 16 - cvx) * 0.5; lastCx = e.clientX; lastCt = now;   // cursor sideways speed (px/frame)
+        kick();
       });
       function release(e) {
         if (!held || e.pointerId !== pid) return;
-        held = false; pid = null; kick();
+        held = false; pid = null; vLift = Math.min(vLift, 0); kick();
       }
       link.addEventListener('pointerup', release);
       link.addEventListener('pointercancel', release);
@@ -2395,6 +2467,7 @@
         if (t0 && (moved || performance.now() - t0 > CLICK_MS)) e.preventDefault();   // t0 is 0 for keyboard clicks
         moved = false; t0 = 0;
       });
+      kick();
       link.addEventListener('dragstart', e => e.preventDefault());
     })();
 
@@ -3010,7 +3083,7 @@
       var cards = Array.prototype.filter.call(deck.children, function (el) {
         return el.classList.contains("portfolio-item") || el.classList.contains("portfolio-group");
       }).concat(Array.prototype.slice.call(document.querySelectorAll(
-        "#artwork .artwork-card, .testimonials-section, .skill-tickers, #contact")));
+        "#artwork .artwork-deck, .testimonials-section, .skill-tickers, #contact")));
       if (!cards.length) return;
       cards.forEach(function (el) { el.classList.add("deck-card"); });
 
