@@ -1294,6 +1294,33 @@
     }
     .lightbox-out-label .ur-arrow { width: 0.9em; height: 0.9em; vertical-align: -0.1em; }
     .lightbox-out:hover .lightbox-out-label { background: rgba(0,0,0,0.9); }
+
+    /* ── CARD DECK (as on the home page): the hero + arrows, each of the 001/002/003 sections and the
+       gallery are dealt in as cards on scroll. Each section carries its own side borders so it can
+       move on its own, and the containers drop their one-time fade-ins (which would otherwise stack
+       the sections above their neighbours). ── */
+    .deck-top { max-width: 900px; margin: 0 auto; }
+    .deck-top > .artwork-hero, .deck-top > .section-arrows { opacity: 1; animation: none; }
+    .case-study-section.case-study-section { opacity: 1; animation: none; border-left: 0; border-right: 0; border-bottom: 0; background: transparent; }
+    .case-study-section > .cs-body { border-left: 1px solid var(--border); border-right: 1px solid var(--border); background: var(--black); }
+    .case-study-section > .cs-body:last-child { border-bottom: 1px solid var(--border); }
+    .deck-card.deck-card {   /* doubled class: outranks each card's own entrance animation */
+      opacity: 1;
+      transform: none;
+      animation: deck-fade 0.6s ease backwards;
+      transform-origin: 50% 0;
+      will-change: transform;
+    }
+    @keyframes deck-fade { from { opacity: 0; } }
+    /* distance shade: a card still coming up from below is dark, lightening from the top as it rises */
+    .deck-card.deck-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 33.34%, rgba(0,0,0,0.75) 66.66%) 0 calc(var(--far, 0) * 100%) / 100% 300% no-repeat;
+    }
 </style>
 </head>
 <body>
@@ -1334,6 +1361,7 @@
 
 <!-- ── HERO ── -->
 <div class="page-wrapper">
+  <div class="deck-top">
   <div class="artwork-hero">
     <a href="/" class="project-cover-link" aria-label="Back to the home page"><video class="project-cover" src="../arctic-cover.mp4" poster="../arctic-cover.jpg" autoplay muted loop playsinline aria-label="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens"></video></a>
     <div class="artwork-title-row">
@@ -1353,15 +1381,13 @@
     </div>
     <p class="hero-skip"><em>Don’t feel like reading the case study? <a href="#artwork-grid" class="hero-gallery-link">Go through the finished project gallery here</a></em></p>
   </div>
-</div>
-
-<!-- ── SECTION ARROWS ── -->
-<div class="page-wrapper">
-<div class="section-arrows">
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
-  <div class="arrow-cell">∨</div>
-</div>
+  <!-- ── SECTION ARROWS ── -->
+  <div class="section-arrows">
+    <div class="arrow-cell">∨</div>
+    <div class="arrow-cell">∨</div>
+    <div class="arrow-cell">∨</div>
+  </div>
+  </div>
 </div>
 
 <div class="page-wrapper">
@@ -2161,6 +2187,101 @@
       grid.addEventListener("click", function (e) {
         if (e.target.closest && e.target.closest(".artwork-card-link")) e.stopPropagation();
       }, true);
+    })();
+  </script>
+  <script>
+    // ── CARD DECK (same motion as the home page): the hero + arrows, each 001/002/003 section and
+    // the project gallery are dealt onto the page as you scroll ──
+    // Coming up from below, a card is tipped back, a touch small and leaning (alternating
+    // sides, like a coin walking over knuckles) and rolls flat as it rises. Heading off the
+    // top, a card lags the scroll, shrinks and dims, so the next one slides over it like the
+    // top card of a shuffle. Everything eases toward its target, so it trails the scroll softly.
+    (function () {
+      if (!window.requestAnimationFrame) return;
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".deck-top, .case-study-section > .cs-body, .artworks-section"));
+      if (!cards.length) return;
+      cards.forEach(function (el) { el.classList.add("deck-card"); });
+
+      var NAV = 110,            // the sticky header covers this much of the top
+          RISE = 110,           // px a card starts below its spot
+          TIP = 22,             // deg it's tipped back on arrival
+          LEAN = 2,             // deg of alternating lean on arrival
+          SHRINK = 0.08,        // how much smaller it starts
+          ENTER = 0.75,         // share of the screen height a card takes to settle in
+          SHADE = 0.2,          // share of the screen height (from the bottom) a card is shaded for
+          LAG = 0.3,            // share of its height a leaving card falls behind the scroll
+          SINK = 0.07,          // how much a leaving card shrinks
+          DIM = 0.55,           // how much a leaving card fades
+          DIM_FROM = 0.5,       // share of a leaving card that's under the header before it starts to fade
+          EXIT = 1.6,           // card heights of scrolling a leaving card takes to fall back fully
+          TAU = 140;            // ms smoothing: higher = softer trail
+
+      var state = cards.map(function (el, i) {
+        el.style.position = "relative";
+        el.style.zIndex = i + 1;   // later cards land on top
+        return { el: el, top: 0, h: 0, enter: 0, exit: 0, side: i % 2 ? 1 : -1, last: i === cards.length - 1 };
+      });
+
+      // layout positions, ignoring transforms (so the motion never feeds back into itself)
+      function measure() {
+        state.forEach(function (s) {
+          var y = 0, n = s.el;
+          while (n) { y += n.offsetTop; n = n.offsetParent; }
+          s.top = y; s.h = s.el.offsetHeight;
+        });
+      }
+
+      function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+      function targets(s) {
+        var vh = window.innerHeight, top = s.top - window.scrollY;
+        // 0 while the card's top is at the bottom edge, 1 once it has risen ENTER of the screen
+        var p = clamp((vh - top) / (vh * ENTER));
+        var enter = 1 - Math.pow(1 - p, 3);
+        // the last item isn't covered by anything, so it doesn't fall behind
+        var exit = s.last ? 0 : clamp((NAV - top) / (s.h * EXIT));
+        return [enter, exit];
+      }
+
+      function paint(s) {
+        var k = 1 - s.enter, q = s.exit;
+        var y = k * RISE + q * s.h * LAG;
+        var sc = (1 - k * SHRINK) * (1 - q * SINK);
+        s.el.style.transform = "perspective(1400px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+          "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
+        var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
+        s.el.style.opacity = (1 - fade * DIM).toFixed(3);
+        // the shade only covers the first SHADE of the screen a card rises through, so it's at
+        // full brightness from there on, long before it finishes settling
+        s.el.style.setProperty("--far", clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4));
+      }
+
+      var raf = 0, prev = 0;
+      function frame(t) {
+        var dt = prev ? Math.min(t - prev, 64) : 16;
+        prev = t;
+        var a = 1 - Math.exp(-dt / TAU), moving = false;
+        state.forEach(function (s) {
+          var g = targets(s);
+          var de = g[0] - s.enter, dx = g[1] - s.exit;
+          if (Math.abs(de) > 0.0005 || Math.abs(dx) > 0.0005) {
+            s.enter += de * a; s.exit += dx * a; moving = true;
+          } else { s.enter = g[0]; s.exit = g[1]; }
+          paint(s);
+        });
+        raf = moving ? requestAnimationFrame(frame) : 0;
+        if (!raf) prev = 0;
+      }
+      function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+
+      measure();
+      // cards already on screen at load start un-dealt and settle in, alongside their fade
+      state.forEach(paint);
+      kick();
+      addEventListener("scroll", kick, { passive: true });
+      addEventListener("resize", function () { measure(); kick(); });
+      if (window.ResizeObserver) new ResizeObserver(function () { measure(); kick(); }).observe(document.body);
+      addEventListener("load", function () { measure(); kick(); });
     })();
   </script>
 </body>
