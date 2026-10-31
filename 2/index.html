@@ -1264,6 +1264,10 @@
     .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.9rem 1.75rem; padding: 0 2.5rem 2.5rem; }
     .hero-meta-row .hero-tags { justify-content: flex-start; flex-wrap: nowrap; }
     .hero-meta-row .hero-tools, .hero-meta-row .hero-type { margin: 0; }
+    /* "Tools used" and the project type get the same outline as the tags */
+    .hero-meta-row .hero-tools, .hero-meta-row .hero-type { border: 1px solid var(--border); padding: 0.4rem 0.8rem; line-height: 1.4; white-space: nowrap; }
+    .hero-meta-row .hero-tools { font-size: 0.72rem; }
+    .hero-meta-row .hero-type { color: #777; }
     @media (max-width: 768px) {
       .artwork-title-row { padding-bottom: 1.25rem; gap: 1rem; }
       .artwork-title-row .hero-desc { flex: none; font-size: 1rem; text-align: left; }
@@ -1280,6 +1284,16 @@
     /* a gallery card that links out (the Figma mockup) rather than opening the lightbox */
     a.artwork-card-link { display: block; color: inherit; text-decoration: none; }
     .artwork-card-link, .artwork-card-link * { cursor: pointer !important; }
+    /* the Figma card in the lightbox: the image and a label both open the mockup */
+    .lightbox-out { display: block; position: relative; color: inherit; text-decoration: none; }
+    .lightbox-out, .lightbox-out * { cursor: pointer !important; }
+    .lightbox-out-label {
+      position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+      background: rgba(0,0,0,0.72); color: var(--white); border: 1px solid rgba(255,255,255,0.22);
+      font-size: 0.75rem; letter-spacing: 0.06em; line-height: 1.4; padding: 6px 14px; white-space: nowrap; transition: background 0.25s;
+    }
+    .lightbox-out-label .ur-arrow { width: 0.9em; height: 0.9em; vertical-align: -0.1em; }
+    .lightbox-out:hover .lightbox-out-label { background: rgba(0,0,0,0.9); }
 </style>
 </head>
 <body>
@@ -1630,7 +1644,7 @@
   });
 
   lightbox.addEventListener('click', e => {
-    if (e.target.closest('.lightbox-img, .lightbox-nav')) return;
+    if (e.target.closest('.lightbox-img, .lightbox-nav, .lightbox-out')) return;
     lightbox.classList.remove('open');
   });
 
@@ -2038,10 +2052,20 @@
     (function () {
       var lb = document.getElementById("lightbox"), grid = document.getElementById("artwork-grid");
       if (!lb || !grid) return;
-      // the original gallery cards (not the scroller's copies, not the dam slideshow card)
+      // the original gallery cards (not the scroller's copies, not the dam slideshow card); a card that
+      // links out (the Figma mockup) is in the sequence too, shown with its link instead of followed
       var items = Array.prototype.filter.call(grid.querySelectorAll(".artwork-card"), function (c) {
-        return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card") && !c.classList.contains("artwork-card-link");
+        return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card");
       });
+      function showLink(card) {
+        var img = card.querySelector(".artwork-card-img"), href = card.getAttribute("href");
+        document.getElementById("lightbox-img-wrap").innerHTML =
+          '<div style="display:inline-block;line-height:0;position:relative;">' +
+          '<a class="lightbox-out" href="' + href + '" target="_blank" rel="noopener" aria-label="Open the interactive Figma mockup">' +
+          '<img class="lightbox-img" src="' + img.src + '" alt="' + img.alt.replace(/"/g, "&quot;") + '" style="display:block;">' +
+          '<span class="lightbox-out-label">View the Figma mockup <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a></div>';
+        lb.classList.add("open"); lb.classList.add("lb-gallery");
+      }
       if (items.length < 2) return;
       var prev = document.createElement("button"), next = document.createElement("button");
       prev.className = "lightbox-nav lb-g-btn lb-g-prev"; prev.type = "button"; prev.setAttribute("aria-label", "Previous image"); prev.innerHTML = "&lsaquo;";
@@ -2055,7 +2079,7 @@
       // anything else that opens the lightbox (process images, the dam slideshow) has no arrows
       document.addEventListener("click", function (e) {
         var c = e.target.closest && e.target.closest(".artwork-card");
-        if ((!c || items.indexOf(c) < 0) && !(e.target.closest && e.target.closest(".lb-g-btn")) && lb.classList.contains("lb-gallery")) lb.classList.remove("lb-gallery");
+        if ((!c || items.indexOf(c) < 0) && !(e.target.closest && e.target.closest(".lb-g-btn, .lightbox-out")) && lb.classList.contains("lb-gallery")) lb.classList.remove("lb-gallery");
       }, true);
       new MutationObserver(function () {
         if (!lb.classList.contains("open") && lb.classList.contains("lb-gallery")) { lb.classList.remove("lb-gallery"); index = -1; }   // guarded: a no-op remove still fires the observer
@@ -2063,7 +2087,9 @@
       function step(d) {
         if (index < 0) return;
         lb.querySelectorAll("video").forEach(function (v) { v.pause(); });
-        items[(index + d + items.length) % items.length].click();
+        var k = (index + d + items.length) % items.length;
+        if (items[k].classList.contains("artwork-card-link")) { index = k; showLink(items[k]); }
+        else items[k].click();
       }
       prev.addEventListener("click", function (e) { e.stopPropagation(); step(-1); });
       next.addEventListener("click", function (e) { e.stopPropagation(); step(1); });

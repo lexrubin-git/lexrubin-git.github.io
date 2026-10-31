@@ -1224,6 +1224,10 @@
     .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.9rem 1.75rem; padding: 0 2.5rem 2.5rem; }
     .hero-meta-row .hero-tags { justify-content: flex-start; flex-wrap: nowrap; }
     .hero-meta-row .hero-tools, .hero-meta-row .hero-type { margin: 0; }
+    /* "Tools used" and the project type get the same outline as the tags */
+    .hero-meta-row .hero-tools, .hero-meta-row .hero-type { border: 1px solid var(--border); padding: 0.4rem 0.8rem; line-height: 1.4; white-space: nowrap; }
+    .hero-meta-row .hero-tools { font-size: 0.72rem; }
+    .hero-meta-row .hero-type { color: #777; }
     @media (max-width: 768px) {
       .artwork-title-row { padding-bottom: 1.25rem; gap: 1rem; }
       .artwork-title-row .hero-desc { flex: none; font-size: 1rem; text-align: left; }
