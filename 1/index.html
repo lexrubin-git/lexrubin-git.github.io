@@ -1228,6 +1228,12 @@
       .artwork-title-row .hero-desc { flex: none; font-size: 1rem; text-align: left; }
       .hero-meta-row { padding: 0 1.5rem 2rem; }
     }
+    /* "Don't feel like reading…": a quiet italic line under the tags row that opens the gallery */
+    .hero-meta-row { padding-bottom: 1.25rem; }
+    .hero-skip { padding: 0 2.5rem 2.5rem; text-align: center; color: #6f6f6f; font-size: 0.85rem; line-height: 1.5; }
+    .hero-skip a { color: #9a9a9a; text-decoration: none; background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat; padding-bottom: 1px; transition: color 0.25s; }
+    .hero-skip a:hover, .hero-skip a:focus-visible { color: var(--white); }
+    @media (max-width: 768px) { .hero-meta-row { padding-bottom: 1rem; } .hero-skip { padding: 0 1.5rem 2rem; } }
 </style>
 </head>
 <body>
@@ -1285,6 +1291,7 @@
       <div class="hero-tools"><strong>Tools used:</strong> Illustrator, Figma, Photoshop</div>
       <div class="hero-type">Paid Work</div>
     </div>
+    <p class="hero-skip"><em>Don’t feel like reading the case study? <a href="#artwork-grid" class="hero-gallery-link">Go through the finished project gallery here</a></em></p>
   </div>
 </div>
 
@@ -2120,6 +2127,22 @@
       fit();
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
       addEventListener("load", fit); addEventListener("resize", fit);
+    })();
+  </script>
+  <script>
+    // ── "GO THROUGH THE FINISHED PROJECT GALLERY": opens the gallery's first photo in the lightbox
+    // (by clicking its card, so the lightbox's arrows step through the rest) ──
+    (function () {
+      var link = document.querySelector(".hero-gallery-link"), grid = document.getElementById("artwork-grid");
+      if (!link || !grid) return;
+      link.addEventListener("click", function (e) {
+        var first = Array.prototype.filter.call(grid.querySelectorAll(".artwork-card"), function (c) {
+          return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card") && c.querySelector(".artwork-card-img");
+        })[0];
+        if (!first) return;   // no gallery photos: the link just scrolls down to the gallery
+        e.preventDefault();
+        first.click();
+      });
     })();
   </script>
 </body>
