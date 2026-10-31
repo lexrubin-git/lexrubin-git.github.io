@@ -172,8 +172,6 @@
        script; it pivots a little below centre, roughly at the hips */
     .about-photo-float { position: relative; transform-origin: 50% 65%; will-change: transform; }
     .about-photo-link.lifted.lifted .about-photo-linkedin-label { opacity: 0; }   /* doubled: outranks the :hover rule */
-    /* while it's up in the air it comes forward, over the sticky header */
-    .about-photo-link.lifted { z-index: 101; }
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
       position: absolute;
@@ -2336,18 +2334,19 @@
       const float = link.querySelector('.about-photo-float');
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Motion, in seconds and photo px. Idle: a slow, subtle rock. Dragged up: the whole photo is
-      // lifted (with a little give, up to LIFT_MAX) and, once off the ground, wobbles like someone
+      // lifted (at half the drag, easing off just under the header line) and, once off the ground, wobbles like someone
       // floating and trying to find their balance. Let go: it falls under gravity, lands with a small
       // bounce and squash, and settles back into the idle rock.
       const SWAY = 1.4, SWAY_T = 3.6,           // idle rock: degrees each way, seconds per cycle
-            LIFT_MAX = 0.5,                     // highest lift, in photo heights
+            LIFT_GAP = 7,                       // the highest lift leaves the photo's top this far (px) under the header line
+            LIFT_RATE = 0.5,                    // photo px lifted per px dragged up: lower = you carry it further for the same lift
             AIR = 24,                           // px of lift for the full airborne wobble
             WOBBLE = 6,                         // airborne wobble, degrees
             GRAVITY = 2200, BOUNCE = 0.28;      // fall (px/s^2) and how much of the landing speed bounces back
 
       let held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
       let t0 = 0, moved = false, pid = null, raf = null, last = 0, visible = true, hover = false;
-      let lift = 0, lift0 = 0, vLift = 0, liftT = 0, ang = 0, vAng = 0, sq = 0, vSq = 0, cvx = 0, lastCx = 0, lastCt = 0;
+      let lift = 0, lift0 = 0, liftMax = 0, vLift = 0, liftT = 0, ang = 0, vAng = 0, sq = 0, vSq = 0, cvx = 0, lastCx = 0, lastCt = 0;
       const phase = Math.random() * 10;
       function draw() {
         const dpr = window.devicePixelRatio || 1;
@@ -2438,6 +2437,9 @@
         held = true; moved = false; t0 = performance.now(); pid = e.pointerId;
         ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0; dx = dy = vx = vy = 0;
         lift0 = liftT = lift; vLift = 0; cvx = 0; lastCx = e.clientX; lastCt = performance.now();   // caught mid-fall: held where it is
+        // room above the photo (as it would sit on the ground) up to just under the header line
+        const nav = document.querySelector('nav'), navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
+        liftMax = Math.max(0, wrap.getBoundingClientRect().top + lift - navBottom - LIFT_GAP);
         link.setPointerCapture(e.pointerId);
         wrap.classList.add('pressed'); draw(); kick();
       });
@@ -2445,9 +2447,9 @@
         if (!held || e.pointerId !== pid) return;
         const k = local(e)[2], mx = (e.clientX - sx) * k, my = (e.clientY - sy) * k;
         if (Math.hypot(e.clientX - sx, e.clientY - sy) > CLICK_PX) moved = true;
-        // dragging up lifts the whole photo (easing off toward LIFT_MAX)...
-        const L = LIFT_MAX * wrap.offsetHeight, from = L * Math.atanh(Math.min(lift0 / L, 0.99));
-        liftT = L * Math.tanh(Math.max(0, from - my) / L);
+        // dragging up lifts the whole photo (at LIFT_RATE, easing off toward just under the header)...
+        const L = Math.max(liftMax, 0.001), from = L * Math.atanh(Math.min(lift0 / L, 0.99)) / LIFT_RATE;
+        liftT = Math.min(liftMax, L * Math.tanh(Math.max(0, from - my) * LIFT_RATE / L));
         // ...and whatever the lift doesn't follow stretches the held spot, with heavy resistance
         const rx = mx, ry = my + (liftT - lift0), m = Math.hypot(rx, ry);
         const g = m ? GIVE * W * Math.tanh(m / (RESIST * W)) / m : 0;
