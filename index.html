@@ -2334,18 +2334,21 @@
       const float = link.querySelector('.about-photo-float');
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Motion, in seconds and photo px. Idle: a slow, subtle rock. Dragged up: the whole photo is
-      // lifted (at half the drag, easing off just under the header line) and, once off the ground, wobbles like someone
+      // lifted (at half the drag, easing off just under the header line) and, off the ground and moving, wobbles like someone
       // floating and trying to find their balance. Let go: it falls under gravity, lands with a small
       // bounce and squash, and settles back into the idle rock.
       const SWAY = 1.4, SWAY_T = 3.6,           // idle rock: degrees each way, seconds per cycle
             LIFT_GAP = 7,                       // the highest lift leaves the photo's top this far (px) under the header line
             LIFT_RATE = 0.5,                    // photo px lifted per px dragged up: lower = you carry it further for the same lift
             AIR = 24,                           // px of lift for the full airborne wobble
-            WOBBLE = 6,                         // airborne wobble, degrees
+            WOBBLE = 6,                         // airborne wobble, degrees (only while the cursor moves)
+            AGIT_SPEED = 0.5,                   // cursor speed (px/ms) for the full wobble
+            AGIT_FADE = 0.45,                   // s for the wobble to die down once the cursor holds still
             GRAVITY = 2200, BOUNCE = 0.28;      // fall (px/s^2) and how much of the landing speed bounces back
 
-      let held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
+      let lastCy = 0, held = false, ax = 0, ay = 0, sx = 0, sy = 0, tx = 0, ty = 0, dx = 0, dy = 0, vx = 0, vy = 0;
       let t0 = 0, moved = false, pid = null, raf = null, last = 0, visible = true, hover = false;
+      let agit = 0;   // 0..1: how much the cursor is moving while it's held (drives the airborne wobble)
       let lift = 0, lift0 = 0, liftMax = 0, vLift = 0, liftT = 0, ang = 0, vAng = 0, sq = 0, vSq = 0, cvx = 0, lastCx = 0, lastCt = 0;
       const phase = Math.random() * 10;
       function draw() {
@@ -2388,11 +2391,12 @@
           }
         }
         const air = Math.min(1, lift / AIR);
+        agit *= Math.exp(-dt / AGIT_FADE);
 
         // tilt: idle rock on the ground (none on hover or while held), a restless balancing wobble in the air
         let target = 0;
         if (!calm) {
-          if (air > 0.01) target = air * WOBBLE * (0.65 * Math.sin(t * 2 * Math.PI * 0.7) + 0.35 * Math.sin(t * 2 * Math.PI * 1.7 + 1.3));
+          if (air > 0.01) target = air * agit * WOBBLE * (0.65 * Math.sin(t * 2 * Math.PI * 0.7) + 0.35 * Math.sin(t * 2 * Math.PI * 1.7 + 1.3));
           else if (!hover && !held) target = SWAY * Math.sin(t * 2 * Math.PI / SWAY_T);
         }
         // in the air, swinging the cursor sideways makes the body lag and tip the other way
@@ -2401,7 +2405,7 @@
         [ang, vAng] = spring(ang, vAng, target, air > 0.01 ? 40 : 30, air > 0.01 ? 5 : 9, dt);
         [sq, vSq] = spring(sq, vSq, 0, 500, 22, dt);
 
-        const sway = calm ? 0 : air * 3 * Math.sin(t * 2 * Math.PI * 1.1 + 2);   // a little sideways drift in the air
+        const sway = calm ? 0 : air * agit * 3 * Math.sin(t * 2 * Math.PI * 1.1 + 2);   // a little sideways drift in the air
         float.style.transform = 'translate(' + sway.toFixed(2) + 'px,' + (-lift).toFixed(2) + 'px) rotate(' + ang.toFixed(3) + 'deg) scale(' +
           (1 - sq * 0.5).toFixed(4) + ',' + (1 + sq).toFixed(4) + ')';
         link.classList.toggle('lifted', lift > 2);
@@ -2436,7 +2440,7 @@
         // drag and text selection are already off via draggable="false", dragstart and user-select)
         held = true; moved = false; t0 = performance.now(); pid = e.pointerId;
         ax = x; ay = y; sx = e.clientX; sy = e.clientY; tx = ty = 0; dx = dy = vx = vy = 0;
-        lift0 = liftT = lift; vLift = 0; cvx = 0; lastCx = e.clientX; lastCt = performance.now();   // caught mid-fall: held where it is
+        lift0 = liftT = lift; vLift = 0; cvx = 0; agit = 0; lastCx = e.clientX; lastCy = e.clientY; lastCt = performance.now();   // caught mid-fall: held where it is
         // room above the photo (as it would sit on the ground) up to just under the header line
         const nav = document.querySelector('nav'), navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
         liftMax = Math.max(0, wrap.getBoundingClientRect().top + lift - navBottom - LIFT_GAP);
@@ -2455,7 +2459,10 @@
         const g = m ? GIVE * W * Math.tanh(m / (RESIST * W)) / m : 0;
         tx = rx * g; ty = ry * g;
         const now = performance.now(), dtc = Math.max(1, now - lastCt);
-        cvx += ((e.clientX - lastCx) / dtc * 16 - cvx) * 0.5; lastCx = e.clientX; lastCt = now;   // cursor sideways speed (px/frame)
+        cvx += ((e.clientX - lastCx) / dtc * 16 - cvx) * 0.5;   // cursor sideways speed (px/frame)
+        const speed = Math.hypot(e.clientX - lastCx, e.clientY - lastCy) / dtc;
+        agit = Math.max(agit, Math.min(1, speed / AGIT_SPEED));   // moving stirs up the wobble
+        lastCx = e.clientX; lastCy = e.clientY; lastCt = now;
         kick();
       });
       function release(e) {
