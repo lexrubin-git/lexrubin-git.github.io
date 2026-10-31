@@ -2222,7 +2222,8 @@
         state.forEach(function (s) {
           var y = 0, n = s.el;
           while (n) { y += n.offsetTop; n = n.offsetParent; }
-          s.top = y; s.h = s.el.offsetHeight;
+          s.top = y; s.h = s.el.offsetHeight; s.w = s.el.offsetWidth;
+          s.tail = Math.min(s.h, window.innerHeight * 0.6);   // a tall card keeps its top part in view until only this much is left
         });
       }
 
@@ -2233,15 +2234,16 @@
         var p = clamp((vh - top) / (vh * ENTER));
         var enter = 1 - Math.pow(1 - p, 3);
         // the last item isn't covered by anything, so it doesn't fall behind
-        var exit = s.last ? 0 : clamp((NAV - top) / (s.h * EXIT));
+        var exit = s.last ? 0 : clamp((NAV - top - (s.h - s.tail)) / (s.tail * EXIT));
         return [enter, exit];
       }
 
       function paint(s) {
         var k = 1 - s.enter, q = s.exit;
-        var y = k * RISE + q * s.h * LAG;
+        var y = k * RISE + q * s.tail * LAG;
         var sc = (1 - k * SHRINK) * (1 - q * SINK);
-        s.el.style.transform = "perspective(1400px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+        // perspective in proportion to the card's width (1400px for a 900px card), so the tilt reads the same on phones
+        s.el.style.transform = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
           "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
         var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
         s.el.style.opacity = (1 - fade * DIM).toFixed(3);

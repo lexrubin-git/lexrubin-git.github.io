@@ -1532,7 +1532,25 @@
   
     /* a closed lightbox never catches clicks (the global a, button rule would otherwise leave its buttons live) */
     .lightbox:not(.open), .lightbox:not(.open) * { pointer-events: none !important; }
-  </style>
+  
+    /* ── WEBSITES: the two site cards sit edge to edge, sharing one border line ── */
+    .group-items { gap: 0; }
+    .group-items > .portfolio-item + .portfolio-item { border-left: 0; }
+    /* ── PHONES: a smaller "View LinkedIn" tag, and a calmer skills ticker and contact form ── */
+    @media (max-width: 768px) {
+      .group-items { gap: 0; }
+      .about-photo-linkedin-label { font-size: 0.5rem; letter-spacing: 0.04em; padding: 2px 5px; bottom: 5px; }
+      .ticker-label { width: 104px; padding: 0 0.6rem; font-size: 0.52rem; letter-spacing: 0.14em; }
+      .ticker-item { font-size: 0.62rem; letter-spacing: 0.06em; padding: 0 1.05rem; gap: 0.9rem; }
+      .contact-section { padding: 2.25rem 1.1rem 2.5rem; }
+      .contact-heading { font-size: 1.5rem; margin-bottom: 0.7rem; }
+      .contact-sub { font-size: 0.7rem; letter-spacing: 0.08em; line-height: 1.6; margin-bottom: 1.6rem; }
+      .contact-form { gap: 0.7rem; }
+      .contact-form input, .contact-form textarea { font-size: 0.8rem; padding: 0.7rem 0.85rem; }
+      .contact-form textarea { min-height: 120px; }
+      .contact-form button { font-size: 0.7rem; padding: 0.7rem 1.5rem; }
+    }
+</style>
 </head>
 <body>
 
@@ -3121,7 +3139,8 @@
         state.forEach(function (s) {
           var y = 0, n = s.el;
           while (n) { y += n.offsetTop; n = n.offsetParent; }
-          s.top = y; s.h = s.el.offsetHeight;
+          s.top = y; s.h = s.el.offsetHeight; s.w = s.el.offsetWidth;
+          s.tail = Math.min(s.h, window.innerHeight * 0.6);   // a tall card keeps its top part in view until only this much is left
         });
       }
 
@@ -3132,15 +3151,16 @@
         var p = clamp((vh - top) / (vh * ENTER));
         var enter = 1 - Math.pow(1 - p, 3);
         // the last item isn't covered by anything, so it doesn't fall behind
-        var exit = s.last ? 0 : clamp((NAV - top) / (s.h * EXIT));
+        var exit = s.last ? 0 : clamp((NAV - top - (s.h - s.tail)) / (s.tail * EXIT));
         return [enter, exit];
       }
 
       function paint(s) {
         var k = 1 - s.enter, q = s.exit;
-        var y = k * RISE + q * s.h * LAG;
+        var y = k * RISE + q * s.tail * LAG;
         var sc = (1 - k * SHRINK) * (1 - q * SINK);
-        s.el.style.transform = "perspective(1400px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+        // perspective in proportion to the card's width (1400px for a 900px card), so the tilt reads the same on phones
+        s.el.style.transform = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
           "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
         var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
         s.el.style.opacity = (1 - fade * DIM).toFixed(3);
