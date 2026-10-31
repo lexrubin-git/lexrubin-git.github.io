@@ -153,16 +153,33 @@
       flex: 0 0 158px;
       text-decoration: none;
     }
-    .about-photo-wrap { width: 100%; aspect-ratio: 480 / 642; position: relative; }   /* cut-out PNG: no frame, nothing cropped */
-    .about-photo-wrap img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: contain;
-      object-position: center bottom;
+    /* cut-out PNG: no frame, nothing cropped. The dim and hover zoom are on the wrap, so the eyes go with the face */
+    .about-photo-wrap {
+      width: 100%; aspect-ratio: 480 / 642; position: relative;
       filter: brightness(0.6);
       transition: transform 0.6s ease, filter 0.5s ease;
     }
-    .about-photo-link:hover .about-photo-wrap img { filter: brightness(1); transform: scale(1.04); }
+    .about-photo-link:hover .about-photo-wrap { filter: brightness(1); transform: scale(1.04); }
+    .about-photo-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* Eyes: each white is laid over the photo's own eye (positions in % of the 480x642 photo) and
+       masks its iris, so the iris can roll under the lids. The iris is trimmed round, enlarged a
+       little, and slowly turns toward the cursor (script: PORTRAIT EYES). */
+    .eye {
+      position: absolute; pointer-events: none;
+      background: var(--eye) 0 0 / 100% 100% no-repeat;
+      -webkit-mask: var(--eye) 0 0 / 100% 100% no-repeat; mask: var(--eye) 0 0 / 100% 100% no-repeat;
+    }
+    .eye-l { --eye: url(/about/eye-left.png);  left: 27.917%; top: 44.860%; width: 12.083%; height: 3.271%; }   /* 58x21 at (134, 288) */
+    .eye-r { --eye: url(/about/eye-right.png); left: 59.167%; top: 45.483%; width: 12.083%; height: 3.271%; }   /* 58x21 at (284, 292) */
+    .iris {
+      position: absolute; width: 46.552%; height: 100%;   /* 27x21 */
+      background: var(--iris) 0 0 / 100% 100% no-repeat;
+      -webkit-mask: radial-gradient(ellipse 44% 57% at 50% 45%, #000 88%, transparent 100%);
+      mask: radial-gradient(ellipse 44% 57% at 50% 45%, #000 88%, transparent 100%);
+      transform: translate(var(--ix, 0px), var(--iy, 0px)) scale(1.15);
+    }
+    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 31.034%; top: 9.524%; }   /* at (152, 290) */
+    .eye-r .iris { --iris: url(/about/iris-right.png); left: 20.690%; top: 4.762%; }   /* at (296, 293) */
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
       position: absolute;
@@ -203,28 +220,7 @@
       .hero-top { gap: 1.25rem; }
       .about-photo-link { flex: 0 0 96px; }
     }
-    /* "artwork section": a quiet link, a faint underline that brightens on hover */
-    .hero-lead a {
-      color: inherit;
-      text-decoration: none;
-      background: linear-gradient(rgba(136,136,136,0.45), rgba(136,136,136,0.45)) left bottom / 100% 1px no-repeat;
-      padding-bottom: 1px;
-      transition: color 0.25s, background-size 0.25s;
-    }
-    .hero-lead a:hover, .hero-lead a:focus-visible { color: #ccc; background-image: linear-gradient(#ccc, #ccc); }
-    .hero-lead a:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
-    .hero-lead a:hover strong, .hero-lead a:focus-visible strong { animation: none; -webkit-text-fill-color: currentColor; }
     .hero-lead strong { font-weight: 600; color: #8a8a8a; }
-    /* "artwork section" keeps the idle light sweep of "Need a personal site?" (cs-shine) */
-    .hero-lead a strong {
-      background: linear-gradient(100deg, #8a8a8a 42%, #fff 50%, #8a8a8a 58%) 100% 0 / 250% 100% no-repeat;
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: cs-shine 4s ease-in-out infinite;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .hero-lead a strong { animation: none; background: none; -webkit-text-fill-color: currentColor; }
-    }
     .hero-ctas {
       display: flex;
       justify-content: center;
@@ -1625,11 +1621,11 @@
     <div class="hero-copy">
       <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
       <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
-      <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the <a href="#artwork"><strong>artwork section</strong></a> below!</p>
+      <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the artwork section below!</p>
     </div>
     <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link">
       <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
-      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" /></div>
+      <div class="about-photo-wrap"><img src="/about/lex-portrait.png" alt="Lex Rubin" /><div class="eye eye-l" aria-hidden="true"><div class="iris"></div></div><div class="eye eye-r" aria-hidden="true"><div class="iris"></div></div></div>
     </a>
     </div>
     <div class="hero-ctas">
@@ -2023,7 +2019,7 @@
     }
 
     // Nav links — small dot, wide ring
-    document.querySelectorAll('nav a, .hero-btn, .hero-lead a').forEach(el => {
+    document.querySelectorAll('nav a, .hero-btn').forEach(el => {
       el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','52px','52px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
@@ -2273,6 +2269,44 @@
       el.addEventListener('mouseenter', () => setCursor('4px','4px','50%','44px','44px','50%','1px'));
       el.addEventListener('mouseleave', resetCursor);
     });
+
+    // ── PORTRAIT EYES: the irises slowly turn toward the cursor, staying inside each eye ──
+    (function () {
+      const eyes = Array.from(document.querySelectorAll('.about-photo-wrap .eye'));
+      if (!eyes.length || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      const MAX_X = 9, MAX_Y = 3,   // furthest an iris travels from rest, in photo px (the eye is 58x21)
+            REACH = 260,            // cursor distance (screen px) at which the iris is fully turned
+            TAU = 320;              // ms smoothing: higher = slower to follow
+      const st = eyes.map(el => ({ el, iris: el.firstElementChild, x: 0, y: 0, tx: 0, ty: 0 }));
+      let raf = null, last = 0;
+      function aim(mx, my) {
+        for (const e of st) {
+          const r = e.el.getBoundingClientRect();
+          const dx = mx - (r.left + r.width / 2), dy = my - (r.top + r.height / 2), d = Math.hypot(dx, dy);
+          const k = d ? Math.min(1, d / REACH) / d : 0;
+          e.tx = dx * k * MAX_X; e.ty = dy * k * MAX_Y;
+        }
+        if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); }
+      }
+      function step(now) {
+        raf = null;
+        const a = 1 - Math.exp(-Math.min(now - last, 64) / TAU); last = now;
+        let moving = false;
+        for (const e of st) {
+          e.x += (e.tx - e.x) * a; e.y += (e.ty - e.y) * a;
+          if (Math.abs(e.tx - e.x) > 0.01 || Math.abs(e.ty - e.y) > 0.01) moving = true;
+          const px = e.el.offsetWidth / 58;   // photo px -> CSS px at the current portrait size
+          e.iris.style.setProperty('--ix', (e.x * px).toFixed(2) + 'px');
+          e.iris.style.setProperty('--iy', (e.y * px).toFixed(2) + 'px');
+        }
+        if (moving) raf = requestAnimationFrame(step);
+      }
+      document.addEventListener('mousemove', ev => aim(ev.clientX, ev.clientY), { passive: true });
+      // the irises keep tracking the cursor's last spot as the page scrolls under it
+      let mx = null, my = null;
+      document.addEventListener('mousemove', ev => { mx = ev.clientX; my = ev.clientY; }, { passive: true });
+      addEventListener('scroll', () => { if (mx !== null) aim(mx, my); }, { passive: true });
+    })();
 
     // ── AMBIENT BACKGROUND HALFTONE: slow random spirals + a cursor "ink" trail, all drawn by dot swell ──
     (function () {
