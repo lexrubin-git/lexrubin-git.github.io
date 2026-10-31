@@ -155,7 +155,7 @@
     }
     /* cut-out PNG: no frame, nothing cropped. The dim and hover zoom are on the wrap, so the eyes go with the face */
     .about-photo-wrap {
-      width: 100%; aspect-ratio: 480 / 642; position: relative;
+      width: 100%; aspect-ratio: 428 / 595; position: relative;
       filter: brightness(0.82);
       transition: transform 0.6s ease, filter 0.5s ease;
     }
@@ -168,25 +168,31 @@
     .about-photo-wrap.pressed .about-photo-stretch { visibility: visible; }
     .about-photo-wrap.pressed > img, .about-photo-wrap.pressed .eye { visibility: hidden; }
     .about-photo-wrap.pressed { filter: brightness(1); }
-    /* Eyes: each white is laid over the photo's own eye (positions in % of the 480x642 photo) and
-       masks its iris, so the iris can roll under the lids. The iris is trimmed round, enlarged a
-       little, and slowly turns toward the cursor (script: PORTRAIT EYES). */
+    /* Eyes: each white is laid over the photo's own eye (positions in % of the 428x595 photo) and
+       masks its iris, so the iris can roll under the lids. The iris is trimmed to a circle around
+       its pupil, enlarged a little, and slowly turns toward the cursor (script: PORTRAIT EYES).
+       The left white is drawn a little wider than its file so it fills that eye's wider opening. */
     .eye {
       position: absolute; pointer-events: none;
       background: var(--eye) 0 0 / 100% 100% no-repeat;
-      -webkit-mask: var(--eye) 0 0 / 100% 100% no-repeat; mask: var(--eye) 0 0 / 100% 100% no-repeat;
+      /* the mask is the white grown ~2px out to the lids (its file has 3px padding all round), so the
+         iris shows right up to the lid line; under it the photo's own iris is painted out */
+      -webkit-mask: var(--eye-mask) center / 110.345% 128.571% no-repeat; mask: var(--eye-mask) center / 110.345% 128.571% no-repeat;
     }
-    .eye-l { --eye: url(/about/eye-left.png);  left: 27.5%; top: 44.860%; width: 12.083%; height: 3.271%; }   /* 58x21 at (132, 288) */
-    .eye-r { --eye: url(/about/eye-right.png); left: 59.167%; top: 45.483%; width: 12.083%; height: 3.271%; }   /* 58x21 at (284, 292) */
+    .eye-l { --eye: url(/about/eye-left.png);  --eye-mask: url(/about/eye-left-mask.png);  left: 23.314%; top: 44.834%; width: 14.744%; height: 3.275%; }   /* 63.1x19.5 at (99.8, 266.8) */
+    .eye-r { --eye: url(/about/eye-right.png); --eye-mask: url(/about/eye-right-mask.png); left: 57.138%; top: 45.458%; width: 12.576%; height: 3.275%; }   /* 53.8x19.5 at (244.6, 270.5) */
     .iris {
-      position: absolute; width: 46.552%; height: 100%;   /* 27x21 */
+      position: absolute;   /* 25.1x25.1 photo px (27x27 file) */
       background: var(--iris) 0 0 / 100% 100% no-repeat;
-      -webkit-mask: radial-gradient(ellipse 44% 57% at 50% 45%, #000 88%, transparent 100%);
-      mask: radial-gradient(ellipse 44% 57% at 50% 45%, #000 88%, transparent 100%);
+      /* the iris circle, centred on the pupil (the file's top rows are the iris mirrored, so the
+         circle stays whole wherever the lid line falls) */
+      -webkit-mask: radial-gradient(circle closest-side at 50% 50%, #000 90%, transparent 100%);
+      mask: radial-gradient(circle closest-side at 50% 50%, #000 90%, transparent 100%);
+      transform-origin: 50% 50%;
       transform: translate(var(--ix, 0px), var(--iy, 0px)) scale(1.15);
     }
-    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 31.034%; top: 9.524%; }   /* at (150, 290) */
-    .eye-r .iris { --iris: url(/about/iris-right.png); left: 20.690%; top: 4.762%; }   /* at (296, 293) */
+    .eye-l .iris { --iris: url(/about/iris-left.png);  left: 35.294%; top: -19.048%; width: 39.706%; height: 128.571%; }   /* at (122.1, 263.1) */
+    .eye-r .iris { --iris: url(/about/iris-right.png); left: 20.690%; top: -23.810%; width: 46.552%; height: 128.571%; }   /* at (255.7, 265.8) */
     /* "View LinkedIn" only appears on hover, its arrow sliding in */
     .about-photo-linkedin-label {
       position: absolute;
@@ -2281,7 +2287,7 @@
     (function () {
       const eyes = Array.from(document.querySelectorAll('.about-photo-wrap .eye'));
       if (!eyes.length || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-      const MAX_X = 9, MAX_Y = 3,   // furthest an iris travels from rest, in photo px (the eye is 58x21)
+      const MAX_X = 8, MAX_Y = 2,   // furthest an iris travels from rest, in photo px (an eye is ~58x21)
             REACH = 260,            // cursor distance (screen px) at which the iris is fully turned
             TAU = 320;              // ms smoothing: higher = slower to follow
       const st = eyes.map(el => ({ el, iris: el.firstElementChild, x: 0, y: 0, tx: 0, ty: 0 }));
@@ -2302,7 +2308,7 @@
         for (const e of st) {
           e.x += (e.tx - e.x) * a; e.y += (e.ty - e.y) * a;
           if (Math.abs(e.tx - e.x) > 0.01 || Math.abs(e.ty - e.y) > 0.01) moving = true;
-          const px = e.el.offsetWidth / 58;   // photo px -> CSS px at the current portrait size
+          const px = e.el.parentNode.offsetWidth / 428;   // photo px -> CSS px at the current portrait size
           e.iris.style.setProperty('--ix', (e.x * px).toFixed(2) + 'px');
           e.iris.style.setProperty('--iy', (e.y * px).toFixed(2) + 'px');
         }
@@ -2328,7 +2334,8 @@
             RESIST = 0.55,       // drag distance (photo widths) for ~76% of that give: higher = stiffer
             RADIUS = 0.62,       // reach of the stretch around the held spot, in photo widths
             CLICK_MS = 300, CLICK_PX = 5;   // a press longer or further than this isn't a click
-      const IMG_W = 1035, IMG_H = 1451;     // the wink photo, fit by height into the 480x642 portrait box
+      // where the wink photo sits in the 428x595 portrait box (as shares of it), lined up face to face
+      const WINK_X = -0.02048, WINK_Y = -0.00084, WINK_W = 0.99292, WINK_H = 1.00130;
 
       const gl = cv.getContext('webgl', { premultipliedAlpha: true, alpha: true });
       if (!gl) return;
@@ -2382,10 +2389,10 @@
         if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
         gl.viewport(0, 0, cw, ch);
         gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-        const iw = H * IMG_W / IMG_H, ix = (W - iw) / 2;
+
         gl.uniform2f(U.box, W, H); gl.uniform1f(U.pad, PAD); gl.uniform1f(U.rad, RADIUS * W);
         gl.uniform2f(U.a, ax, ay); gl.uniform2f(U.d, dx, dy);
-        gl.uniform2f(U.img0, ix, 0); gl.uniform2f(U.img1, ix + iw, H);
+        gl.uniform2f(U.img0, WINK_X * W, WINK_Y * H); gl.uniform2f(U.img1, (WINK_X + WINK_W) * W, (WINK_Y + WINK_H) * H);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       // client px -> photo-box px (undoing the hover zoom)
