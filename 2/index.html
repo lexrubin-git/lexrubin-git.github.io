@@ -1302,8 +1302,16 @@
     .deck-top { max-width: 900px; margin: 0 auto; }
     .deck-top > .artwork-hero, .deck-top > .section-arrows { opacity: 1; animation: none; }
     .case-study-section.case-study-section { opacity: 1; animation: none; border-left: 0; border-right: 0; border-bottom: 0; background: transparent; }
-    .case-study-section > .cs-body { border-left: 1px solid var(--border); border-right: 1px solid var(--border); background: var(--black); }
+    /* card edges: the top card and the gallery are outlined all round; the 001/002/003 sections only
+       where they don't meet another section (001 top, 003 bottom). Cards that touch overlap by 1px, so
+       at rest two meeting edges read as one line */
+    .case-study-section > .cs-body { border: 1px solid var(--border); border-top: 0; border-bottom: 0; background: var(--black); }
+    .case-study-section > .cs-body:first-child { border-top: 1px solid var(--border); }
     .case-study-section > .cs-body:last-child { border-bottom: 1px solid var(--border); }
+    .case-study-section.case-study-section { margin-top: -1px; }
+    .deck-top { margin-top: -1px; }   /* its top edge tucks under the header's own line */
+    .deck-top > .artwork-hero { border-top: 1px solid var(--border); }
+    .artworks-section.artworks-section { border: 1px solid var(--border); margin-top: -1px; }
     .deck-card.deck-card {   /* doubled class: outranks each card's own entrance animation */
       opacity: 1;
       transform: none;
