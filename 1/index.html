@@ -1104,12 +1104,12 @@
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   
-    /* one-line project description under the tags, sized like "Tools used" */
+    /* project description, above the tags */
     .hero-desc {
-      margin-top: 0.9rem;
-      max-width: 19rem;
-      color: #777;
-      font-size: 0.75rem;
+      margin: 0 0 1rem;
+      max-width: 23rem;
+      color: #9a9a9a;
+      font-size: 0.9rem;
       line-height: 1.55;
       text-align: right;
       text-wrap: balance;
@@ -1139,7 +1139,12 @@
       object-position: center;
       border-bottom: 1px solid var(--border);
     }
-    @media (max-width: 768px) { .project-cover { aspect-ratio: 8 / 3; } }   /* full banner on phones, like the home thumbnails */
+    @media (max-width: 768px) { .project-cover { aspect-ratio: 8 / 3; } }
+    /* the cover links back to the home page */
+    .project-cover-link { display: block; cursor: pointer; }
+    .project-cover-link .project-cover { transition: filter 0.3s ease; }
+    .project-cover-link:hover .project-cover { filter: brightness(1.12); }
+    .project-cover-link:focus-visible { outline: 1px solid var(--white); outline-offset: -2px; }   /* full banner on phones, like the home thumbnails */
   
     /* ── PROJECT GALLERY: endless horizontal scroller, pauses on hover ── */
     .artworks-grid.marquee { display: block; overflow: hidden; }
@@ -1251,18 +1256,18 @@
 <!-- ── HERO ── -->
 <div class="page-wrapper">
   <div class="artwork-hero">
-    <video class="project-cover" src="../pyxd-cover.mp4?v=2" poster="../pyxd-cover.jpg?v=2" autoplay muted loop playsinline aria-label="Two people wearing the PyxMagic t-shirt beside the PyxMagic logo"></video>
+    <a href="/" class="project-cover-link" aria-label="Back to the home page"><video class="project-cover" src="../pyxd-cover.mp4?v=2" poster="../pyxd-cover.jpg?v=2" autoplay muted loop playsinline aria-label="Two people wearing the PyxMagic t-shirt beside the PyxMagic logo"></video></a>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">PyxMagic<span class="title-sub">Design systems &amp; brand&nbsp;identity</span></h1>
       </div>
       <div class="hero-tags-col">
+        <p class="hero-desc">A cohesive UI and brand language spanning app, web, and apparel for an AI photography product</p>
         <div class="hero-tags">
           <span class="hero-tag">UI/UX</span>
           <span class="hero-tag">Systems</span>
           <span class="hero-tag">Branding</span>
         </div>
-        <p class="hero-desc">A cohesive UI and brand language spanning app, web, and apparel for an AI photography product</p>
         <div class="hero-tools"><strong>Tools used:</strong> Illustrator, Figma, Photoshop</div>
         <div class="hero-type">Paid Work</div>
       </div>
