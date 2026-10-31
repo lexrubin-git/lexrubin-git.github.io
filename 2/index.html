@@ -1624,9 +1624,12 @@
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
       // Cursor ink: dots the cursor passes over swell at once, hold briefly, then ease back
-      // slowly, so a quick stroke leaves a fading line you can draw with.
-      const INK_R = 16, INK_HOLD = 450, INK_FADE = 2600;   // brush radius (px), hold and fade-out (ms)
-      let inked = new Map(), lastX = null, lastY = null;   // dot index -> { k: strength 0..1, t: time inked }
+      // slowly, so a quick stroke leaves a fading line you can draw with. The stroke is kept as
+      // points rather than swollen dots, so it can ride the scroll wind: it is carried along
+      // with the spirals but INK_DRIFT times as far, giving a parallax between drawing and coils.
+      const INK_R = 16, INK_HOLD = 650, INK_FADE = 3200,   // brush radius (px), hold and fade-out (ms)
+            INK_DRIFT = 1.5;                               // how much harder the wind carries ink than spirals
+      let strokes = [], inkOff = 0, lastX = null, lastY = null;   // stroke points { x, y, t }, y before drift
       const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
@@ -1635,10 +1638,10 @@
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        dots = []; hot = new Set(); inked = new Map();
+        dots = []; hot = new Set(); strokes = [];
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
-          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
+          for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R, ink: false });
         base.width = cv.width; base.height = cv.height;
         bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const bp = new Path2D();
@@ -1658,6 +1661,26 @@
       // straight away (in the same slot) while the old tail is still draining.
       let spirals = [], slots = [], firstRun = true;
       const TAIL = 420, REACH = 13, SAMPLES = 90, RAMP_IN = 0.06, RAMP_OUT = 0.25;
+      // Scroll wind: scrolling blows the spirals the opposite way (up when scrolling down, down when
+      // scrolling up). A gust builds quickly, stretches each coil (its far side is pushed harder,
+      // with a slight sideways ripple) and, once the scrolling stops, slowly glides them back.
+      const GUST_GAIN = 70,        // push (px) per px/ms of scroll speed
+            GUST_MAX = 160,        // strongest push (px)
+            GUST_IN = 350,         // ms for a gust to build
+            GUST_OUT = 1000,       // ms for the spirals to glide back once it eases
+            GUST_STRETCH = 0.55,   // how much more the leading side of a coil is pushed
+            GUST_RIPPLE = 0.18;    // sideways ripple, as a share of the push
+      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null;
+      function blow(now) {
+        const dt = windT === null ? 16 : Math.max(1, Math.min(now - windT, 100)); windT = now;   // never 0: two frames can share a timestamp
+        const v = (window.scrollY - windScroll) / dt; windScroll = window.scrollY;
+        windV += (v - windV) * (1 - Math.exp(-dt / 120));
+        const target = Math.max(-GUST_MAX, Math.min(GUST_MAX, -windV * GUST_GAIN));   // against the scroll
+        const building = Math.abs(target) > Math.abs(wind) && target * wind >= 0;
+        wind += (target - wind) * (1 - Math.exp(-dt / (building ? GUST_IN : GUST_OUT)));
+        if (!isFinite(wind) || !isFinite(windV)) wind = windV = 0;
+        if (Math.abs(wind) < 0.05 && !target) wind = 0;
+      }
       const CARDS = 'nav, footer, .hero, .artwork-hero, .case-study-section, .artworks-section, .section-arrows, .portfolio-grid, .gallery-section, .content-col, .skills-section, .skill-tickers, .testimonials-section, .contact-section';
 
       // Glide: a quick sine ramp up (so it gets going right away), a long even cruise, then a
@@ -1688,6 +1711,7 @@
           if (score >= 200) break;
         }
         const sp = { slot, side, rMax, cx, cy, b, rot: Math.random() * Math.PI * 2, dir: Math.random() < 0.5 ? 1 : -1,
+                     gust: 0.75 + Math.random() * 0.5,   // each spiral catches the wind a little differently
                      len: b * thMax * thMax / 2, start: now, dur: 32000 + Math.random() * 16000, done: false,
                      x0: cx - rMax - REACH, x1: cx + rMax + REACH, y0: cy - rMax - REACH, y1: cy + rMax + REACH,
                      trail: null };
@@ -1715,6 +1739,7 @@
       function frame(now) {
         raf = null;
         if (firstRun && spirals.length >= 3) firstRun = false;
+        if (!calm) blow(now);
         if (!calm) for (let slot = 0; slot < 3; slot++)
           if (now >= slots[slot] && !spirals.some(sp => sp.slot === slot && !sp.done)) { spawn(now, slot); slots[slot] = Infinity; }
 
@@ -1725,15 +1750,25 @@
           if (t >= 1) { sp.done = true; slots[sp.slot] = now; continue; }   // next one in this slot starts right away
           // head runs past the end by one tail length, so the tail drains into the finish
           const head = (sp.len + TAIL) * glide(t);
-          const trail = [];
+          const trail = [], push = wind * sp.gust;
+          let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
           for (let i = 0; i <= SAMPLES; i++) {
             const s = head - TAIL * (i / SAMPLES);
             if (s < 0 || s > sp.len) continue;
             const w = Math.pow(1 - i / SAMPLES, 1.6);       // full at the head, fading down the tail
-            const [px, py] = at(sp, s);
+            let [px, py] = at(sp, s);
+            if (push) {
+              // -1 on the side the wind comes from, +1 on the side it blows toward
+              const rel = (py - sp.cy) / sp.rMax * Math.sign(push);
+              px += push * GUST_RIPPLE * Math.sin(rel * 2.4 + sp.rot);
+              py += push * (1 + GUST_STRETCH * rel);
+            }
             trail.push(px, py, w);
+            if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
           }
           sp.trail = trail;
+          // dots to redraw: around the trail as it's drawn now (dots it left keep shrinking back via hot)
+          sp.x0 = x0 - REACH; sp.x1 = x1 + REACH; sp.y0 = y0 - REACH; sp.y1 = y1 + REACH;
         }
 
         // Only dots inside an active spiral, or still shrinking back, are redrawn: the
@@ -1750,17 +1785,35 @@
           const iy0 = Math.max(0, Math.floor((sp.y0 - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((sp.y1 - SPACING / 2) / SPACING));
           for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) touch.add(ix * rows + iy);
         }
-        for (const [i, e] of inked) { if (strength(e, now) <= 0) inked.delete(i); else touch.add(i); }
+        // ink: each live stroke point, shifted by the wind, swells the dots under its brush
+        inkOff = INK_DRIFT * wind;
+        strokes = strokes.filter(p => now - p.t < INK_HOLD + INK_FADE);
+        const inked = new Map();   // dot index -> ink strength 0..1 this frame
+        for (const p of strokes) {
+          const f = strength(p.t, now), y = p.y + inkOff;
+          if (f <= 0) continue;
+          const ix0 = Math.max(0, Math.floor((p.x - INK_R - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((p.x + INK_R - SPACING / 2) / SPACING));
+          const iy0 = Math.max(0, Math.floor((y - INK_R - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((y + INK_R - SPACING / 2) / SPACING));
+          for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) {
+            const i = ix * rows + iy, d = dots[i], u = 1 - Math.hypot(d.x - p.x, d.y - y) / INK_R;
+            if (u <= 0) continue;
+            const k = u * u * (3 - 2 * u) * f;
+            if (k > (inked.get(i) || 0)) inked.set(i, k);
+          }
+        }
+        for (const i of inked.keys()) touch.add(i);
         const path = new Path2D(), next = new Set(), half = SPACING / 2;
         for (const i of touch) {
           const d = dots[i];
           let k = 0;
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
-          const e = inked.get(i);
-          const ik = e ? e.k * strength(e, now) : 0;
+          const ik = inked.get(i) || 0;
+          if (ik || k) d.ink = ik > k;   // remember what last drew this dot
           const target = BASE_R + (MAX_R - BASE_R) * Math.max(k, ik);
-          d.r += (target - d.r) * (target > d.r && ik > k ? 0.35 : 0.08);   // ink swells in quickly, everything eases back slowly
+          // ink swells in quickly and lets go fairly quickly too, so a drifting drawing stays crisp
+          // (its fade is already gradual); spiral dots ease back slowly to draw their tails
+          d.r += (target - d.r) * (d.ink ? (target > d.r ? 0.35 : 0.25) : 0.08);
           if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
           next.add(i);
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
@@ -1771,22 +1824,19 @@
         ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(path);   // same faintness at every size
         spirals = spirals.filter(sp => !sp.done);
 
-        if (document.visibilityState !== 'hidden' && (!calm || inked.size || hot.size)) raf = requestAnimationFrame(frame);
+        if (document.visibilityState !== 'hidden' && (!calm || strokes.length || hot.size)) raf = requestAnimationFrame(frame);
       }
 
+      // add a stroke point under the cursor, stored before the current drift so it moves with the ink
       function ink(x, y, now) {
-        const ix0 = Math.max(0, Math.floor((x - INK_R - SPACING / 2) / SPACING)), ix1 = Math.min(cols - 1, Math.ceil((x + INK_R - SPACING / 2) / SPACING));
-        const iy0 = Math.max(0, Math.floor((y - INK_R - SPACING / 2) / SPACING)), iy1 = Math.min(rows - 1, Math.ceil((y + INK_R - SPACING / 2) / SPACING));
-        for (let ix = ix0; ix <= ix1; ix++) for (let iy = iy0; iy <= iy1; iy++) {
-          const i = ix * rows + iy, d = dots[i], u = 1 - Math.hypot(d.x - x, d.y - y) / INK_R;
-          if (u <= 0) continue;
-          const k = u * u * (3 - 2 * u), cur = inked.get(i);
-          if (!cur || k >= cur.k * strength(cur, now)) inked.set(i, { k: k, t: now });
-        }
+        y -= inkOff;
+        const last = strokes[strokes.length - 1];
+        if (last && Math.abs(last.x - x) < 3 && Math.abs(last.y - y) < 3) { last.t = now; return; }   // lingering: refresh, don't pile up
+        strokes.push({ x: x, y: y, t: now });
       }
       // 1 while holding, then a slow ease-out back to 0
-      function strength(e, now) {
-        const a = now - e.t - INK_HOLD;
+      function strength(t, now) {
+        const a = now - t - INK_HOLD;
         if (a <= 0) return 1;
         const f = Math.min(1, a / INK_FADE);
         return 1 - f * f * (3 - 2 * f);
