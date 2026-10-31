@@ -1273,10 +1273,13 @@
     /* "Don't feel like reading…": a quiet italic line under the tags row that opens the gallery */
     /* below the tags row, a dotted rule across the card; the line sits centred in the strip under it */
     .hero-meta-row { padding-bottom: 1.6rem; }
-    .hero-skip { padding: 1.3rem 2.5rem; border-top: 1px dotted rgba(255,255,255,0.18); text-align: center; color: #6f6f6f; font-size: 0.85rem; line-height: 1.5; }
+    .hero-skip { padding: 1.3rem 2.5rem; background: linear-gradient(to right, rgba(255,255,255,0.3) 1px, transparent 1px) left top / 6px 1px repeat-x;   /* a dot every 6px */ text-align: center; color: #6f6f6f; font-size: 0.85rem; line-height: 1.5; }
     .hero-skip a { color: #9a9a9a; text-decoration: none; background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat; padding-bottom: 1px; transition: color 0.25s; }
     .hero-skip a:hover, .hero-skip a:focus-visible { color: var(--white); }
     @media (max-width: 768px) { .hero-meta-row { padding-bottom: 1.25rem; } .hero-skip { padding: 1.1rem 1.5rem; } }
+    /* a gallery card that links out (the Figma mockup) rather than opening the lightbox */
+    a.artwork-card-link { display: block; color: inherit; text-decoration: none; }
+    .artwork-card-link, .artwork-card-link * { cursor: pointer !important; }
 </style>
 </head>
 <body>
@@ -1323,7 +1326,7 @@
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Mobile app design</span></h1>
       </div>
-      <p class="hero-desc">Created and designed a fully functional mockup mobile app for a fictional zoo focusing on arctic animals</p>
+      <p class="hero-desc">Fully designed mobile app and mockup app for fictional zoo focusing on arctic animals</p>
     </div>
     <div class="hero-meta-row">
       <div class="hero-tags">
@@ -1448,6 +1451,12 @@
         <img class="artwork-card-img" src="arctic_3.png" alt="Image 3">
         <div class="artwork-card-overlay"><span class="artwork-enlarge-label">Click to enlarge</span></div>
       </div>
+
+      <!-- Card 4: opens the interactive Figma mockup instead of the lightbox -->
+      <a class="artwork-card artwork-card-link" href="https://www.figma.com/proto/lnq8qdBoGJtHE9BXuBeMpa/Arctic-Zoo-and-Aquarium---Lex-Rubin?content-scaling=fixed&kind=proto&node-id=5-4&scaling=scale-down&t=JeY1t1BAURecegM7-1" target="_blank" rel="noopener" aria-label="Open the interactive Figma mockup">
+        <img class="artwork-card-img" src="process-final-design.png" alt="Final app screens: splash, Polar Bear exhibit, welcome and zoo map">
+        <div class="artwork-card-overlay"><span class="artwork-enlarge-label">View the Figma mockup <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:0.9em;height:0.9em;vertical-align:-0.1em"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
+      </a>
 
     </div>
   </div>
@@ -2031,7 +2040,7 @@
       if (!lb || !grid) return;
       // the original gallery cards (not the scroller's copies, not the dam slideshow card)
       var items = Array.prototype.filter.call(grid.querySelectorAll(".artwork-card"), function (c) {
-        return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card");
+        return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card") && !c.classList.contains("artwork-card-link");
       });
       if (items.length < 2) return;
       var prev = document.createElement("button"), next = document.createElement("button");
@@ -2109,12 +2118,23 @@
       if (!link || !grid) return;
       link.addEventListener("click", function (e) {
         var first = Array.prototype.filter.call(grid.querySelectorAll(".artwork-card"), function (c) {
-          return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card") && c.querySelector(".artwork-card-img");
+          return !c.hasAttribute("aria-hidden") && !c.classList.contains("slideshow-card") && !c.classList.contains("artwork-card-link") && c.querySelector(".artwork-card-img");
         })[0];
         if (!first) return;   // no gallery photos: the link just scrolls down to the gallery
         e.preventDefault();
         first.click();
       });
+    })();
+  </script>
+  <script>
+    // ── GALLERY LINK CARD: clicks on it (and on the scroller's copies of it) follow the link only;
+    // stopped here, on the way down, so the gallery's own handler never opens the lightbox for it ──
+    (function () {
+      var grid = document.getElementById("artwork-grid");
+      if (!grid) return;
+      grid.addEventListener("click", function (e) {
+        if (e.target.closest && e.target.closest(".artwork-card-link")) e.stopPropagation();
+      }, true);
     })();
   </script>
 </body>
