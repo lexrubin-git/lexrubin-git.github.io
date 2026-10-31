@@ -1317,7 +1317,20 @@
   
     /* a closed lightbox never catches clicks (the global a, button rule would otherwise leave its buttons live) */
     .lightbox:not(.open), .lightbox:not(.open) * { pointer-events: none !important; }
-  </style>
+      /* ── HERO LAYOUT: title + description side by side (the description is sized to match the
+       title's height, see HERO DESCRIPTION FIT), then tags, tools and project type in one centred row ── */
+    .artwork-title-row { align-items: flex-start; padding-bottom: 1.75rem; gap: 2.5rem; }
+    .artwork-title-row .hero-title-col { flex: 1 1 auto; }
+    .artwork-title-row .hero-desc { flex: 0 0 min(25rem, 44%); margin: 0; max-width: none; line-height: 1.45; text-align: right; }
+    .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.9rem 1.75rem; padding: 0 2.5rem 2.5rem; }
+    .hero-meta-row .hero-tags { justify-content: center; }
+    .hero-meta-row .hero-tools, .hero-meta-row .hero-type { margin: 0; }
+    @media (max-width: 768px) {
+      .artwork-title-row { padding-bottom: 1.25rem; gap: 1rem; }
+      .artwork-title-row .hero-desc { flex: none; font-size: 1rem; text-align: left; }
+      .hero-meta-row { padding: 0 1.5rem 2rem; }
+    }
+</style>
 </head>
 <body>
 
@@ -1363,16 +1376,16 @@
       <div class="hero-title-col">
         <h1 class="artwork-main-title">U.C. Berkeley dam research<span class="title-sub">Information design</span></h1>
       </div>
-      <div class="hero-tags-col">
-        <p class="hero-desc">Dense technical datasets turned into figures built for academic publication and a lay audience</p>
-        <div class="hero-tags">
-          <span class="hero-tag">Data Viz</span>
-          <span class="hero-tag">Diagrams</span>
-          <span class="hero-tag">Visual</span>
-        </div>
-        <div class="hero-tools"><strong>Tools used:</strong> Illustrator, InDesign, ArcGIS, Photoshop</div>
-        <div class="hero-type">PhD Research</div>
+      <p class="hero-desc">Dense technical datasets turned into figures built for academic publication and a lay audience</p>
+    </div>
+    <div class="hero-meta-row">
+      <div class="hero-tags">
+        <span class="hero-tag">Data Viz</span>
+        <span class="hero-tag">Diagrams</span>
+        <span class="hero-tag">Visual</span>
       </div>
+      <div class="hero-tools"><strong>Tools used:</strong> Illustrator, InDesign, ArcGIS, Photoshop</div>
+      <div class="hero-type">PhD Research</div>
     </div>
   </div>
 </div>
@@ -2269,5 +2282,27 @@
     });
   </script>
   <script src="/click-fx.js" defer></script>
+  <script>
+    // ── HERO DESCRIPTION FIT: beside the title, the description gets the largest size (up to 26px)
+    // that keeps it no taller than the project name + subtitle ──
+    (function () {
+      var row = document.querySelector(".artwork-title-row"), title = row && row.querySelector(".hero-title-col"), desc = row && row.querySelector(".hero-desc");
+      if (!desc || !title) return;
+      function fit() {
+        desc.style.fontSize = "";
+        if (getComputedStyle(row).flexDirection === "column") return;   // stacked on phones: CSS size
+        var lo = 13, hi = 26;
+        for (var i = 0; i < 12; i++) {
+          var mid = (lo + hi) / 2; desc.style.fontSize = mid + "px";
+          if (desc.offsetHeight > title.offsetHeight + 1) hi = mid; else lo = mid;
+        }
+        desc.style.fontSize = lo.toFixed(2) + "px";
+        while (lo > 13 && desc.offsetHeight > title.offsetHeight + 1) { lo -= 0.25; desc.style.fontSize = lo + "px"; }
+      }
+      fit();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      addEventListener("load", fit); addEventListener("resize", fit);
+    })();
+  </script>
 </body>
 </html>
