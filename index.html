@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lex Rubin Portfolio</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- the hero's name + intro wait (briefly) for their fonts, then fade in, so they never
+       show in a fallback face and then jump when the real one arrives -->
+  <script>
+    document.documentElement.classList.add('hero-wait');
+    setTimeout(function () { document.documentElement.classList.remove('hero-wait'); }, 2500);
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=EB+Garamond&family=Inter:wght@300;400;500;600&family=Jost&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -114,14 +122,20 @@
     .hero-name, .hero-lead { text-wrap: balance; }
     /* Letters of the name randomly ease to thinner weights on their own, inside a
        box locked to its heavy width, so nothing around it moves */
+    /* The weight eases through --w, and the font-weight it sets is rounded to steps of 10: every
+       in-between weight of a variable font is a new font instance to build and shape, which made
+       each frame of a pulse cost ~10x more layout. Steps of 10 are too fine to see. */
+    @property --w { syntax: '<number>'; inherits: false; initial-value: 900; }
     .hero-name-char {
       display: inline-block;
       text-align: center;
       font-weight: 900;
-      transition: font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      font-weight: round(nearest, var(--w), 10);
+      transition: --w 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     /* Automatic pulse: slower, symmetrical ease in and out */
-    .hero-name-char.is-auto { transition: font-weight 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+    .hero-name-char.is-auto { transition: --w 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+    .hero-wait .hero-copy { opacity: 0; }
     .hero-name {
       font-family: 'Archivo', 'Inter', sans-serif;
       font-size: clamp(2.03rem, 4.68vw, 3.12rem);
@@ -143,7 +157,7 @@
     /* name + intro: one centred block, exactly as wide as the
        name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
        so they wrap to the name's width; text-wrap: balance keeps their lines even, with no orphans */
-    .hero-copy { width: fit-content; margin: 0; text-align: center; }
+    .hero-copy { width: fit-content; margin: 0; text-align: center; transition: opacity 0.5s ease; }
     .hero-copy .hero-lead { margin-left: 0; max-width: none; width: 0; min-width: 100%; }
     /* name + intro on the left, portrait (links to LinkedIn) on the right; the pair sits in the middle */
     .hero-top { display: flex; align-items: center; justify-content: center; gap: 3.5rem; }
@@ -1782,21 +1796,21 @@
           <div class="gallery-track">
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img src="/about/1.png" alt="Design 1" />
+              <img loading="lazy" decoding="async" src="/about/1.png" alt="Design 1" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
             </div>
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img src="/about/2.png" alt="Design 2" />
+              <img loading="lazy" decoding="async" src="/about/2.png" alt="Design 2" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
             </div>
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img src="/about/3.png" alt="Design 3" />
+              <img loading="lazy" decoding="async" src="/about/3.png" alt="Design 3" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
@@ -1818,32 +1832,32 @@
           <div class="gallery-track">
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_1.png" alt="Artwork 1" data-caption="White colored pencil on blackboard - 20&quot;x14&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_1.png" alt="Artwork 1" data-caption="White colored pencil on blackboard - 20&quot;x14&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_5.png" alt="Artwork 2" data-caption="Acrylic self-portrait(s) - 9&quot;x12&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_5.png" alt="Artwork 2" data-caption="Acrylic self-portrait(s) - 9&quot;x12&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_6.jpg" alt="Monochromatic acrylic portrait" data-caption="MONOCHROMATIC ACRYLIC PORTRAIT - 9&quot;x12&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_6.jpg" alt="Monochromatic acrylic portrait" data-caption="MONOCHROMATIC ACRYLIC PORTRAIT - 9&quot;x12&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_4.png" alt="Artwork 3" data-caption="Pencil figure study - 12&quot;x8&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_4.png" alt="Artwork 3" data-caption="Pencil figure study - 12&quot;x8&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_3.png" alt="Artwork 4" data-caption="Pencil figure study - 18&quot;x24&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_3.png" alt="Artwork 4" data-caption="Pencil figure study - 18&quot;x24&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img src="artwork/artwork_2.png" alt="Artwork 5" data-caption="Pencil figure study - 18&quot;x24&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_2.png" alt="Artwork 5" data-caption="Pencil figure study - 18&quot;x24&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
           </div>
@@ -1999,19 +2013,23 @@
     const cur  = document.getElementById('cur');
     const ring = document.getElementById('ring0');
 
-    let mx = 0, my = 0, rx = 0, ry = 0, dx = 0, dy = 0, seen = false;
+    let mx = 0, my = 0, rx = 0, ry = 0, dx = 0, dy = 0, seen = false, curRaf = 0;
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
       if (!seen) { seen = true; dx = rx = mx; dy = ry = my; }
+      if (!curRaf) curRaf = requestAnimationFrame(animCursor);
     });
 
+    // the dot and ring trail the mouse; once both have caught up the loop sleeps until it moves again
     function animCursor() {
       dx += (mx - dx) * 0.08; dy += (my - dy) * 0.08;
-      cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
       rx += (mx - rx) * 0.036; ry += (my - ry) * 0.036;
+      const settled = Math.abs(mx - rx) < 0.1 && Math.abs(my - ry) < 0.1 && Math.abs(mx - dx) < 0.1 && Math.abs(my - dy) < 0.1;
+      if (settled) { dx = rx = mx; dy = ry = my; }
+      cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
       ring.style.left = rx + 'px';
       ring.style.top  = ry + 'px';
-      requestAnimationFrame(animCursor);
+      curRaf = settled ? 0 : requestAnimationFrame(animCursor);
     }
     animCursor();
 
@@ -2145,7 +2163,9 @@
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       track.style.transition = 'none';
       const copies = [];
-      function slotW() { return viewport.clientWidth / visibleCount; }
+      // the row's width is cached (reading clientWidth every frame forced a full page layout each frame)
+      let viewW = viewport.clientWidth;
+      function slotW() { return viewW / visibleCount; }
       function addCopy() {
         slots.forEach(orig => {
           const k = orig.cloneNode(true);
@@ -2165,7 +2185,9 @@
       const sets = Math.max(1, Math.ceil(visibleCount / total));
       for (let n = 1; n < 2 * sets; n++) addCopy();
       sizeAll();
-      window.addEventListener('resize', sizeAll);
+      function resized() { viewW = viewport.clientWidth; sizeAll(); }
+      window.addEventListener('resize', resized);
+      if (window.ResizeObserver) new ResizeObserver(resized).observe(viewport);
 
       let x = 0, last = null, hover = false, tween = null;
       strip.addEventListener('mouseenter', () => { hover = true; });
@@ -2224,9 +2246,15 @@
         }
         const half = slotW() * total * sets, shown = ((x % half) + half) % half;
         track.style.transform = 'translateX(' + (-shown) + 'px)';
-        requestAnimationFrame(frame);
+        // off screen (and not being dragged or gliding) the strip rests until it's back in view
+        if (onScreen || drag || tween || fling) raf = requestAnimationFrame(frame);
+        else { raf = 0; last = null; }
       }
-      requestAnimationFrame(frame);
+      let raf = requestAnimationFrame(frame), onScreen = true;
+      if (window.IntersectionObserver) new IntersectionObserver(es => {
+        onScreen = es[es.length - 1].isIntersecting;
+        if (onScreen && !raf) raf = requestAnimationFrame(frame);
+      }, { rootMargin: '100px 0px' }).observe(strip);
     }
 
     document.querySelectorAll('.gallery-strip').forEach(strip => initCarousel(strip, 3));
@@ -2392,7 +2420,6 @@
       function tick(now) {
         raf = null;
         const dt = Math.min(now - last, 50) / 1000, t = now / 1000 + phase; last = now;
-        const H0 = wrap.offsetHeight || 1;
 
         // lift: follows the drag while held, falls under gravity once let go
         if (held) [lift, vLift] = spring(lift, vLift, liftT, 260, 26, dt);
@@ -2506,7 +2533,6 @@
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
-      const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
         const dpr = window.devicePixelRatio || 1;
@@ -2518,11 +2544,10 @@
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
           for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
-        base.width = cv.width; base.height = cv.height;
-        bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // the resting grid is drawn once; frames only redraw the cells of dots that change
         const bp = new Path2D();
         for (const d of dots) { bp.moveTo(d.x + BASE_R, d.y); bp.arc(d.x, d.y, BASE_R, 0, Math.PI * 2); }
-        bctx.fillStyle = 'rgba(255,255,255,0.15)'; bctx.fill(bp);
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(bp);
         spirals = [];
         const now = performance.now();
         slots = [now, now, now];   // all three start immediately (already partway in, see spawn)
@@ -2546,10 +2571,11 @@
             GUST_OUT = 1000,       // ms for the spirals to glide back once it eases
             GUST_STRETCH = 0.55,   // how much more the leading side of a coil is pushed
             GUST_RIPPLE = 0.18;    // sideways ripple, as a share of the push
-      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null;
+      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null, sy = window.scrollY;
+      addEventListener('scroll', () => { sy = window.scrollY; }, { passive: true });   // read here, not per frame (that forced a style update)
       function blow(now) {
         const dt = windT === null ? 16 : Math.max(1, Math.min(now - windT, 100)); windT = now;   // never 0: two frames can share a timestamp
-        const v = (window.scrollY - windScroll) / dt; windScroll = window.scrollY;
+        const v = (sy - windScroll) / dt; windScroll = sy;
         windV += (v - windV) * (1 - Math.exp(-dt / 120));
         const target = Math.max(-GUST_MAX, Math.min(GUST_MAX, -windV * GUST_GAIN));   // against the scroll
         const building = Math.abs(target) > Math.abs(wind) && target * wind >= 0;
@@ -2647,13 +2673,9 @@
           sp.x0 = x0 - REACH; sp.x1 = x1 + REACH; sp.y0 = y0 - REACH; sp.y1 = y1 + REACH;
         }
 
-        // Only dots inside an active spiral, or still shrinking back, are redrawn: the
-        // resting grid is copied in, then each changed dot's cell is cleared and redrawn.
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        ctx.drawImage(base, 0, 0);
-        const dpr = cv.width / W;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // Only dots inside an active spiral, or still shrinking back, are redrawn: each one's
+        // cell is cleared and the dot drawn again at its new size (the rest of the canvas is
+        // left as it is, so a frame touches a few hundred small cells, not the whole screen).
         const touch = new Set(hot);
         for (const sp of spirals) {
           if (!sp.trail) continue;
@@ -2668,9 +2690,11 @@
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
           const target = BASE_R + (MAX_R - BASE_R) * k;
+          const was = d.r;
           d.r += (target - d.r) * 0.08;   // eases in and back slowly, which draws the tails
-          if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
-          next.add(i);
+          if (Math.abs(d.r - BASE_R) < 0.02) d.r = BASE_R;   // back at rest: drawn once more at the base size, then left alone
+          else next.add(i);
+          if (d.r === was) continue;   // unchanged (e.g. a resting dot inside a spiral's box): already drawn
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
           path.moveTo(d.x + d.r, d.y);
           path.arc(d.x, d.y, d.r, 0, Math.PI * 2);
@@ -2741,19 +2765,25 @@
         // A letter can be mid-pulse when this runs, so measure everything at rest with transitions off, then put it back.
         var saved = [];
         chars.forEach(function (el) {
-          saved.push(el.style.fontWeight);
-          el.style.transition = "none"; el.style.fontWeight = ""; el.style.width = "";
+          saved.push(el.style.getPropertyValue("--w"));
+          el.style.transition = "none"; el.style.removeProperty("--w"); el.style.width = "";
         });
         chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / parseFloat(getComputedStyle(el).fontSize)).toFixed(4) + "em"; });
-        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        chars.forEach(function (el, i) { el.style.setProperty("--w", saved[i]); });
         h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
         chars.forEach(function (el) { el.style.transition = ""; });
       }
-      // wait for Archivo itself: fonts.ready alone can resolve before the heading's font has even been
-      // requested, which locked the widths to the fallback font's letters
+      // wait for Archivo itself (fonts.ready alone can resolve before the heading's font has even been
+      // requested, which locked the widths to the fallback font's letters) and the intro's Inter,
+      // then lock the widths and fade the name + intro in. Letters only start pulsing once locked,
+      // so the name never changes width (and the intro, sized to it, never re-wraps).
+      var locked = false;
       (document.fonts && document.fonts.load
-        ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
-        : Promise.resolve()).then(lock);
+        ? Promise.all([document.fonts.load("900 1em Archivo", h.textContent), document.fonts.load("400 1em Inter")]).catch(function () {})
+        : Promise.resolve()).then(function () {
+          lock(); locked = true;
+          document.documentElement.classList.remove("hero-wait");
+        });
       var WEIGHTS = [100, 200, 300, 400, 500, 600];
       function pick(el) {
         var w, prev = el.dataset.w;
@@ -2778,7 +2808,7 @@
           el.style.transition = "none";
           paint(el, norm, HOVER_SCALE);
           requestAnimationFrame(function () { requestAnimationFrame(function () {
-            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, --w 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
             paint(el, 0, 1);
           }); });
           angle.set(el, 0);
@@ -2836,15 +2866,15 @@
         new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(h);
       }
       function pulse() {
-        if (visible && !document.hidden) {
+        if (locked && visible && !document.hidden) {
           var free = Array.prototype.filter.call(chars, function (el) { return !el._busy; });
           if (free.length) {
             var el = free[Math.floor(Math.random() * free.length)];
             el._busy = true;
             el.classList.add("is-auto");
-            el.style.fontWeight = pick(el);
+            el.style.setProperty("--w", pick(el));
             el._autoTimer = setTimeout(function () {
-              el.style.fontWeight = "";
+              el.style.removeProperty("--w");
               el._autoTimer = setTimeout(function () {
                 el._busy = false;
                 el.classList.remove("is-auto"); delete el.dataset.w;
@@ -2875,11 +2905,11 @@
         // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
         var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
         chars.forEach(function (el) {
-          saved.push(el.style.fontWeight);
-          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+          saved.push(el.style.getPropertyValue("--w"));
+          el.style.transition = "none"; el.style.setProperty("--w", "900"); el.style.width = "";
         });
         chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
-        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        chars.forEach(function (el, i) { el.style.setProperty("--w", saved[i]); });
         h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
         chars.forEach(function (el) { el.style.transition = ""; });
       }
@@ -2887,7 +2917,8 @@
       // requested, which locked the widths to the fallback font's letters
       (document.fonts && document.fonts.load
         ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
-        : Promise.resolve()).then(lock);
+        : Promise.resolve()).then(function () { lock(); locked = true; });
+      var locked = false;   // letters pulse only once their widths are locked
       var WEIGHTS = [100, 200, 300, 400, 500, 600];
       function pick(el) {
         var w, prev = el.dataset.w;
@@ -2912,7 +2943,7 @@
           el.style.transition = "none";
           paint(el, norm, HOVER_SCALE);
           requestAnimationFrame(function () { requestAnimationFrame(function () {
-            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, --w 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
             paint(el, 0, 1);
           }); });
           angle.set(el, 0);
@@ -2970,15 +3001,15 @@
         new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(h);
       }
       function pulse() {
-        if (visible && !document.hidden) {
+        if (locked && visible && !document.hidden) {
           var free = Array.prototype.filter.call(chars, function (el) { return !el._busy; });
           if (free.length) {
             var el = free[Math.floor(Math.random() * free.length)];
             el._busy = true;
             el.classList.add("is-auto");
-            el.style.fontWeight = pick(el);
+            el.style.setProperty("--w", pick(el));
             el._autoTimer = setTimeout(function () {
-              el.style.fontWeight = "";
+              el.style.removeProperty("--w");
               el._autoTimer = setTimeout(function () {
                 el._busy = false;
                 el.classList.remove("is-auto"); delete el.dataset.w;
@@ -3145,8 +3176,8 @@
       }
 
       function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-      function targets(s) {
-        var vh = window.innerHeight, top = s.top - window.scrollY;
+      function targets(s, vh, sy) {
+        var top = s.top - sy;
         // 0 while the card's top is at the bottom edge, 1 once it has risen ENTER of the screen
         var p = clamp((vh - top) / (vh * ENTER));
         var enter = 1 - Math.pow(1 - p, 3);
@@ -3155,27 +3186,32 @@
         return [enter, exit];
       }
 
+      // styles are only written when they change: cards resting off screen cost nothing per frame,
+      // and --far (inherited, so a change restyles the whole card) is left alone once settled
       function paint(s) {
         var k = 1 - s.enter, q = s.exit;
         var y = k * RISE + q * s.tail * LAG;
         var sc = (1 - k * SHRINK) * (1 - q * SINK);
         // perspective in proportion to the card's width (1400px for a 900px card), so the tilt reads the same on phones
-        s.el.style.transform = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+        var tf = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
           "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
+        if (tf !== s.tf) s.el.style.transform = s.tf = tf;
         var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
-        s.el.style.opacity = (1 - fade * DIM).toFixed(3);
+        var op = (1 - fade * DIM).toFixed(3);
+        if (op !== s.op) s.el.style.opacity = s.op = op;
         // the shade only covers the first SHADE of the screen a card rises through, so it's at
         // full brightness from there on, long before it finishes settling
-        s.el.style.setProperty("--far", clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4));
+        var far = clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4);
+        if (far !== s.far) s.el.style.setProperty("--far", s.far = far);
       }
 
       var raf = 0, prev = 0;
       function frame(t) {
         var dt = prev ? Math.min(t - prev, 64) : 16;
         prev = t;
-        var a = 1 - Math.exp(-dt / TAU), moving = false;
+        var a = 1 - Math.exp(-dt / TAU), moving = false, vh = window.innerHeight, sy = window.scrollY;
         state.forEach(function (s) {
-          var g = targets(s);
+          var g = targets(s, vh, sy);
           var de = g[0] - s.enter, dx = g[1] - s.exit;
           if (Math.abs(de) > 0.0005 || Math.abs(dx) > 0.0005) {
             s.enter += de * a; s.exit += dx * a; moving = true;
@@ -3397,11 +3433,11 @@
         // A letter can be mid-pulse when this runs, so measure everything at 900 with transitions off, then put it back.
         var fs = parseFloat(getComputedStyle(h).fontSize), saved = [];
         chars.forEach(function (el) {
-          saved.push(el.style.fontWeight);
-          el.style.transition = "none"; el.style.fontWeight = "900"; el.style.width = "";
+          saved.push(el.style.getPropertyValue("--w"));
+          el.style.transition = "none"; el.style.setProperty("--w", "900"); el.style.width = "";
         });
         chars.forEach(function (el) { el.style.width = (el.getBoundingClientRect().width / fs).toFixed(4) + "em"; });
-        chars.forEach(function (el, i) { el.style.fontWeight = saved[i]; });
+        chars.forEach(function (el, i) { el.style.setProperty("--w", saved[i]); });
         h.offsetWidth;   // apply the restored weights before transitions return, so they don't animate
         chars.forEach(function (el) { el.style.transition = ""; });
       }
@@ -3409,7 +3445,8 @@
       // requested, which locked the widths to the fallback font's letters
       (document.fonts && document.fonts.load
         ? document.fonts.load("900 1em Archivo", h.textContent).catch(function () {}).then(function () { return document.fonts.ready; })
-        : Promise.resolve()).then(lock);
+        : Promise.resolve()).then(function () { lock(); locked = true; });
+      var locked = false;   // letters pulse only once their widths are locked
       // the smiley joins in: it spins like a letter, and its line thins and thickens the way the
       // letters' weight does (it keeps its own size, so it isn't width-locked)
       var icon = h.querySelector(".contact-heading-icon");
@@ -3417,7 +3454,7 @@
       var pool = Array.prototype.slice.call(chars).concat(icon ? [icon] : []);
       function setWeight(el, w) {
         if (el === icon) el.style.strokeWidth = w ? (0.75 + 1.5 * (w - 100) / 800).toFixed(2) : "";   // 900 -> 2.25, its resting stroke
-        else el.style.fontWeight = w || "";
+        else el.style.setProperty("--w", w || "");
       }
       var WEIGHTS = [100, 200, 300, 400, 500, 600];
       function pick(el) {
@@ -3443,7 +3480,7 @@
           el.style.transition = "none";
           paint(el, norm, HOVER_SCALE);
           requestAnimationFrame(function () { requestAnimationFrame(function () {
-            el.style.transition = "transform " + RETURN_MS + "ms ease-out, font-weight 0.35s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
+            el.style.transition = "transform " + RETURN_MS + "ms ease-out, --w 0.35s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1)";
             paint(el, 0, 1);
           }); });
           angle.set(el, 0);
@@ -3501,7 +3538,7 @@
         new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(h);
       }
       function pulse() {
-        if (visible && !document.hidden) {
+        if (locked && visible && !document.hidden) {
           var free = pool.filter(function (el) { return !el._busy; });
           if (free.length) {
             var el = free[Math.floor(Math.random() * free.length)];

@@ -1583,19 +1583,23 @@
   const cur  = document.getElementById('cur');
   const ring = document.getElementById('ring0');
 
-  let mx = 0, my = 0, rx = 0, ry = 0, dx = 0, dy = 0, seen = false;
+  let mx = 0, my = 0, rx = 0, ry = 0, dx = 0, dy = 0, seen = false, curRaf = 0;
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
     if (!seen) { seen = true; dx = rx = mx; dy = ry = my; }
+    if (!curRaf) curRaf = requestAnimationFrame(animCursor);
   });
 
+  // the dot and ring trail the mouse; once both have caught up the loop sleeps until it moves again
   function animCursor() {
     dx += (mx - dx) * 0.08; dy += (my - dy) * 0.08;
-    cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
     rx += (mx - rx) * 0.036; ry += (my - ry) * 0.036;
+    const settled = Math.abs(mx - rx) < 0.1 && Math.abs(my - ry) < 0.1 && Math.abs(mx - dx) < 0.1 && Math.abs(my - dy) < 0.1;
+    if (settled) { dx = rx = mx; dy = ry = my; }
+    cur.style.left = dx + 'px'; cur.style.top = dy + 'px';
     ring.style.left = rx + 'px';
     ring.style.top  = ry + 'px';
-    requestAnimationFrame(animCursor);
+    curRaf = settled ? 0 : requestAnimationFrame(animCursor);
   }
   animCursor();
 
@@ -1720,7 +1724,6 @@
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
       const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
-      const base = document.createElement('canvas'), bctx = base.getContext('2d');   // resting grid, drawn once
 
       function build() {
         const dpr = window.devicePixelRatio || 1;
@@ -1732,11 +1735,10 @@
         cols = Math.ceil((W - SPACING / 2) / SPACING); rows = Math.ceil((H - SPACING / 2) / SPACING);
         for (let ix = 0; ix < cols; ix++)
           for (let iy = 0; iy < rows; iy++) dots.push({ x: SPACING / 2 + ix * SPACING, y: SPACING / 2 + iy * SPACING, r: BASE_R });
-        base.width = cv.width; base.height = cv.height;
-        bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // the resting grid is drawn once; frames only redraw the cells of dots that change
         const bp = new Path2D();
         for (const d of dots) { bp.moveTo(d.x + BASE_R, d.y); bp.arc(d.x, d.y, BASE_R, 0, Math.PI * 2); }
-        bctx.fillStyle = 'rgba(255,255,255,0.15)'; bctx.fill(bp);
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(bp);
         spirals = [];
         const now = performance.now();
         slots = [now, now, now];   // all three start immediately (already partway in, see spawn)
@@ -1760,10 +1762,11 @@
             GUST_OUT = 1000,       // ms for the spirals to glide back once it eases
             GUST_STRETCH = 0.55,   // how much more the leading side of a coil is pushed
             GUST_RIPPLE = 0.18;    // sideways ripple, as a share of the push
-      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null;
+      let wind = 0, windV = 0, windScroll = window.scrollY, windT = null, sy = window.scrollY;
+      addEventListener('scroll', () => { sy = window.scrollY; }, { passive: true });   // read here, not per frame (that forced a style update)
       function blow(now) {
         const dt = windT === null ? 16 : Math.max(1, Math.min(now - windT, 100)); windT = now;   // never 0: two frames can share a timestamp
-        const v = (window.scrollY - windScroll) / dt; windScroll = window.scrollY;
+        const v = (sy - windScroll) / dt; windScroll = sy;
         windV += (v - windV) * (1 - Math.exp(-dt / 120));
         const target = Math.max(-GUST_MAX, Math.min(GUST_MAX, -windV * GUST_GAIN));   // against the scroll
         const building = Math.abs(target) > Math.abs(wind) && target * wind >= 0;
@@ -1861,13 +1864,9 @@
           sp.x0 = x0 - REACH; sp.x1 = x1 + REACH; sp.y0 = y0 - REACH; sp.y1 = y1 + REACH;
         }
 
-        // Only dots inside an active spiral, or still shrinking back, are redrawn: the
-        // resting grid is copied in, then each changed dot's cell is cleared and redrawn.
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        ctx.drawImage(base, 0, 0);
-        const dpr = cv.width / W;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // Only dots inside an active spiral, or still shrinking back, are redrawn: each one's
+        // cell is cleared and the dot drawn again at its new size (the rest of the canvas is
+        // left as it is, so a frame touches a few hundred small cells, not the whole screen).
         const touch = new Set(hot);
         for (const sp of spirals) {
           if (!sp.trail) continue;
@@ -1882,9 +1881,11 @@
           for (const sp of spirals)
             if (sp.trail && d.x >= sp.x0 && d.x <= sp.x1 && d.y >= sp.y0 && d.y <= sp.y1) k = Math.max(k, swell(sp.trail, d.x, d.y));
           const target = BASE_R + (MAX_R - BASE_R) * k;
+          const was = d.r;
           d.r += (target - d.r) * 0.08;   // eases in and back slowly, which draws the tails
-          if (Math.abs(d.r - BASE_R) < 0.02) { d.r = BASE_R; continue; }   // back at rest: the copied grid already shows it
-          next.add(i);
+          if (Math.abs(d.r - BASE_R) < 0.02) d.r = BASE_R;   // back at rest: drawn once more at the base size, then left alone
+          else next.add(i);
+          if (d.r === was) continue;   // unchanged (e.g. a resting dot inside a spiral's box): already drawn
           ctx.clearRect(d.x - half, d.y - half, SPACING, SPACING);
           path.moveTo(d.x + d.r, d.y);
           path.arc(d.x, d.y, d.r, 0, Math.PI * 2);
@@ -2065,7 +2066,12 @@
       addEventListener("pointercancel", endDrag);
       grid.addEventListener("click", function (e) { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
       grid.addEventListener("dragstart", function (e) { e.preventDefault(); });
-      function half() { return track.scrollWidth / 2 || 1; }
+      // the track's width is cached (reading scrollWidth every frame forced a full page layout each frame)
+      var halfW = track.scrollWidth / 2 || 1;
+      function half() { return halfW; }
+      function remeasure() { halfW = track.scrollWidth / 2 || 1; }
+      addEventListener("resize", remeasure);
+      if (window.ResizeObserver) new ResizeObserver(remeasure).observe(track);
       function step() { return cards[0].getBoundingClientRect().width || 300; }
       function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
       function go(dir) { var from = tween ? tween.to : x; tween = { from: x, to: from + dir * step(), start: performance.now(), dur: 550 }; }
@@ -2087,9 +2093,15 @@
         }
         var h = half(), shown = ((x % h) + h) % h;
         track.style.transform = "translateX(" + (-shown) + "px)";
-        requestAnimationFrame(frame);
+        // off screen (and not being dragged or gliding) the gallery rests until it's back in view
+        if (onScreen || drag || tween || fling) raf = requestAnimationFrame(frame);
+        else { raf = 0; last = null; }
       }
-      requestAnimationFrame(frame);
+      var raf = requestAnimationFrame(frame), onScreen = true;
+      if (window.IntersectionObserver) new IntersectionObserver(function (es) {
+        onScreen = es[es.length - 1].isIntersecting;
+        if (onScreen && !raf) raf = requestAnimationFrame(frame);
+      }, { rootMargin: "100px 0px" }).observe(grid);
     })();
   </script>
 
@@ -2231,8 +2243,8 @@
       }
 
       function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-      function targets(s) {
-        var vh = window.innerHeight, top = s.top - window.scrollY;
+      function targets(s, vh, sy) {
+        var top = s.top - sy;
         // 0 while the card's top is at the bottom edge, 1 once it has risen ENTER of the screen
         var p = clamp((vh - top) / (vh * ENTER));
         var enter = 1 - Math.pow(1 - p, 3);
@@ -2246,22 +2258,26 @@
         var y = k * RISE + q * s.tail * LAG;
         var sc = (1 - k * SHRINK) * (1 - q * SINK);
         // perspective in proportion to the card's width (1400px for a 900px card), so the tilt reads the same on phones
-        s.el.style.transform = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
+        var tf = "perspective(" + Math.round(Math.max(420, (s.w || 900) * 1.55)) + "px) translateY(" + y.toFixed(2) + "px) rotateX(" + (k * TIP).toFixed(3) +
           "deg) rotateZ(" + (k * LEAN * s.side).toFixed(3) + "deg) scale(" + sc.toFixed(4) + ")";
+        if (tf !== s.tf) s.el.style.transform = s.tf = tf;   // only written when changed: resting cards cost nothing
         var fade = clamp((q * EXIT - DIM_FROM) / (EXIT - DIM_FROM));
-        s.el.style.opacity = (1 - fade * DIM).toFixed(3);
+        var op = (1 - fade * DIM).toFixed(3);
+        if (op !== s.op) s.el.style.opacity = s.op = op;
         // the shade only covers the first SHADE of the screen a card rises through, so it's at
-        // full brightness from there on, long before it finishes settling
-        s.el.style.setProperty("--far", clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4));
+        // full brightness from there on, long before it finishes settling (--far is inherited,
+        // so each change restyles the whole card: it's left alone once settled)
+        var far = clamp(1 - (1 - Math.cbrt(k)) * ENTER / SHADE).toFixed(4);
+        if (far !== s.far) s.el.style.setProperty("--far", s.far = far);
       }
 
       var raf = 0, prev = 0;
       function frame(t) {
         var dt = prev ? Math.min(t - prev, 64) : 16;
         prev = t;
-        var a = 1 - Math.exp(-dt / TAU), moving = false;
+        var a = 1 - Math.exp(-dt / TAU), moving = false, vh = window.innerHeight, sy = window.scrollY;
         state.forEach(function (s) {
-          var g = targets(s);
+          var g = targets(s, vh, sy);
           var de = g[0] - s.enter, dx = g[1] - s.exit;
           if (Math.abs(de) > 0.0005 || Math.abs(dx) > 0.0005) {
             s.enter += de * a; s.exit += dx * a; moving = true;
