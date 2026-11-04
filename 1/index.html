@@ -1905,6 +1905,21 @@
       build();
       wake();
       window.addEventListener('resize', () => { build(); wake(); });
+      // Overscroll: a phone's bounce past the very top or bottom pulls the header / footer away from the
+      // screen edge, and the fixed dots would show in the gap. The canvas is cut off at the header's top
+      // and the footer's top edge (both are solid black, so normally this changes nothing) so the gap is plain black.
+      const edgeNav = document.querySelector('nav'), edgeFoot = document.querySelector('footer');
+      let clipped = '', clipRaf = 0;
+      function clipToEdges() {
+        clipRaf = 0;
+        const t = edgeNav ? Math.max(0, Math.round(edgeNav.getBoundingClientRect().top)) : 0;
+        const b = edgeFoot ? Math.max(0, Math.round(window.innerHeight - edgeFoot.getBoundingClientRect().top)) : 0;
+        const c = t || b ? 'inset(' + t + 'px 0 ' + b + 'px 0)' : 'none';
+        if (c !== clipped) cv.style.clipPath = clipped = c;
+      }
+      const queueClip = () => { if (!clipRaf) clipRaf = requestAnimationFrame(clipToEdges); };
+      ['scroll', 'resize', 'touchmove'].forEach(ev => addEventListener(ev, queueClip, { passive: true }));
+      clipToEdges();
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') { if (raf !== null) cancelAnimationFrame(raf); raf = null; }
         else wake();
