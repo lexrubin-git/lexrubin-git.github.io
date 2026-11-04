@@ -163,7 +163,7 @@
       font-size: clamp(0.84rem, 1.5vw, 0.95rem);
       font-weight: 400;
       line-height: 1.5;
-      color: #666;
+      color: #777;   /* #777 on black meets the 4.5:1 contrast minimum (#666 was 3.65:1) */
     }
     /* name + intro: one centred block, exactly as wide as the
        name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
@@ -1599,7 +1599,7 @@
 
   <!-- NAV -->
   <nav>
-    <a href="/" class="logo" id="logo-link" style="position:relative;display:inline-block;width:108px;height:108px;">
+    <a href="/" class="logo" id="logo-link" aria-label="Lex Rubin, home" style="position:relative;display:inline-block;width:108px;height:108px;">
       <svg id="logo-default" style="display:block;" width="108" height="108" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593.83 593.83">
   <defs>
     <style>
@@ -1695,7 +1695,7 @@
     <!-- Arctic Zoo -->
     <div class="portfolio-item full-width" onclick="window.location='2/'">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="arctic-cover.jpg" data-src="arctic-cover.mp4" style="object-position: left center;" aria-label="Arctic Zoo &amp; Aquarium app animation"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="arctic-cover.jpg" data-src="arctic-cover-1800.mp4" data-src-mobile="arctic-cover-1200.mp4" style="object-position: left center;" aria-label="Arctic Zoo &amp; Aquarium app animation"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1705,7 +1705,7 @@
     <!-- CrosswordLeague -->
     <div class="portfolio-item full-width" onclick="window.open('https://crosswordleague.com', '_blank', 'noopener')">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="crossword-cover.jpg?v=4" data-src="crossword-cover.mp4?v=4" aria-label="CrosswordLeague.com animation with a laptop and two phones showing the game"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="crossword-cover.jpg?v=4" data-src="crossword-cover-1800.mp4" data-src-mobile="crossword-cover-1200.mp4" aria-label="CrosswordLeague.com animation with a laptop and two phones showing the game"></video>
         <div class="overlay">
           <span class="overlay-text">Visit Site<svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
         </div>
@@ -1715,7 +1715,7 @@
     <!-- Apple Watch -->
     <div class="portfolio-item full-width" onclick="window.location='3/'">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="watch-cover.jpg" data-src="watch-cover.mp4" aria-label="Apple Watch face animation"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="watch-cover.jpg" data-src="watch-cover-1800.mp4" data-src-mobile="watch-cover-1200.mp4" aria-label="Apple Watch face animation"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1725,7 +1725,7 @@
     <!-- PyxMagic -->
     <div class="portfolio-item full-width" onclick="window.location='1/'">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="pyxd-cover.jpg?v=2" data-src="pyxd-cover.mp4?v=2" aria-label="Two people wearing the PyxMagic t-shirt beside the PyxMagic logo"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="pyxd-cover.jpg?v=2" data-src="pyxd-cover-1800.mp4" data-src-mobile="pyxd-cover-1200.mp4" aria-label="Two people wearing the PyxMagic t-shirt beside the PyxMagic logo"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1735,7 +1735,7 @@
     <!-- Dam Research -->
     <div class="portfolio-item full-width" onclick="window.location='4/'">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="dam-cover.jpg" data-src="dam-cover.mp4" style="object-position: right center;" aria-label="Dam Design &amp; Data Visualization: an open book of the dam research figures"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="dam-cover.jpg" data-src="dam-cover-1800.mp4" data-src-mobile="dam-cover-1200.mp4" style="object-position: right center;" aria-label="Dam Design &amp; Data Visualization: an open book of the dam research figures"></video>
         <div class="overlay">
           <span class="overlay-text">View Project</span>
         </div>
@@ -1745,7 +1745,7 @@
     <!-- 1for80 (coming soon) -->
     <div class="portfolio-item full-width is-soon">
       <div class="item-image">
-        <video class="item-video" muted loop playsinline preload="none" poster="1for80-cover.jpg" data-src="1for80-cover.mp4" aria-label="1for80: a job application helper app shown on a laptop"></video>
+        <video class="item-video" muted loop playsinline preload="none" poster="1for80-cover.jpg" data-src="1for80-cover-1800.mp4" data-src-mobile="1for80-cover-1200.mp4" aria-label="1for80: a job application helper app shown on a laptop"></video>
         <div class="overlay">
           <span class="overlay-text">Coming Soon...</span>
         </div>
@@ -1765,7 +1765,7 @@
         <div class="portfolio-item" onclick="window.open('https://brendanpgalvin.com', '_blank', 'noopener')">
           <div class="item-image site-thumb" role="img" aria-label="brendanpgalvin.com home page: Brendan Galvin, Composer, over a dark video of him conducting">
             <div class="site-zoom">
-              <div class="site-video"><video class="item-video" muted loop playsinline preload="none" poster="brendan-cover.jpg" data-src="brendan-cover.mp4" aria-hidden="true"></video></div>
+              <div class="site-video"><video class="item-video" muted loop playsinline preload="none" poster="brendan-cover.jpg" data-src="brendan-cover-960.mp4" aria-hidden="true"></video></div>
               <div class="site-shade"></div>
               <div class="site-stage" aria-hidden="true">
                 <div class="bg-head">
@@ -1820,21 +1820,21 @@
           <div class="gallery-track">
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="/about/1.png" alt="Design 1" />
+              <img loading="lazy" decoding="async" src="/about/1-thumb.webp" alt="Design 1" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
             </div>
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="/about/2.png" alt="Design 2" />
+              <img loading="lazy" decoding="async" src="/about/2-thumb.webp" alt="Design 2" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
             </div>
             <div class="gallery-img-slot">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="/about/3.png" alt="Design 3" />
+              <img loading="lazy" decoding="async" src="/about/3-thumb.webp" alt="Design 3" />
               <a href="https://www.instagram.com/lexdesigns99/" target="_blank" style="display:block;position:absolute;inset:0;z-index:1;">
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">View on Instagram <svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
               </a>
@@ -1856,27 +1856,27 @@
           <div class="gallery-track">
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_1.png" alt="Artwork 1" data-caption="White colored pencil on blackboard - 20&quot;x14&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_1-thumb.webp" data-full="artwork/artwork_1.webp" alt="Artwork 1" data-caption="White colored pencil on blackboard - 20&quot;x14&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_5.png" alt="Artwork 2" data-caption="Acrylic self-portrait(s) - 9&quot;x12&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_5-thumb.webp" data-full="artwork/artwork_5.webp" alt="Artwork 2" data-caption="Acrylic self-portrait(s) - 9&quot;x12&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_6.jpg" alt="Monochromatic acrylic portrait" data-caption="MONOCHROMATIC ACRYLIC PORTRAIT - 9&quot;x12&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_6-thumb.webp" data-full="artwork/artwork_6.webp" alt="Monochromatic acrylic portrait" data-caption="MONOCHROMATIC ACRYLIC PORTRAIT - 9&quot;x12&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_4.png" alt="Artwork 3" data-caption="Pencil figure study - 12&quot;x8&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_4-thumb.webp" data-full="artwork/artwork_4.webp" alt="Artwork 3" data-caption="Pencil figure study - 12&quot;x8&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_3.png" alt="Artwork 4" data-caption="Pencil figure study - 18&quot;x24&quot;" />
+              <img loading="lazy" decoding="async" src="artwork/artwork_3-thumb.webp" data-full="artwork/artwork_3.webp" alt="Artwork 4" data-caption="Pencil figure study - 18&quot;x24&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
           </div>
@@ -2292,7 +2292,7 @@
       const imgEl = artworkSlots[lightboxIndex].querySelector('img');
       if (imgEl) {
         lightboxWrap.innerHTML = '<div style="display:inline-block;line-height:0;">'
-          + '<img class="lightbox-img" src="' + imgEl.src + '" alt="Artwork" style="display:block;">'
+          + '<img class="lightbox-img" src="' + (imgEl.dataset.full || imgEl.src) + '" alt="Artwork" style="display:block;">'
           + '</div>';
         lightboxCaption.textContent = imgEl.dataset.caption || '';
       }
@@ -3103,7 +3103,9 @@
       var vids = document.querySelectorAll("video.item-video[data-src]");
       if (!vids.length) return;
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // keep the still poster
-      function start(v) { if (!v.src) { v.src = v.dataset.src; v.load(); } var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      // phones get the smaller encode: a card is at most ~400px wide there
+      var small = window.matchMedia && matchMedia("(max-width: 768px)").matches;
+      function start(v) { if (!v.src) { v.src = (small && v.dataset.srcMobile) || v.dataset.src; v.load(); } var p = v.play(); if (p && p.catch) p.catch(function () {}); }
       if (!("IntersectionObserver" in window)) { vids.forEach(start); return; }
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
