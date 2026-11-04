@@ -39,7 +39,13 @@
 
     html {
       scroll-behavior: smooth;
+      /* no sideways scrolling on any page: cards that tilt or drift (the card deck, the scroll wind)
+         can poke past the screen edge mid-animation. clip, unlike hidden, doesn't break the sticky header;
+         hidden on html is the fallback for older Safari (on the root it doesn't affect sticky either) */
+      overflow-x: hidden;
+      overflow-x: clip;
     }
+    body { overflow-x: clip; }
 
     /* ── CUSTOM SCROLLBAR ── */
     ::-webkit-scrollbar { width: 12px; height: 12px; }
