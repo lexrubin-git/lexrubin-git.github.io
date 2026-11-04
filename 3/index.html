@@ -1723,7 +1723,7 @@
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
 
       function build() {
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);   // 3x phones draw at 2x: the faint dots look the same, and a full-screen 3x canvas redrawn each frame was most of the scroll cost
         W = window.innerWidth; H = window.innerHeight;
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';

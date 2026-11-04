@@ -2571,7 +2571,7 @@
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
 
       function build() {
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);   // 3x phones draw at 2x: the faint dots look the same, and a full-screen 3x canvas redrawn each frame was most of the scroll cost
         W = window.innerWidth; H = window.innerHeight;
         cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
         cv.style.width = W + 'px'; cv.style.height = H + 'px';
@@ -3150,21 +3150,33 @@
         vids.forEach(function (v) { io.observe(v); });
         return;
       }
-      // Phones: videos still load just before they scroll in, but only the one most in view plays
-      // (the rest hold their poster frame), so the phone decodes one video at a time, not three
-      var shown = new Map(), playing = null;
+      // Phones: videos still load just before they scroll in, but only the one nearest the middle of
+      // the screen plays (the rest hold their poster frame), so the phone decodes one video at a time.
+      // Several short video boxes fit on a phone screen at once, so "nearest the middle" (rechecked as
+      // you scroll) picks the one you're looking at, where "most visible" tied and favoured the top one.
+      var onScreen = new Set(), playing = null, raf = 0;
       var near = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) { if (e.isIntersecting) load(e.target); });
       }, { rootMargin: "300px 0px" });
       var seen = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { shown.set(e.target, e.isIntersecting ? e.intersectionRatio : 0); });
-        var best = null, most = 0.2;   // at least a fifth of it on screen
-        shown.forEach(function (r, v) { if (r > most) { most = r; best = v; } });
+        entries.forEach(function (e) { if (e.isIntersecting) onScreen.add(e.target); else onScreen.delete(e.target); });
+        pick();
+      });
+      function pick() {
+        raf = 0;
+        var mid = (110 + innerHeight) / 2, best = null, gap = Infinity;   // middle of the screen below the header
+        onScreen.forEach(function (v) {
+          var r = v.getBoundingClientRect();
+          if (r.bottom < 110 || r.top > innerHeight) return;
+          var d = Math.abs((r.top + r.bottom) / 2 - mid);
+          if (d < gap) { gap = d; best = v; }
+        });
         if (best === playing) return;
         if (playing) playing.pause();
         playing = best;
         if (best) start(best);
-      }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
+      }
+      addEventListener("scroll", function () { if (!raf) raf = requestAnimationFrame(pick); }, { passive: true });
       vids.forEach(function (v) { near.observe(v); seen.observe(v); });
     })();
   </script>
