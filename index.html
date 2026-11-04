@@ -153,7 +153,6 @@
       line-height: 1.5;
       color: #666;
     }
-    .hero-lead-more { margin-top: 0.9rem; }
     /* name + intro: one centred block, exactly as wide as the
        name. The paragraphs add nothing to its width (width 0) and then fill it (min-width 100%),
        so they wrap to the name's width; text-wrap: balance keeps their lines even, with no orphans */
@@ -584,6 +583,20 @@
       z-index: 10;
       pointer-events: none;
     }
+
+    /* Overscroll: a phone's bounce at the very top or bottom pulls the page away from the fixed dot
+       background, so the header and footer each carry a black band past their outer edge to cover
+       the gap. They're box-shadows, which (unlike a real box) can't make the page scroll further. */
+    nav::before, footer::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 0;
+      box-shadow: 0 0 0 100vh var(--black);
+      pointer-events: none;
+    }
+    nav::before { top: 0; clip-path: inset(-100vh 0 0 0); }
+    footer::after { bottom: 0; clip-path: inset(0 0 -100vh 0); }
 
     /* ── FOOTER ── */
     footer {
@@ -1649,7 +1662,6 @@
     <div class="hero-copy">
       <h1 class="hero-name" id="hero-name">Lex Rubin</h1>
       <p class="hero-lead">I’m based in Los Angeles with a focus on <strong>Product &amp; UI/UX Design</strong>.</p>
-      <p class="hero-lead hero-lead-more">In addition to my work, check out some of my personal art that I’ve made in the artwork section below!</p>
     </div>
     <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank" rel="noopener noreferrer" class="about-photo-link" draggable="false">
       <div class="about-photo-linkedin-label">View LinkedIn<span class="about-li-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
@@ -1853,11 +1865,6 @@
             <div class="gallery-img-slot artwork-lightbox-trigger">
               <div class="gallery-shimmer"></div>
               <img loading="lazy" decoding="async" src="artwork/artwork_3.png" alt="Artwork 4" data-caption="Pencil figure study - 18&quot;x24&quot;" />
-              <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
-            </div>
-            <div class="gallery-img-slot artwork-lightbox-trigger">
-              <div class="gallery-shimmer"></div>
-              <img loading="lazy" decoding="async" src="artwork/artwork_2.png" alt="Artwork 5" data-caption="Pencil figure study - 18&quot;x24&quot;" />
               <div class="gallery-slot-overlay"><span class="gallery-slot-overlay-text">Click to enlarge</span></div>
             </div>
           </div>
