@@ -1910,7 +1910,8 @@
       if (!cv) return;
       const ctx = cv.getContext('2d');
       const SPACING = 12, BASE_R = 1, MAX_R = 2.8;      // the background grid; spirals only resize these dots
-      const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // phones (and reduced motion) get the still dot grid only: no spirals, no scroll wind
+      const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce), (max-width: 768px), (hover: none)').matches;
       let dots = [], W = 0, H = 0, raf = null, cols = 0, rows = 0, hot = new Set();
 
       function build() {
