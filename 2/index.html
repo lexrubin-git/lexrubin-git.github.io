@@ -1173,7 +1173,30 @@
     }
     @media (max-width: 768px) { .project-cover { aspect-ratio: 8 / 3; } }
     /* the cover links back to the home page */
-    .project-cover-link { display: block; cursor: pointer; }
+    .project-cover-link { display: block; position: relative; cursor: pointer; }
+    /* hover label, same as the home thumbnails' "View Project" */
+    .cover-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(0, 0, 0, 0.72);
+      color: #f0ede8;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .project-cover-link:hover .cover-label, .project-cover-link:focus-visible .cover-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
     .project-cover-link .project-cover { transition: filter 0.3s ease; }
     .project-cover-link:hover .project-cover { filter: brightness(1.12); }
     .project-cover-link:focus-visible { outline: 1px solid var(--white); outline-offset: -2px; }   /* full banner on phones, like the home thumbnails */
@@ -1377,7 +1400,7 @@
 <div class="page-wrapper">
   <div class="deck-top">
   <div class="artwork-hero">
-    <a href="/" class="project-cover-link" aria-label="Back to the home page"><video class="project-cover" src="../arctic-cover-1800.mp4" poster="../arctic-cover.jpg" autoplay muted loop playsinline aria-label="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens"></video></a>
+    <a href="/" class="project-cover-link" aria-label="Go to homepage"><video class="project-cover" src="../arctic-cover-1800.mp4" poster="../arctic-cover.jpg" autoplay muted loop playsinline aria-label="Arctic Zoo &amp; Aquarium logo beside the app's home and polar bear exhibit screens"></video><span class="cover-label" aria-hidden="true">Go to homepage</span></a>
     <div class="artwork-title-row">
       <div class="hero-title-col">
         <h1 class="artwork-main-title">Arctic Zoo &amp; Aquarium<span class="title-sub">Mobile app design</span></h1>
