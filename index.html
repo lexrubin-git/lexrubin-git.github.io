@@ -811,9 +811,11 @@
 
       .grid-wrapper { padding: 0 0.75rem; }
 
-      .hero { padding: 3.25rem 1.25rem 2.75rem; }   /* with the portrait: 2rem 1.25rem 1.75rem */
+      /* the name + intro sit centred between the card's top and the buttons (equal space above and below);
+         with the portrait: padding 2rem 1.25rem 1.75rem and the buttons' margin-top back to 1.9rem */
+      .hero { padding: 2.5rem 1.25rem 2.75rem; }
       /* the two buttons share one row, each half the width */
-      .hero-ctas { gap: 0.75rem; max-width: 360px; margin-left: auto; margin-right: auto; }
+      .hero-ctas { gap: 0.75rem; max-width: 360px; margin: 2.65rem auto 0; }
       .hero-btn { flex: 1 1 0; min-width: 0; padding: 0.95rem 0.5rem; gap: 0.45rem; font-size: min(0.75rem, 3.2vw); letter-spacing: 0.08em; white-space: nowrap; }
       #work, #artwork { scroll-margin-top: 70px; }
 
