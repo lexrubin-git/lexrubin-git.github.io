@@ -43,12 +43,14 @@
       font-family: 'Inter', sans-serif;
       font-weight: 400;
       min-height: 100vh;
+      padding-top: 110px;   /* room for the fixed header */
     }
 
     /* ── NAV ── */
+    /* fixed (not sticky) so it stays on the screen's top edge when a phone's bounce pulls the page down */
     nav {
-      position: sticky;
-      top: 0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
       z-index: 100;
       display: flex;
       align-items: center;
@@ -834,6 +836,7 @@
     /* ── MOBILE NAV ── */
     @media (max-width: 768px) {
       nav { padding: 0 1.25rem; height: 70px; }
+      body { padding-top: 70px; }
       #logo-link { max-width: 70px !important; max-height: 70px !important; overflow: hidden !important; }
       .logo { width: 70px !important; height: 70px !important; }
       .logo svg { width: 70px !important; height: 70px !important; }
@@ -853,6 +856,9 @@
       .nav-hamburger { display: flex; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); }
       .footer-links { flex-wrap: wrap; gap: 0.9rem 1.75rem; justify-content: center; font-size: 0.78rem; word-spacing: 0.3em; }
       .footer-links > * { white-space: nowrap; }
+      /* Back to Top leads and the © line comes last */
+      .footer-links > .footer-top { order: -1; }
+      .footer-links > .footer-copy { order: 1; }
       .footer-reached { letter-spacing: 0.3em; word-spacing: 0.5em; font-size: 0.85rem; }
 
       /* page layout */
@@ -1144,6 +1150,7 @@
     .page-scroll:hover .page-scroll-thumb { background: #3a3a3a; }   /* the resting grey, made opaque and a little brighter */
     .page-scroll.dragging .page-scroll-thumb { background: #444; }
     footer { position: relative; z-index: 95; }   /* the footer covers the bar at the bottom, like the header at the top */
+    footer.pinned { position: fixed; left: 0; right: 0; }   /* during a bounce past the bottom (top set by script) */
     body.scroll-dragging { user-select: none; -webkit-user-select: none; }
   
     /* project description, above the tags */
@@ -1536,10 +1543,10 @@
   <div class="footer-bottom">
     <div class="footer-reached">You've reached the bottom</div>
     <div class="footer-links">
-      <span>© 2026 Lex Rubin</span>
+      <span class="footer-copy">© 2026 Lex Rubin</span>
       <a href="https://www.linkedin.com/in/lex-rubin-21093a306/" target="_blank">LinkedIn<span class="footer-arrow" aria-hidden="true"><svg class="ur-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
       <a href="/">Home Page</a>
-      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
+      <a href="#" class="footer-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top</a>
     </div>
     <button class="footer-scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇕</button>
   </div>
@@ -1932,25 +1939,42 @@
       build();
       wake();
       window.addEventListener('resize', () => { build(); wake(); });
-      // Overscroll: a phone's bounce past the very top or bottom pulls the header / footer away from the
-      // screen edge, and the fixed dots would show in the gap. The canvas is cut off at the header's top
-      // and the footer's top edge (both are solid black, so normally this changes nothing) so the gap is plain black.
-      const edgeNav = document.querySelector('nav'), edgeFoot = document.querySelector('footer');
-      let clipped = '', clipRaf = 0;
-      function clipToEdges() {
-        clipRaf = 0;
-        const t = edgeNav ? Math.max(0, Math.round(edgeNav.getBoundingClientRect().top)) : 0;
-        const b = edgeFoot ? Math.max(0, Math.round(window.innerHeight - edgeFoot.getBoundingClientRect().top)) : 0;
-        const c = t || b ? 'inset(' + t + 'px 0 ' + b + 'px 0)' : 'none';
-        if (c !== clipped) cv.style.clipPath = clipped = c;
-      }
-      const queueClip = () => { if (!clipRaf) clipRaf = requestAnimationFrame(clipToEdges); };
-      ['scroll', 'resize', 'touchmove'].forEach(ev => addEventListener(ev, queueClip, { passive: true }));
-      clipToEdges();
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') { if (raf !== null) cancelAnimationFrame(raf); raf = null; }
         else wake();
       });
+    })();
+  </script>
+  <script>
+    // ── OVERSCROLL: header and footer stay on the screen's edges ──
+    // A phone's bounce past the very top or bottom pulls the page away from the screen edge. The header
+    // is fixed, so it stays put on its own. While the page is pulled past its end, the footer is pinned
+    // to the bottom of the screen and an empty slot holds its place, so the gap opens above the footer
+    // and shows the dot background, the same as the gap under the header at the top.
+    (function () {
+      var foot = document.querySelector('footer');
+      if (!foot) return;
+      var slot = document.createElement('div');
+      slot.className = 'footer-slot';
+      foot.parentNode.insertBefore(slot, foot);
+      var pinned = false, raf = 0;
+      function check() {
+        raf = 0;
+        // where the footer's bottom edge sits in the page (its slot's, while pinned)
+        var past = innerHeight - (pinned ? slot : foot).getBoundingClientRect().bottom;
+        var zoomed = window.visualViewport && visualViewport.scale > 1.01;
+        if (past > 1 && !zoomed) {
+          var h = foot.getBoundingClientRect().height;   // exact, so the slot keeps the page the same length
+          if (!pinned) { slot.style.height = h + 'px'; foot.classList.add('pinned'); pinned = true; }
+          foot.style.top = (innerHeight - h) + 'px';
+          raf = requestAnimationFrame(check);   // keep watching until the bounce settles
+        } else if (pinned) {
+          foot.classList.remove('pinned'); foot.style.top = ''; slot.style.height = ''; pinned = false;
+        }
+      }
+      function nudge() { if (raf) cancelAnimationFrame(raf); check(); }
+      ['scroll', 'resize', 'touchmove'].forEach(function (ev) { addEventListener(ev, nudge, { passive: true }); });
+      check();
     })();
   </script>
 
@@ -1997,7 +2021,8 @@
         // The track ends where the content column ends: where the footer's top edge sits once
         // the page is scrolled to the bottom. The track is invisible, so the thumb simply moves
         // steadily down and comes to rest just above the footer, never behind it.
-        var footerTopAtEnd = footer ? footer.getBoundingClientRect().top + scrollY - max : innerHeight;
+        var footRef = footer && footer.classList.contains('pinned') ? footer.previousElementSibling : footer;   // its slot, while pinned in a bounce
+        var footerTopAtEnd = footRef ? footRef.getBoundingClientRect().top + scrollY - max : innerHeight;
         trackH = Math.max(0, Math.min(innerHeight, footerTopAtEnd) - navH);
         bar.style.height = trackH + 'px';
         // sized as if the page were at least as long as the home page, so shorter pages (About) get the same thumb
